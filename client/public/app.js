@@ -1,4 +1,19 @@
 window.fetch('/api/accu')
+    .then(function (res) {
+      return res.text()
+        .then(JSON.parse)
+        .then(body => {
+          if (body.ok) {
+            return body.data
+          }
+          throw body.error
+        })
+    })
+    .then(function (data) {
+      displayTempToUser(data[0].Temperature.Metric.Value, 'accuweather')
+    })
+
+window.fetch('/api/open')
   .then(function (res) {
     return res.text()
       .then(JSON.parse)
@@ -10,12 +25,17 @@ window.fetch('/api/accu')
       })
   })
   .then(function (data) {
+    const tempInCelsius = data.list[0].main.temp - 273.15
+    displayTempToUser(+tempInCelsius.toFixed(1), 'openweather')
+  })
+
+  function displayTempToUser (value, divTempId) {
     const newDiv = document.createElement('input')
     newDiv.type = 'text'
-    newDiv.value = data[0].Temperature.Metric.Value
-    const accuWeather = document.getElementById('accuweather')
-    accuWeather.appendChild(newDiv)
-  })
+    newDiv.value = value
+    const divDisplayWeather = document.getElementById(divTempId)
+    divDisplayWeather.appendChild(newDiv)
+  }
 
 // [
 //   {
