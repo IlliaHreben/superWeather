@@ -1,4 +1,23 @@
-window.fetch('/api/accu')
+document.getElementById('search').onclick = () => {
+
+const cityName = document.getElementById('cityName').value
+
+  window.fetch(`/api/accu?cityName=${cityName}`)
+      .then(function (res) {
+        return res.text()
+          .then(JSON.parse)
+          .then(body => {
+            if (body.ok) {
+              return body.data
+            }
+            throw body.error
+          })
+      })
+      .then(function (data) {
+        displayTempToUser(data[0].Temperature.Metric.Value, 'accuweather')
+      })
+
+  window.fetch(`/api/open?cityName=${cityName}`)
     .then(function (res) {
       return res.text()
         .then(JSON.parse)
@@ -10,24 +29,25 @@ window.fetch('/api/accu')
         })
     })
     .then(function (data) {
-      displayTempToUser(data[0].Temperature.Metric.Value, 'accuweather')
+      const tempInCelsius = data.list[0].main.temp - 273.15
+      displayTempToUser(+tempInCelsius.toFixed(1), 'openweather')
     })
 
-window.fetch('/api/open')
-  .then(function (res) {
-    return res.text()
-      .then(JSON.parse)
-      .then(body => {
-        if (body.ok) {
-          return body.data
-        }
-        throw body.error
+    window.fetch(`/api/yahoo?cityName=${cityName}`)
+      .then(function (res) {
+        return res.text()
+          .then(JSON.parse)
+          .then(body => {
+            if (body.ok) {
+              return body.data
+            }
+            throw body.error
+          })
       })
-  })
-  .then(function (data) {
-    const tempInCelsius = data.list[0].main.temp - 273.15
-    displayTempToUser(+tempInCelsius.toFixed(1), 'openweather')
-  })
+      .then(data => {
+        displayTempToUser(data.current_observation.condition.temperature, 'yahooweather')
+      })
+}
 
   function displayTempToUser (value, divTempId) {
     const newDiv = document.createElement('input')
