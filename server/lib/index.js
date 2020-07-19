@@ -2,40 +2,86 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const serveStatic = require('serve-static')
 const fetch = require('node-fetch')
+const OAuth = require('oauth')
+const {promisify} = require('util')
 
 const port = 3000
 const apiKeyAccuWeather = 'hoArfRosT1215'
 const apiKeyOpenWeather = '1aa104f66067dcf0b4baff605313f074'
+const city = 'Kyiv'
+const language = 'en-us'
+
+const yahooRequest = new OAuth.OAuth(
+    null,
+    null,
+    'dj0yJmk9eWJaMEQ2enN1b3U3JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PTYw',
+    '5838d4ce9cbaab52e5e533ec1c79e5654745ec8a',
+    '1.0',
+    null,
+    'HMAC-SHA1',
+    null,
+    {'X-Yahoo-App-Id': 'BHSaSz1y'} //header
+)
+
 
 
 const api = express.Router()
   .get('/accu', (req, res) => {
-    fetch(`http://apidev.accuweather.com/currentconditions/v1/324505.json?language=en&apikey=${apiKeyAccuWeather}`)
+    fetch(`https://apidev.accuweather.com/locations/v1/cities/search.json?q=${req.query.cityName}&apikey=${apiKeyAccuWeather}&language=${language}`)
       .then(resApi => resApi.json())
       .then(data => {
-        res.send({
-          ok: true,
-          data
-        })
-    })
-    .catch(err => {
-      res.send({
-        ok: false,
-        message: 'Cannot request weather from AccuWeather'
+        const cityCode = data[0].Key
+        fetch(`http://apidev.accuweather.com/currentconditions/v1/${cityCode}.json?language=en&apikey=${apiKeyAccuWeather}`)
+          .then(resApi => resApi.json())
+          .then(data => {
+            res.send({
+              ok: true,
+              data
+            })
+          })
+          .catch(err => {
+            res.send({
+              ok: false,
+              message: 'Cannot request weather from AccuWeather'
+            })
+            console.log(err)
+          })
       })
-      console.log(err)
-    })
+      .catch(err => {
+        res.send({
+          ok: false,
+          message: 'Wrong city'
+        })
+        console.log(err)
+      })
   })
   .get('/open', (req, res) => {
-    fetch(`http://api.openweathermap.org/data/2.5/find?q=Kyiv&type=like&APPID=${apiKeyOpenWeather}`)
+    fetch(`http://api.openweathermap.org/data/2.5/find?q=${req.query.cityName}&type=like&APPID=${apiKeyOpenWeather}`)
       .then(resApi => resApi.json())
       .then(data => {
-        console.log(data.list[0].main.temp)
+        // console.log(data.list[0].main.temp)
         res.send({
           ok: true,
           data
         })
     })
+  })
+  .get('/yahoo', (req, res) => {
+    yahooRequest.get(
+        `https://weather-ydn-yql.media.yahoo.com/forecastrss?location=${req.query.cityName},ca&format=json&u=c`,
+        null,
+        null,
+        function (err, data, result) {  //3-d - result
+          if (err) {
+              console.log(err)
+          } else {
+            res.send({
+              ok: true,
+              data: JSON.parse(data)
+            })
+          }
+        }
+    )
   })
 
 
