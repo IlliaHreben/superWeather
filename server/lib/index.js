@@ -29,9 +29,13 @@ const api = express.Router()
   .get('/accu', (req, res) => {
     fetch(`https://apidev.accuweather.com/locations/v1/cities/search.json?q=${req.query.cityName}&apikey=${apiKeyAccuWeather}&language=${language}`)
       .then(resApi => resApi.json())
+      .catch(err => {
+        console.error(err)
+        throw new Error('Wrong city')
+      })
       .then(data => {
         const cityCode = data[0].Key
-        fetch(`http://apidev.accuweather.com/currentconditions/v1/${cityCode}.json?language=en&apikey=${apiKeyAccuWeather}`)
+        return fetch(`http://apidev.accuweather.com/currentconditions/v1/${cityCode}.json?language=en&apikey=${apiKeyAccuWeather}`)
           .then(resApi => resApi.json())
           .then(data => {
             res.send({
@@ -40,19 +44,16 @@ const api = express.Router()
             })
           })
           .catch(err => {
-            res.send({
-              ok: false,
-              message: 'Cannot request weather from AccuWeather'
-            })
-            console.log(err)
+            console.error(err)
+            throw new Error('Cannot request weather from AccuWeather')
           })
       })
       .catch(err => {
+        console.error(err)
         res.send({
           ok: false,
-          message: 'Wrong city'
+          message: err.message
         })
-        console.log(err)
       })
   })
   .get('/open', (req, res) => {
@@ -67,21 +68,27 @@ const api = express.Router()
     })
   })
   .get('/yahoo', (req, res) => {
-    yahooRequest.get(
+    const yahooResponse = new Promise((resolve, reject) => {
+      yahooRequest.get(
         `https://weather-ydn-yql.media.yahoo.com/forecastrss?location=${req.query.cityName},ca&format=json&u=c`,
         null,
         null,
-        function (err, data, result) {  //3-d - result
-          if (err) {
-              console.log(err)
-          } else {
-            res.send({
-              ok: true,
-              data: JSON.parse(data)
-            })
-          }
-        }
-    )
+        (err, data) => err ? reject(err) : resolve(data)  //3-d - result
+      )
+    })
+    return yahooResponse
+      .then(JSON.parse)
+      .then(data => res.send({
+        ok:true,
+        data
+      }))
+      .catch(err => {
+        console.error(err)
+        res.send({
+          ok: false,
+          message: err.message
+        })
+      })
   })
 
 
