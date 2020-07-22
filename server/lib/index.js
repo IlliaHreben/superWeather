@@ -5,6 +5,8 @@ const fetch = require('node-fetch')
 const OAuth = require('oauth')
 const {promisify} = require('util')
 
+const connection = require('./mysqlConnect')
+
 const port = 3000
 const apiKeyAccuWeather = 'hoArfRosT1215'
 const apiKeyOpenWeather = '1aa104f66067dcf0b4baff605313f074'
@@ -38,10 +40,13 @@ const api = express.Router()
         return fetch(`http://apidev.accuweather.com/currentconditions/v1/${cityCode}.json?language=en&apikey=${apiKeyAccuWeather}`)
           .then(resApi => resApi.json())
           .then(data => {
+
             res.send({
               ok: true,
               data
             })
+
+            addDataToDB(req.query.cityName, data[0].Temperature.Metric.Value, 'accuWeather')
           })
           .catch(err => {
             console.error(err)
@@ -65,6 +70,7 @@ const api = express.Router()
           ok: true,
           data
         })
+        addDataToDB(req.query.cityName, data.list[0].main.temp - 273.15, 'openWeather')
     })
   })
   .get('/yahoo', (req, res) => {
@@ -78,10 +84,14 @@ const api = express.Router()
     })
     return yahooResponse
       .then(JSON.parse)
-      .then(data => res.send({
-        ok:true,
-        data
-      }))
+      .then(data => {
+        res.send({
+          ok: true,
+          data
+        })
+
+        addDataToDB(req.query.cityName, data.current_observation.condition.temperature, 'yahooWeather')
+      })
       .catch(err => {
         console.error(err)
         res.send({
@@ -91,7 +101,12 @@ const api = express.Router()
       })
   })
 
-
+const addDataToDB= (cityName, tempValue, source) => {
+  const sqlScheme = 'INSERT INTO weathers(city, temp, source, datetime) VALUES(?, ?, ?, ?)'
+  connection.query(sqlScheme, [cityName, tempValue, source, new Date()])
+    .then(([row, ]) => console.log('Data added'))
+    .catch(err => console.error('Error: ' + err.message))
+}
 
 
 const app = express()
