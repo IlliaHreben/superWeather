@@ -6,7 +6,7 @@ const OAuth = require('oauth')
 const {promisify} = require('util')
 
 const {
-  connection,
+  Weathers,
   addDataToDB,
   takeHistoryWeatherRequests
 } = require('./mysqlConnect')
@@ -35,12 +35,11 @@ const api = express.Router()
   .get('/showhistory', (req, res) => {
     takeHistoryWeatherRequests(req.query.cityName)
       .then(data => {
-        console.log(typeof data[0][0].datetime)
         res.send({
           ok: true,
           data
         })
-    })
+      })
   })
   .get('/accu', (req, res) => {
     fetch(`https://apidev.accuweather.com/locations/v1/cities/search.json?q=${req.query.cityName}&apikey=${apiKeyAccuWeather}&language=${language}`)
@@ -52,20 +51,20 @@ const api = express.Router()
       .then(data => {
         const cityCode = data[0].Key
         return fetch(`http://apidev.accuweather.com/currentconditions/v1/${cityCode}.json?language=en&apikey=${apiKeyAccuWeather}`)
-          .then(resApi => resApi.json())
-          .then(data => {
+      })
+      .then(resApi => resApi.json())
+      .then(data => {
 
-            res.send({
-              ok: true,
-              data
-            })
+        res.send({
+          ok: true,
+          data
+        })
 
-            addDataToDB(req.query.cityName, data[0].Temperature.Metric.Value, 'accuWeather')
-          })
-          .catch(err => {
-            console.error(err)
-            throw new Error('Cannot request weather from AccuWeather')
-          })
+        addDataToDB(req.query.cityName, data[0].Temperature.Metric.Value, 'accuWeather')
+      })
+      .catch(err => {
+        console.error(err)
+        throw new Error('Cannot request weather from AccuWeather')
       })
       .catch(err => {
         console.error(err)

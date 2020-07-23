@@ -1,32 +1,52 @@
 const mysql = require('mysql2')
+const Sequelize = require('sequelize')
 
 const password = 'superweather' // move to config
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'superweather',
-  database: 'superweather',
-  password
-}).promise()
+const sequelize = new Sequelize('superweather', 'superweather', password, {
+  dialect: 'mysql',
+  host: 'localhost'
+})
 
-const sql = "CREATE TABLE if not exists weathers (id INT AUTO_INCREMENT PRIMARY KEY, city VARCHAR(255), temp FLOAT, source VARCHAR(255), datetime TIMESTAMP)"
+const Weathers = sequelize.define('weathers', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  city: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  temp: {
+    type: Sequelize.FLOAT,
+    allowNull: false
+  },
+  source: {
+    type: Sequelize.STRING,
+    allowNull: false
+  }
+})
 
-// connection.query('DROP TABLE weathers')
-
-connection.query(sql)
-  .then(() => console.log("Table created")) // (result)
-  .catch(err => console.error(err.message))
+sequelize.sync()
+  .then(() => {
+    console.log('Sucessfuly sync.')
+  })
+  .catch(err => console.log(err))
 
 const addDataToDB = (cityName, tempValue, source) => {
-  const sqlAddString = 'INSERT INTO weathers(city, temp, source, datetime) VALUES(?, ?, ?, ?)'
-  connection.query(sqlAddString, [cityName, tempValue, source, new Date()])
-    .then(([row, ]) => console.log(row[0]))
+  Weathers.create({
+    city: cityName,
+    temp: tempValue,
+    source
+  })
+    .then((res) => console.log(`Sucessfuly added. Info about row: ${res.city}: ${res.temp}. ${source}`))
     .catch(err => console.error('Error: ' + err.message))
 }
 
 const takeHistoryWeatherRequests = cityName => {
-  const sqlTakeHistoryWeatherRequests = `SELECT * FROM weathers WHERE city=?`
-  return connection.query(sqlTakeHistoryWeatherRequests, cityName)
+  return Weathers.findAll({ where:{city: cityName}, raw: true })
 }
 
-module.exports = {connection, addDataToDB, takeHistoryWeatherRequests}
+module.exports = {Weathers, addDataToDB, takeHistoryWeatherRequests}
