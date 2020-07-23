@@ -1,7 +1,7 @@
 const mysql = require('mysql2')
 const Sequelize = require('sequelize')
 
-const {sqlPassword, host} = ('./config')
+const {sqlPassword, host} = require('./config')
 
 const sequelize = new Sequelize('superweather', 'superweather', sqlPassword, {
   dialect: 'mysql',

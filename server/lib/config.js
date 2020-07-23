@@ -14,13 +14,4 @@ const consumerKeyYahoo = 'dj0yJmk9eWJaMEQ2enN1b3U3JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MC
 
 const consumerSecretYahoo = '5838d4ce9cbaab52e5e533ec1c79e5654745ec8a'
 
-module.exports = {
-  sqlPassword,
-  host,
-  port,
-  apiKeyAccuWeather,
-  apiKeyOpenWeather,
-  language,
-  consumerKeyYahoo,
-  consumerSecretYahoo
-}
+module.exports = {sqlPassword, host, port, apiKeyAccuWeather, apiKeyOpenWeather, language, consumerKeyYahoo, consumerSecretYahoo}
