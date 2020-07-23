@@ -13,18 +13,22 @@ const sql = "CREATE TABLE weathers (id INT AUTO_INCREMENT PRIMARY KEY, city VARC
 // const sqlScheme = 'INSERT INTO weathers(city, temp, datetime) VALUES(?, ?, ?)'
 // const weatherData = ['Kyiv', '28', new Date()]
 
-// connection.query('DROP TABLE weathers')
+connection.query('DROP TABLE weathers')
 
 connection.query(sql)
   .then(result => console.log("Table created"))
   .catch(err => console.error(err.message))
 
-// connection.query(sqlScheme, weatherData)
-//   .then(([row, ]) => console.log('Data added'))
-//   .catch(err => console.error('Ошибка: ' + err.message))
-//
+
 connection.query("SELECT * FROM weathers")
   .then(([rows, ]) => console.log(rows)) //2-d - fields
-  .catch(err => console.error(err))
+  .catch(err => console.error(err.message))
 
-module.exports = connection
+const addDataToDB = (cityName, tempValue, source) => {
+  const sqlScheme = 'INSERT INTO weathers(city, temp, source, datetime) VALUES(?, ?, ?, ?)'
+  connection.query(sqlScheme, [cityName, tempValue, source, new Date()])
+    .then(([row, ]) => console.log('Data added.' + row))
+    .catch(err => console.error('Error: ' + err.message))
+}
+
+module.exports = {connection, addDataToDB}

@@ -1,18 +1,31 @@
 <html>
   <head>
     <title>superWeather</title>
-    <!-- <link rel='stylesheet' href='/styles.css'> -->
+    <link rel='stylesheet' href='/styles.css'>
   </head>
 
   <body>
-    <div id="inputInformationArea">
+
+    <header id="inputInformationArea">
+      <div id="cityNameContainer">
         <input type='inputArea' id='cityName'>
         <button type='inputArea' id='search'>SEARCH</button>
-    </div>
-    <div id="accuweather"></div>
-    <div id="openweather"></div>
-    <div id="yahooweather"></div>
+      </div>
+    </header>
 
+    <section>
+      <div class="weatherWidget" id="accuweather"></div>
+      <div class="weatherWidget" id="openweather"></div>
+      <div class="weatherWidget" id="yahooweather"></div>
+    </section>
+
+    <aside>
+
+    </aside>
+
+    <footer>
+
+    </footer>
     <script type='module' src='app.js'></script>
   </body>
 </html>

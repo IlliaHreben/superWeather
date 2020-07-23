@@ -5,7 +5,7 @@ const fetch = require('node-fetch')
 const OAuth = require('oauth')
 const {promisify} = require('util')
 
-const connection = require('./mysqlConnect')
+const {connection, addDataToDB} = require('./mysqlConnect')
 
 const port = 3000
 const apiKeyAccuWeather = 'hoArfRosT1215'
@@ -101,12 +101,7 @@ const api = express.Router()
       })
   })
 
-const addDataToDB= (cityName, tempValue, source) => {
-  const sqlScheme = 'INSERT INTO weathers(city, temp, source, datetime) VALUES(?, ?, ?, ?)'
-  connection.query(sqlScheme, [cityName, tempValue, source, new Date()])
-    .then(([row, ]) => console.log('Data added'))
-    .catch(err => console.error('Error: ' + err.message))
-}
+
 
 
 const app = express()
