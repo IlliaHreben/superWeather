@@ -23,3 +23,9 @@ section {
   margin-top: 30px;
   width: 100%;
 }
+
+aside {
+  display: relative;
+  margin-top: 30px;
+  width: 100%;
+}

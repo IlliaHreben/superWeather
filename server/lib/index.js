@@ -5,7 +5,11 @@ const fetch = require('node-fetch')
 const OAuth = require('oauth')
 const {promisify} = require('util')
 
-const {connection, addDataToDB} = require('./mysqlConnect')
+const {
+  connection,
+  addDataToDB,
+  takeHistoryWeatherRequests
+} = require('./mysqlConnect')
 
 const port = 3000
 const apiKeyAccuWeather = 'hoArfRosT1215'
@@ -28,6 +32,16 @@ const yahooRequest = new OAuth.OAuth(
 
 
 const api = express.Router()
+  .get('/showhistory', (req, res) => {
+    takeHistoryWeatherRequests(req.query.cityName)
+      .then(data => {
+        console.log(typeof data[0][0].datetime)
+        res.send({
+          ok: true,
+          data
+        })
+    })
+  })
   .get('/accu', (req, res) => {
     fetch(`https://apidev.accuweather.com/locations/v1/cities/search.json?q=${req.query.cityName}&apikey=${apiKeyAccuWeather}&language=${language}`)
       .then(resApi => resApi.json())
@@ -62,15 +76,14 @@ const api = express.Router()
       })
   })
   .get('/open', (req, res) => {
-    fetch(`http://api.openweathermap.org/data/2.5/find?q=${req.query.cityName}&type=like&APPID=${apiKeyOpenWeather}`)
+    fetch(`http://api.openweathermap.org/data/2.5/find?q=${req.query.cityName}&units=metric&type=like&APPID=${apiKeyOpenWeather}`)
       .then(resApi => resApi.json())
       .then(data => {
-        // console.log(data.list[0].main.temp)
         res.send({
           ok: true,
           data
         })
-        addDataToDB(req.query.cityName, data.list[0].main.temp - 273.15, 'openWeather')
+        addDataToDB(req.query.cityName, data.list[0].main.temp, 'openWeather')
     })
   })
   .get('/yahoo', (req, res) => {
