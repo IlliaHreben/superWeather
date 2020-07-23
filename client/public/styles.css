@@ -1,0 +1,25 @@
+header {
+  font: 14px/24px "Source Code Pro", Inconsolata, "Lucida Console", Terminal, "Courier New", Courier;
+  position: static;
+  width: 100%;
+}
+
+#cityNameContainer {
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
+  display: block;
+}
+
+.weatherWidget {
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
+  display: block;
+}
+
+section {
+  display: relative;
+  margin-top: 30px;
+  width: 100%;
+}
