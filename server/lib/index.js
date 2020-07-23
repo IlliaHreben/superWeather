@@ -5,7 +5,7 @@ const fetch = require('node-fetch')
 const OAuth = require('oauth')
 const {promisify} = require('util')
 
-const {port, apiKeyAccuWeather, apiKeyOpenWeather, language, consumerKeyYahoo, consumerSecretYahoo} = ('./config')
+const {port, apiKeyAccuWeather, apiKeyOpenWeather, language, consumerKeyYahoo, consumerSecretYahoo} = require('./config')
 const {addDataToDB, takeHistoryWeatherRequests} = require('./mysqlConnect')
 
 const yahooRequest = new OAuth.OAuth(
