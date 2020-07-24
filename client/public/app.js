@@ -30,7 +30,7 @@ const cityName = document.getElementById('cityName').value
       throw body.error
     })
     .then(data => {
-      displayTempToUser(data[0].Temperature.Metric.Value + '\u2103', 'accuweather')
+      displayTempToUser(data.temp + '\u2103', 'accuweather')
     })
 
   window.fetch(`/api/open?cityName=${cityName}`)
@@ -43,7 +43,7 @@ const cityName = document.getElementById('cityName').value
       throw body.error
     })
     .then(data => {
-      displayTempToUser(data.list[0].main.temp + '\u2103', 'openweather')
+      displayTempToUser(data.temp + '\u2103', 'openweather')
     })
 
   window.fetch(`/api/yahoo?cityName=${cityName}`)
@@ -56,7 +56,7 @@ const cityName = document.getElementById('cityName').value
       throw body.error
     })
     .then(data => {
-      displayTempToUser(data.current_observation.condition.temperature + '\u2103', 'yahooweather')
+      displayTempToUser(data.temp + '\u2103', 'yahooweather')
     })
 }
 

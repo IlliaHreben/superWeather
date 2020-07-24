@@ -1,4 +1,3 @@
-const mysql = require('mysql2')
 const Sequelize = require('sequelize')
 
 const {sqlPassword, host} = require('./config')
@@ -36,13 +35,20 @@ sequelize.sync()
   .catch(err => console.log(err))
 
 const addDataToDB = (cityName, tempValue, source) => {
-  Weathers.create({
+  return Weathers.create({
     city: cityName,
     temp: tempValue,
     source
   })
-    .then((res) => console.log(`Sucessfuly added. Info about row: ${res.city}: ${res.temp}. ${source}`))
-    .catch(err => console.error('Error: ' + err.message))
+    .then((res) => {
+      console.log(`Sucessfuly added. Row: ${res.city}: ${res.temp}. ${source}`)
+      return {
+        city: res.city,
+        temp: res.temp,
+        source,
+        updatedAt: res.updatedAt
+      }
+    })
 }
 
 const takeHistoryWeatherRequests = cityName => {
