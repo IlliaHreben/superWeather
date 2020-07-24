@@ -1,52 +1,38 @@
 document.getElementById('search').onclick = () => {
 
-const cityName = document.getElementById('cityName').value
+  const cityName = document.getElementById('cityName').value
 
-  window.fetch(`/api/showhistory?cityName=${cityName}`)
-    .then(res => res.text())
-    .then(JSON.parse)
-    .then(body => {
-      if (body.ok) {
-        return body.data
-      }
-      throw body.error
-    })
+  const promiseYahoo = window.fetch(`/api/yahoo?cityName=${cityName}`)
+  const promiseOpen = window.fetch(`/api/open?cityName=${cityName}`)
+  const promiseAccu = window.fetch(`/api/accu?cityName=${cityName}`)
+  const promiseGetHistory = window.fetch(`/api/showhistory?cityName=${cityName}`)
+
+  jsonToData(promiseGetHistory)
     .then(data => {
-      console.log(data)
       data.forEach((row) => {
         const textDate = `${row.temp}\u2103 (${formatDate(row.createdAt)})`
         displayTempToUser(textDate, 'weatherHistory')
-        console.log(typeof row.datetime)
       })
     })
 
-  window.fetch(`/api/accu?cityName=${cityName}`)
-    .then(res => res.text())
-    .then(JSON.parse)
-    .then(body => {
-      if (body.ok) {
-        return body.data
-      }
-      throw body.error
-    })
+  jsonToData(promiseAccu)
     .then(data => {
-      displayTempToUser(data.temp + '\u2103', 'accuweather')
+      displayTempToUser(data.temp + '\u2103', data.source.toLowerCase())
     })
 
-  window.fetch(`/api/open?cityName=${cityName}`)
-    .then(res => res.text())
-    .then(JSON.parse)
-    .then(body => {
-      if (body.ok) {
-        return body.data
-      }
-      throw body.error
-    })
+  jsonToData(promiseOpen)
     .then(data => {
-      displayTempToUser(data.temp + '\u2103', 'openweather')
+      displayTempToUser(data.temp + '\u2103', data.source.toLowerCase())
     })
 
-  window.fetch(`/api/yahoo?cityName=${cityName}`)
+  jsonToData(promiseYahoo)
+    .then(data => {
+      displayTempToUser(data.temp + '\u2103', data.source.toLowerCase())
+    })
+}
+
+const jsonToData = (promise) => {
+  return promise
     .then(res => res.text())
     .then(JSON.parse)
     .then(body => {
@@ -54,9 +40,6 @@ const cityName = document.getElementById('cityName').value
         return body.data
       }
       throw body.error
-    })
-    .then(data => {
-      displayTempToUser(data.temp + '\u2103', 'yahooweather')
     })
 }
 

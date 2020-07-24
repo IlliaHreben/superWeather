@@ -46,6 +46,7 @@ const addDataToDB = (cityName, tempValue, source) => {
         city: res.city,
         temp: res.temp,
         source,
+        createdAt: res.createdAt,
         updatedAt: res.updatedAt
       }
     })
