@@ -3,7 +3,6 @@ const bodyParser = require('body-parser')
 const serveStatic = require('serve-static')
 const fetch = require('node-fetch')
 const OAuth = require('oauth')
-const {promisify} = require('util')
 
 const {port, apiKeyAccuWeather, apiKeyOpenWeather, language, consumerKeyYahoo, consumerSecretYahoo} = require('./config')
 const {addDataToDB, takeHistoryWeatherRequests} = require('./mysqlConnect')
@@ -33,7 +32,7 @@ const api = express.Router()
       })
   })
   .get('/accu', (req, res) => {
-    fetch(`https://apidev.accuweather.com/locations/v1/cities/search.json?q=${req.query.cityName}&apikey=${apiKeyAccuWeather}&language=${language}`)
+    const promise = fetch(`https://apidev.accuweather.com/locations/v1/cities/search.json?q=${req.query.cityName}&apikey=${apiKeyAccuWeather}&language=${language}`)
       .then(resApi => resApi.json())
       .catch(err => {
         console.error(err)
@@ -45,66 +44,50 @@ const api = express.Router()
       })
       .then(resApi => resApi.json())
       .then(data => {
-
-        res.send({
-          ok: true,
-          data
-        })
-
-        addDataToDB(req.query.cityName, data[0].Temperature.Metric.Value, 'accuWeather')
+        return addDataToDB(req.query.cityName, data[0].Temperature.Metric.Value, 'accuWeather')
       })
-      .catch(err => {
-        console.error(err)
-        throw new Error('Cannot request weather from AccuWeather')
-      })
-      .catch(err => {
-        console.error(err)
-        res.send({
-          ok: false,
-          message: err.message
-        })
-      })
+    sendPromiseToClient(res, promise)
   })
   .get('/open', (req, res) => {
-    fetch(`http://api.openweathermap.org/data/2.5/find?q=${req.query.cityName}&units=metric&type=like&APPID=${apiKeyOpenWeather}`)
+    const promise = fetch(`http://api.openweathermap.org/data/2.5/find?q=${req.query.cityName}&units=metric&type=like&APPID=${apiKeyOpenWeather}`)
       .then(resApi => resApi.json())
       .then(data => {
-        res.send({
-          ok: true,
-          data
-        })
-        addDataToDB(req.query.cityName, data.list[0].main.temp, 'openWeather')
-    })
+        return addDataToDB(req.query.cityName, data.list[0].main.temp, 'openWeather')
+      })
+    sendPromiseToClient(res, promise)
   })
   .get('/yahoo', (req, res) => {
-    const yahooResponse = new Promise((resolve, reject) => {
-      yahooRequest.get(
-        `https://weather-ydn-yql.media.yahoo.com/forecastrss?location=${req.query.cityName},ca&format=json&u=c`,
-        null,
-        null,
-        (err, data) => err ? reject(err) : resolve(data)  //3-d - result
-      )
-    })
-    return yahooResponse
+    const promise = new Promise((resolve, reject) => {
+        yahooRequest.get(
+          `https://weather-ydn-yql.media.yahoo.com/forecastrss?location=${req.query.cityName},ca&format=json&u=c`,
+          null,
+          null,
+          (err, data) => err ? reject(err) : resolve(data)  //3-d - result
+        )
+      })
       .then(JSON.parse)
       .then(data => {
-        res.send({
-          ok: true,
-          data
-        })
-
-        addDataToDB(req.query.cityName, data.current_observation.condition.temperature, 'yahooWeather')
-      })
-      .catch(err => {
-        console.error(err)
-        res.send({
-          ok: false,
-          message: err.message
-        })
-      })
+        return addDataToDB(req.query.cityName, data.current_observation.condition.temperature, 'yahooWeather')
+    })
+    sendPromiseToClient(res, promise)
   })
 
-
+const sendPromiseToClient = (res, promise) => {
+  promise
+    .then(data => {
+      res.send({
+        ok: true,
+        data
+      })
+    })
+    .catch(err => {
+      console.error(err)
+      res.send({
+        ok: false,
+        message: err.message
+      })
+    })
+}
 
 
 const app = express()
