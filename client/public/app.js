@@ -41,6 +41,9 @@ const jsonToData = (promise) => {
       }
       throw body.error
     })
+    .catch(err => {
+      displayTempToUser(`Error: ${err.message}. Code: ${err.code}`, 'error')
+    })
 }
 
 function displayTempToUser (value, divTempId) {

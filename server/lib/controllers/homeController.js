@@ -3,6 +3,7 @@ const OAuth = require('oauth')
 
 const {apiKeyAccuWeather, apiKeyOpenWeather, language, consumerKeyYahoo, consumerSecretYahoo} = require('../config')
 const {addDataToDB, takeHistoryWeatherRequests} = require('../mysqlConnect')
+const ServiceError = require('../ServiceError')
 
 const getYahoo = (req, res) => {
   const yahooRequest = new OAuth.OAuth(
@@ -27,8 +28,15 @@ const getYahoo = (req, res) => {
     })
     .then(JSON.parse)
     .then(data => {
+      if (data.location.city == 'Ca') {
+        throw new ServiceError('Cannot request weather from YahooWeather', 'UNKNOWN_ERROR')
+      }
       return addDataToDB(req.query.cityName, data.current_observation.condition.temperature, 'yahooWeather')
-  })
+    })
+    .catch(err => {
+      console.error(err.message)
+      throw new ServiceError('Cannot request weather from YahooWeather', 'UNKNOWN_ERROR')
+    })
   sendPromiseToClient(res, promise)
 }
 
@@ -38,6 +46,10 @@ const getOpen = (req, res) => {
     .then(data => {
       return addDataToDB(req.query.cityName, data.list[0].main.temp, 'openWeather')
     })
+    .catch(err => {
+      console.error(err.message)
+      throw new ServiceError('Cannot request weather from OpenWeather', 'UNKNOWN_ERROR')
+    })
   sendPromiseToClient(res, promise)
 }
 
@@ -46,7 +58,7 @@ const getAccu = (req, res) => {
     .then(resApi => resApi.json())
     .catch(err => {
       console.error(err)
-      throw new Error('Wrong city')
+      throw new ServiceError('Wrong city', 'WRONG_CITY')
     })
     .then(data => {
       const cityCode = data[0].Key
@@ -55,6 +67,10 @@ const getAccu = (req, res) => {
     .then(resApi => resApi.json())
     .then(data => {
       return addDataToDB(req.query.cityName, data[0].Temperature.Metric.Value, 'accuWeather')
+    })
+    .catch(err => {
+      console.error(err.message)
+      throw new ServiceError('Cannot request weather from AccuWeather', 'UNKNOWN_ERROR')
     })
   sendPromiseToClient(res, promise)
 }
@@ -77,12 +93,16 @@ const sendPromiseToClient = (res, promise) => {
         data
       })
     })
-    .catch(err => {
-      console.error(err)
-      res.send({
-        ok: false,
-        message: err.message
-      })
+    .catch(error => {
+      console.warn(error)
+      if (error instanceof ServiceError) {
+        res
+          .status(400)
+          .send({
+            ok: false,
+            error: {message: error.message, code: error.code}
+          })
+      }
     })
 }
 
