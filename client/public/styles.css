@@ -7,25 +7,36 @@ header {
 #cityNameContainer {
   margin-left: auto;
   margin-right: auto;
-  width: 300px;
+  width: 330px;
   display: block;
+}
+
+
+.weatherWidgetContainer, .errorMessageContainer {
+  /* margin-left: auto; */
+  width: 300px;
+  position: relative;
+  left: 50%;
+  margin: 0 0 0 -150px;
 }
 
 .weatherWidget, .errorMessage {
-  margin-left: auto;
-  margin-right: auto;
-  width: 300px;
-  display: block;
+  position: relative;
+  width: 100%;
 }
 
 section {
-  display: relative;
+  position: relative;
   margin-top: 30px;
   width: 100%;
+  /* position: absolute; */
+  overflow: auto;
 }
 
 aside {
-  display: relative;
+  position: relative;
   margin-top: 30px;
   width: 100%;
+  /* position: absolute; */
+  overflow: auto;
 }

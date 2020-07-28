@@ -11,23 +11,23 @@ document.getElementById('search').onclick = () => {
     .then(data => {
       data.forEach((row) => {
         const textDate = `${row.temperature}\u2103 (${formatDate(row.createdAt)})`
-        displayTempToUser(textDate, 'weatherHistory')
+        displayTempToUser(textDate, 'weatherHistory', 'weatherWidget')
       })
     })
 
   jsonToData(promiseAccu)
     .then(data => {
-      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase())
+      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase(), 'weatherWidget')
     })
 
   jsonToData(promiseOpen)
     .then(data => {
-      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase())
+      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase(), 'weatherWidget')
     })
 
   jsonToData(promiseYahoo)
     .then(data => {
-      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase())
+      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase(), 'weatherWidget')
     })
 }
 
@@ -42,14 +42,15 @@ const jsonToData = (promise) => {
       throw body.error
     })
     .catch(err => {
-      displayTempToUser(`Error: ${err.message}. Code: ${err.code}`, 'error')
+      displayTempToUser(`Error: ${err.message}. Code: ${err.code}`, 'error', 'errorMessage')
     })
 }
 
-function displayTempToUser (value, divTempId) {
+function displayTempToUser (value, divTempId, divClass) {
   const newDiv = document.createElement('input')
   newDiv.type = 'text'
   newDiv.value = value
+  newDiv.className = divClass
   const divDisplayWeather = document.getElementById(divTempId)
   divDisplayWeather.appendChild(newDiv)
 }
