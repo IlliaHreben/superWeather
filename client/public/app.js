@@ -10,24 +10,24 @@ document.getElementById('search').onclick = () => {
   jsonToData(promiseGetHistory)
     .then(data => {
       data.forEach((row) => {
-        const textDate = `${row.temp}\u2103 (${formatDate(row.createdAt)})`
+        const textDate = `${row.temperature}\u2103 (${formatDate(row.createdAt)})`
         displayTempToUser(textDate, 'weatherHistory')
       })
     })
 
   jsonToData(promiseAccu)
     .then(data => {
-      displayTempToUser(data.temp + '\u2103', data.source.toLowerCase())
+      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase())
     })
 
   jsonToData(promiseOpen)
     .then(data => {
-      displayTempToUser(data.temp + '\u2103', data.source.toLowerCase())
+      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase())
     })
 
   jsonToData(promiseYahoo)
     .then(data => {
-      displayTempToUser(data.temp + '\u2103', data.source.toLowerCase())
+      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase())
     })
 }
 

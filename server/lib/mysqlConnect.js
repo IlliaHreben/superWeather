@@ -14,11 +14,36 @@ const Weathers = sequelize.define('weathers', {
     primaryKey: true,
     allowNull: false
   },
-  city: {
+  temperature: {
+    type: Sequelize.FLOAT,
+    allowNull: false
+  },
+  cityId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  }
+})
+
+const Cities = sequelize.define('cities', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  name: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  temp: {
+  country: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  latitude: {
+    type: Sequelize.FLOAT,
+    allowNull: false
+  },
+  longitude: {
     type: Sequelize.FLOAT,
     allowNull: false
   },
@@ -26,34 +51,42 @@ const Weathers = sequelize.define('weathers', {
     type: Sequelize.STRING,
     allowNull: false
   }
+}, {
+    indexes: [
+        {
+            unique: true,
+            fields: ['name', 'source']
+        }
+    ]
 })
+Cities.hasMany(Weathers, {onDelete: 'cascade'})
+Weathers.belongsTo(Cities, {onDelete: 'cascade'})
 
-sequelize.sync()
+sequelize.sync({force: true})
   .then(() => {
     console.log('Sucessfuly sync.')
   })
-  .catch(err => console.log(err))
+  .catch(err => console.log('ERROR!!!!' + err.message))
 
-const addDataToDB = (cityName, tempValue, source) => {
-  return Weathers.create({
-    city: cityName,
-    temp: tempValue,
-    source
-  })
-    .then((res) => {
-      console.log(`Sucessfuly added. Row: ${res.city}: ${res.temp}. ${source}`)
-      return {
-        city: res.city,
-        temp: res.temp,
-        source,
-        createdAt: res.createdAt,
-        updatedAt: res.updatedAt
-      }
+const addWeatherToDB = (cityData, weatherData) => {
+  return Cities.upsert(cityData)
+    .then(([city]) => {
+      return Weathers.create({
+        ...weatherData,
+        cityId: city.id
+      })
+        .then(weather => {
+          console.log(`Sucessfuly added.`)
+          return {city, weather}
+        })
     })
 }
 
-const takeHistoryWeatherRequests = cityName => {
-  return Weathers.findAll({ where:{city: cityName}, raw: true })
+const takeHistoryWeatherRequests = name => {
+  return Weathers.findAll({include: {
+    model: Cities,
+    where: {name}
+  }})
 }
 
-module.exports = {Weathers, addDataToDB, takeHistoryWeatherRequests}
+module.exports = {Weathers, addWeatherToDB, takeHistoryWeatherRequests}
