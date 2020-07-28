@@ -11,9 +11,13 @@ header {
   display: block;
 }
 
+#aboutCityArea {
+  position: absolute;
+  top: 5%; left: 15%;
+  width: 250px;
+}
 
 .weatherWidgetContainer, .errorMessageContainer {
-  /* margin-left: auto; */
   width: 300px;
   position: relative;
   left: 50%;
@@ -29,7 +33,6 @@ section {
   position: relative;
   margin-top: 30px;
   width: 100%;
-  /* position: absolute; */
   overflow: auto;
 }
 
@@ -37,6 +40,5 @@ aside {
   position: relative;
   margin-top: 30px;
   width: 100%;
-  /* position: absolute; */
   overflow: auto;
 }

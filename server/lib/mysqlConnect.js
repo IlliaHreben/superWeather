@@ -66,7 +66,7 @@ sequelize.sync({force: true})
   .then(() => {
     console.log('Sucessfuly sync.')
   })
-  .catch(err => console.log('ERROR!!!!' + err.message))
+  .catch(err => console.log('ERROR!!!' + err.message))
 
 const addWeatherToDB = (cityData, weatherData) => {
   return Cities.upsert(cityData)
@@ -89,4 +89,11 @@ const takeHistoryWeatherRequests = name => {
   }})
 }
 
-module.exports = {Weathers, addWeatherToDB, takeHistoryWeatherRequests}
+const getAboutCity = name => {
+  return Cities.findAll({
+    where: {name},
+    raw: true
+  })
+}
+
+module.exports = {Weathers, addWeatherToDB, takeHistoryWeatherRequests, getAboutCity}

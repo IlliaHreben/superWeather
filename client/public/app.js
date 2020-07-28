@@ -9,7 +9,7 @@ document.getElementById('search').onclick = () => {
 
   jsonToData(promiseGetHistory)
     .then(data => {
-      data.forEach((row) => {
+      data.forEach(row => {
         const textDate = `${row.temperature}\u2103 (${formatDate(row.createdAt)})`
         displayTempToUser(textDate, 'weatherHistory', 'weatherWidget')
       })
@@ -28,6 +28,29 @@ document.getElementById('search').onclick = () => {
   jsonToData(promiseYahoo)
     .then(data => {
       displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase(), 'weatherWidget')
+    })
+}
+
+document.getElementById('about').onclick = () => {
+  const cityName = document.getElementById('cityName').value
+  if (!cityName || cityName === '') {
+    console.log(`You did not enter the city name.`)
+    displayTempToUser(`You did not enter the city name.`, 'error', 'errorMessage')
+    return
+  }
+
+  const promiseAboutCity = window.fetch(`/api/aboutCity?cityName=${cityName}`)
+
+  jsonToData(promiseAboutCity)
+    .then(data => {
+      const aboutCityArea = document.getElementById('aboutCityArea')
+      data.forEach(raw => {
+        const inputAboutCity = document.createElement('textarea')
+        inputAboutCity.value = `${raw.name}, ${raw.country}. \rCoordinates: ${raw.latitude}, ${raw.longitude}. \rSource: ${raw.source} \rCreatedAt: ${formatDate(raw.createdAt)}`
+        inputAboutCity.style.width = '100%'
+        inputAboutCity.style.height = '70px'
+        aboutCityArea.appendChild(inputAboutCity)
+      })
     })
 }
 

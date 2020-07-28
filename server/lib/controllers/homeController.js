@@ -2,7 +2,7 @@ const fetch = require('node-fetch')
 const OAuth = require('oauth')
 
 const {apiKeyAccuWeather, apiKeyOpenWeather, language, consumerKeyYahoo, consumerSecretYahoo} = require('../config')
-const {addWeatherToDB, takeHistoryWeatherRequests} = require('../mysqlConnect')
+const {addWeatherToDB, takeHistoryWeatherRequests, getAboutCity} = require('../mysqlConnect')
 const ServiceError = require('../ServiceError')
 
 const getYahoo = (req, res) => {
@@ -139,9 +139,14 @@ const formatCity = city => {
 const showHistory = (req, res) => {
   sendPromiseToClient(res,
     takeHistoryWeatherRequests(req.query.cityName)
-      .then(data => {
-        return data.map(formatWeather)
-      })
+      .then(data => data.map(formatWeather))
+  )
+}
+
+const aboutCity = (req, res) => {
+  sendPromiseToClient(res,
+    getAboutCity(req.query.cityName)
+      .then(cities => cities.map(formatCity))
   )
 }
 
@@ -166,4 +171,4 @@ const sendPromiseToClient = (res, promise) => {
     })
 }
 
-module.exports = {getYahoo, getOpen, getAccu, showHistory}
+module.exports = {getYahoo, getOpen, getAccu, showHistory, aboutCity}
