@@ -12,7 +12,6 @@ const api = express.Router()
   .get('/open', getOpen)
   .get('/yahoo', getYahoo)
 
-
 const app = express()
   .use(serveStatic('../client/public', {extensions: ['html']}))
   .use(bodyParser.json())

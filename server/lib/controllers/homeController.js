@@ -1,38 +1,14 @@
-const fetch = require('node-fetch')
-const OAuth = require('oauth')
-
-const {apiKeyAccuWeather, apiKeyOpenWeather, language, consumerKeyYahoo, consumerSecretYahoo} = require('../config')
 const {addWeatherToDB, takeHistoryWeatherRequests, getAboutCity} = require('../mysqlConnect')
+const openGetCurrent = require('./interactors/openWeather')
+const yahooGetCurrent = require('./interactors/yahooWeather')
+const {accuGetCity, accuGetCurrent} = require('./interactors/accuWeather')
 const ServiceError = require('../ServiceError')
 
 const getYahoo = (req, res) => {
-  const yahooRequest = new OAuth.OAuth(
-      null,
-      null,
-      consumerKeyYahoo,
-      consumerSecretYahoo,
-      '1.0',
-      null,
-      'HMAC-SHA1',
-      null,
-      {'X-Yahoo-App-Id': 'BHSaSz1y'} //header
-  )
-
-  const promise = new Promise((resolve, reject) => {
-      yahooRequest.get(
-        `https://weather-ydn-yql.media.yahoo.com/forecastrss?location=${req.query.cityName},ca&format=json&u=c`,
-        null,
-        null,
-        (err, data) => err ? reject(err) : resolve(data)  //3-d - result
-      )
-    })
-    .then(JSON.parse)
+  const promise = yahooGetCurrent(req.query.cityName)
     .then(data => {
-      if (data.location.city == 'Ca') {
-        throw new ServiceError('Cannot request weather from YahooWeather', 'UNKNOWN_ERROR')
-      }
       // console.log('--------------YAHOO---------------')
-      // console.log(data.location)
+      // console.log(data)
       // console.log('--------------YAHOO---------------')
 
       return addWeatherToDB({
@@ -48,20 +24,12 @@ const getYahoo = (req, res) => {
     .then(({city, weather}) => {
       return {city: formatCity(city), weather: formatWeather(weather)}
     })
-    .catch(err => {
-      console.error(err.message)
-      throw new ServiceError('Cannot request weather from YahooWeather', 'UNKNOWN_ERROR')
-    })
   sendPromiseToClient(res, promise)
 }
 
 const getOpen = (req, res) => {
-  const promise = fetch(`http://api.openweathermap.org/data/2.5/find?q=${req.query.cityName}&units=metric&type=like&APPID=${apiKeyOpenWeather}`)
-    .then(resApi => resApi.json())
+  const promise = openGetCurrent(req.query.cityName)
     .then(data => {
-      // console.log('--------------OPEN---------------')
-      // console.log(data.list[0])
-      // console.log('--------------OPEN---------------')
       return addWeatherToDB({
         name: data.list[0].name,
         country: data.list[0].sys.country,
@@ -75,28 +43,20 @@ const getOpen = (req, res) => {
     .then(({city, weather}) => {
       return {city: formatCity(city), weather: formatWeather(weather)}
     })
-    .catch(err => {
-      console.error(err.message)
-      throw new ServiceError('Cannot request weather from OpenWeather', 'UNKNOWN_ERROR')
-    })
   sendPromiseToClient(res, promise)
 }
 
 const getAccu = (req, res) => {
-  const promise = fetch(`https://apidev.accuweather.com/locations/v1/cities/search.json?q=${req.query.cityName}&apikey=${apiKeyAccuWeather}&language=${language}`)
-    .then(resApi => resApi.json())
-    .catch(err => {
-      console.error(err.message)
-      throw new ServiceError('Wrong city', 'WRONG_CITY')
-    })
+  const promise = accuGetCity(req.query.cityName)
     .then(dataCity => {
-      // console.log('--------------ACCU CITY---------------')
-      // console.log(dataCity[0])
-      // console.log('--------------ACCU CITY---------------')
-      const cityKey = dataCity[0].Key
-      return fetch(`http://apidev.accuweather.com/currentconditions/v1/${cityKey}.json?language=en&apikey=${apiKeyAccuWeather}`)
-        .then(resApi => resApi.json())
+      console.log('--------------ACCU CITY---------------')
+      console.log(dataCity)
+      console.log('--------------ACCU CITY---------------')
+      return accuGetCurrent(dataCity[0].Key)
         .then(data => {
+          console.log('--------------ACCU WEATHER---------------')
+          console.log(data)
+          console.log('--------------ACCU WEATHER---------------')
           return addWeatherToDB({
             name: dataCity[0].EnglishName,
             country: dataCity[0].Country.EnglishName,
@@ -110,10 +70,6 @@ const getAccu = (req, res) => {
     })
     .then(({city, weather}) => {
       return {city: formatCity(city), weather: formatWeather(weather)}
-    })
-    .catch((err) => {
-      console.error(err.message)
-      throw new ServiceError('Cannot request weather from AccuWeather.' + err.message, 'UNKNOWN_ERROR')
     })
   sendPromiseToClient(res, promise)
 }
@@ -159,16 +115,29 @@ const sendPromiseToClient = (res, promise) => {
       })
     })
     .catch(err => {
-      console.warn(err.message)
       if (err instanceof ServiceError) {
+        console.warn(err.message)
         res
           .status(400)
           .send({
             ok: false,
             error: {message: err.message, code: err.code}
           })
+      } else {
+        console.error(err)
+        res
+          .status(500)
+          .send({
+            ok: false,
+            error: {message: 'Unknown error', code: 'UNKNOWN_ERROR'}
+          })
       }
     })
 }
+
+// fetch('https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBlZzpcj22jqN3A4IpBzygaB1XmlVGA3zM')
+//   .then(res => {
+//     console.log(res)
+//   })
 
 module.exports = {getYahoo, getOpen, getAccu, showHistory, aboutCity}
