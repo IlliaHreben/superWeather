@@ -1,5 +1,5 @@
 const {accuGetCity, accuGetCurrent, accuGetForecast} = require('../interactors/accuWeather')
-const {sendPromiseToClient, formatWeather, formatCity} = require('./homeController')
+const {sendPromiseToClient, formatWeather, formatCity, formatForecasts} = require('./homeController')
 const {addWeatherToDB} = require('../../mysqlConnect')
 
 const getAccu = (req, res) => {
@@ -37,8 +37,12 @@ const getAccu = (req, res) => {
           // console.log('--------------ACCU WEATHER---------------')
         })
     })
-    .then(({city, weather}) => {
-      return {city: formatCity(city), weather: formatWeather(weather)}
+    .then(({city, weather, forecasts}) => {
+      return {
+        city: formatCity(city),
+        weather: formatWeather(weather),
+        forecasts: formatForecasts(forecasts)
+      }
     })
   sendPromiseToClient(res, promise)
 }

@@ -17,17 +17,29 @@ document.getElementById('search').onclick = () => {
 
   jsonToData(promiseAccu)
     .then(data => {
-      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase(), 'weatherWidget')
+      displayTempToUser(`${data.weather.temperature}\u2103 - ${data.city.source}`, data.city.source.toLowerCase(), 'weatherWidget')
+      data.forecasts.forEach(day => {
+        console.log(day)
+        displayTempToUser(`${formatDate(day.date)}. ${day.temperatureMin}\u2103 - ${day.temperatureMax}\u2103. ${day.iconPhrase}`, data.city.source.toLowerCase(), 'weatherWidget')
+      })
     })
 
   jsonToData(promiseOpen)
     .then(data => {
-      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase(), 'weatherWidget')
+      displayTempToUser(`${data.weather.temperature}\u2103 - ${data.city.source}`, data.city.source.toLowerCase(), 'weatherWidget')
+      data.forecasts.forEach(day => {
+        console.log(day)
+        displayTempToUser(`${formatDate(day.date)}. ${day.temperatureMin}\u2103 - ${day.temperatureMax}\u2103. ${day.iconPhrase}`, data.city.source.toLowerCase(), 'weatherWidget')
+      })
     })
 
   jsonToData(promiseYahoo)
     .then(data => {
-      displayTempToUser(data.weather.temperature + '\u2103', data.city.source.toLowerCase(), 'weatherWidget')
+      displayTempToUser(`${data.weather.temperature}\u2103 - ${data.city.source}`, data.city.source.toLowerCase(), 'weatherWidget')
+      data.forecasts.forEach(day => {
+        console.log(day)
+        displayTempToUser(`${formatDate(day.date)}. ${day.temperatureMin}\u2103 - ${day.temperatureMax}\u2103. ${day.iconPhrase}`, data.city.source.toLowerCase(), 'weatherWidget')
+      })
     })
 }
 

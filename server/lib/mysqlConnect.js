@@ -15,9 +15,9 @@ const addWeatherToDB = (cityData, weatherData, forecastData) => {
             forecast.weatherId = weather.id
             return forecast
           }))
-            .then(forecast => {
+            .then(forecasts => {
               console.log(`Sucessfuly added.`)
-              return {city, weather, forecast}
+              return {city, weather, forecasts}
             })
         })
     })

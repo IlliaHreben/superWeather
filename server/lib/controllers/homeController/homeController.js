@@ -18,6 +18,18 @@ const formatCity = city => {
   }
 }
 
+const formatForecasts = forecasts => {
+  return forecasts.map(day => {
+    return {
+      date: day.date,
+      temperatureMin: day.temperatureMin,
+      temperatureMax: day.temperatureMax,
+      iconId: day.iconId,
+      iconPhrase: day.iconPhrase
+    }
+  })
+}
+
 
 const sendPromiseToClient = (res, promise) => {
   promise
@@ -53,4 +65,4 @@ const sendPromiseToClient = (res, promise) => {
 //     console.log(res)
 //   })
 
-module.exports = {sendPromiseToClient, formatWeather, formatCity}
+module.exports = {sendPromiseToClient, formatWeather, formatCity, formatForecasts}
