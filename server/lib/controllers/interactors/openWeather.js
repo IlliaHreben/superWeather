@@ -16,15 +16,11 @@ const openGetCurrent = cityName => {
 }
 
 const openGetForecast = cityName => {
-  openGetCurrent(cityName)
+  return openGetCurrent(cityName)
     .then(data => {
       // console.log(data.list[0].coord.lat)
       return fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${data.list[0].coord.lat}&lon=${data.list[0].coord.lon}&exclude=hourly, minutely&units=metric&appid=${apiKeyOpenWeather}`)
         .then(resApi => resApi.json())
-        .then(forecast => {
-          // console.log('----------------OPEN---------------------')
-          // console.log(forecast.daily[0])
-        })
     })
 }
 

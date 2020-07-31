@@ -1,9 +1,9 @@
-const yahooGetCurrent = require('../interactors/yahooWeather')
+const yahooGetCurrentForecast = require('../interactors/yahooWeather')
 const {sendPromiseToClient, formatWeather, formatCity} = require('./homeController')
 const {addWeatherToDB} = require('../../mysqlConnect')
 
 const getYahoo = (req, res) => {
-  const promise = yahooGetCurrent(req.query.cityName)
+  const promise = yahooGetCurrentForecast(req.query.cityName)
     .then(data => {
       // console.log('--------------YAHOO---------------')
       // console.log(data)
@@ -17,7 +17,15 @@ const getYahoo = (req, res) => {
         source: 'yahooWeather'
       }, {
         temperature: data.current_observation.condition.temperature
-      })
+      }, data.forecasts.map(day => {
+        return {
+          date: day.date,
+          temperatureMin: day.low,
+          temperatureMax: day.high,
+          iconId: day.code.toString(),
+          iconPhrase: day.text
+        }
+      }))
     })
     .then(({city, weather}) => {
       return {city: formatCity(city), weather: formatWeather(weather)}

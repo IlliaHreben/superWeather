@@ -8,21 +8,33 @@ const getAccu = (req, res) => {
       // console.log('--------------ACCU CITY---------------')
       // console.log(dataCity)
       // console.log('--------------ACCU CITY---------------')
-      accuGetForecast(dataCity[0].Key)
+
+
       return accuGetCurrent(dataCity[0].Key)
         .then(data => {
+          return accuGetForecast(dataCity[0].Key)
+            .then(forecast => {
+              return addWeatherToDB({
+                name: dataCity[0].EnglishName,
+                country: dataCity[0].Country.EnglishName,
+                latitude: dataCity[0].GeoPosition.Latitude,
+                longitude: dataCity[0].GeoPosition.Longitude,
+                source: 'accuWeather'
+              }, {
+                temperature: data[0].Temperature.Metric.Value
+              }, forecast.DailyForecasts.map(day => {
+                return {
+                  date: day.Date,
+                  temperatureMin: +((day.Temperature.Minimum.Value - 32) * 5/9).toFixed(1),
+                  temperatureMax: +((day.Temperature.Maximum.Value - 32) * 5/9).toFixed(1),
+                  iconId: day.Day.Icon.toString(),
+                  iconPhrase: day.Day.IconPhrase
+                }
+              }))
+            })
           // console.log('--------------ACCU WEATHER---------------')
           // console.log(data)
           // console.log('--------------ACCU WEATHER---------------')
-          return addWeatherToDB({
-            name: dataCity[0].EnglishName,
-            country: dataCity[0].Country.EnglishName,
-            latitude: dataCity[0].GeoPosition.Latitude,
-            longitude: dataCity[0].GeoPosition.Longitude,
-            source: 'accuWeather'
-          }, {
-            temperature: data[0].Temperature.Metric.Value
-          })
         })
     })
     .then(({city, weather}) => {

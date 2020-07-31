@@ -15,7 +15,7 @@ const yahooRequest = new OAuth.OAuth(
     {'X-Yahoo-App-Id': 'BHSaSz1y'} //header
 )
 
-const yahooGetCurrent = cityName => {
+const yahooGetCurrentForecast = cityName => {
   return new Promise((resolve, reject) => {
       yahooRequest.get(
         `https://weather-ydn-yql.media.yahoo.com/forecastrss?location=${cityName},ca&format=json&u=c`,
@@ -34,4 +34,4 @@ const yahooGetCurrent = cityName => {
 }
 
 
- module.exports = yahooGetCurrent
+ module.exports = yahooGetCurrentForecast
