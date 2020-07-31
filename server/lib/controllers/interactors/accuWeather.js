@@ -15,12 +15,20 @@ const accuGetCity = cityName => {
 }
 
 const accuGetCurrent = cityKey => {
-  return fetch(`http://apidev.accuweather.com/currentconditions/v1/${cityKey}.json?language=en&apikey=${apiKeyAccuWeather}`)
+  return fetch(`https://apidev.accuweather.com/currentconditions/v1/${cityKey}.json?language=en&apikey=${apiKeyAccuWeather}`)
     .then(resApi => resApi.json())
     .catch(err => {
       console.log(err)
     })
 }
 
+const accuGetForecast = cityKey => {
+  return fetch(`https://dataservice.accuweather.com/forecasts/v1/daily/5day/${cityKey}?apikey=8fcGrl6GYczUPQOshCeWIxss6guDWoKl&language=en-us`)
+    .then(resApi => resApi.json())
+    .then(forecast => {
+      // console.log('----------------ACCU---------------------')
+      // console.log(forecast.DailyForecasts)
+    })
+}
 
- module.exports = {accuGetCity, accuGetCurrent}
+ module.exports = {accuGetCity, accuGetCurrent, accuGetForecast}

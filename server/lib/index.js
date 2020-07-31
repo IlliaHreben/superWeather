@@ -2,7 +2,11 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const serveStatic = require('serve-static')
 
-const {getYahoo, getOpen, getAccu, showHistory, aboutCity} = require('./controllers/homeController')
+const getYahoo = require('./controllers/homeController/getYahoo')
+const getOpen = require('./controllers/homeController/getOpen')
+const getAccu = require('./controllers/homeController/getAccu')
+const showHistory = require('./controllers/homeController/showHistory')
+const aboutCity = require('./controllers/homeController/aboutCity')
 const {port} = require('./config')
 
 const api = express.Router()

@@ -28,4 +28,4 @@ const openGetForecast = cityName => {
     })
 }
 
- module.exports = {openGetCurrent, openGetForecast}
+module.exports = {openGetCurrent, openGetForecast}
