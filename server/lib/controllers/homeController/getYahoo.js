@@ -20,7 +20,7 @@ const getYahoo = (req, res) => {
         iconId: data.current_observation.condition.code,
         iconPhrase: data.current_observation.condition.text
       }, data.forecasts.map(day => {
-        console.log(day.date)
+        // console.log(day.date)
         return {
           date: +(day.date + '000'),
           temperatureMin: day.low,

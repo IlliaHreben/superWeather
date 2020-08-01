@@ -17,14 +17,14 @@ const getOpen = (req, res) => {
             longitude: data.list[0].coord.lon,
             source: 'openWeather'
           }, {
-            temperature: data.list[0].main.temp,
+            temperature: +(data.list[0].main.temp.toFixed(1)),
             iconId: data.list[0].weather[0].icon,
             iconPhrase: data.list[0].weather[0].description
           }, forecast.daily.map(day => {
             return {
               date: new Date(+(day.dt + '000')),
-              temperatureMin: day.temp.min,
-              temperatureMax: day.temp.max,
+              temperatureMin: +(day.temp.min.toFixed(1)),
+              temperatureMax: +(day.temp.max.toFixed(1)),
               iconId: day.weather[0].icon,
               iconPhrase: day.weather[0].description
             }
