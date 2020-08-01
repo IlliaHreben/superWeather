@@ -3,7 +3,10 @@ const ServiceError = require('../../ServiceError')
 const formatWeather = weather => {
   return {
     temperature: weather.temperature,
-    createdAt: weather.createdAt
+    iconId: weather.iconId,
+    iconPhrase: weather.iconPhrase,
+    createdAt: weather.createdAt,
+    updatedAt: weather.updatedAt
   }
 }
 
@@ -14,7 +17,8 @@ const formatCity = city => {
     latitude: city.latitude,
     longitude: city.longitude,
     source: city.source,
-    createdAt: city.createdAt
+    createdAt: city.createdAt,
+    updatedAt: city.updatedAt
   }
 }
 
@@ -25,7 +29,9 @@ const formatForecasts = forecasts => {
       temperatureMin: day.temperatureMin,
       temperatureMax: day.temperatureMax,
       iconId: day.iconId,
-      iconPhrase: day.iconPhrase
+      iconPhrase: day.iconPhrase,
+      createdAt: day.createdAt,
+      updatedAt: day.updatedAt
     }
   })
 }

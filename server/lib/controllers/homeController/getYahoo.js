@@ -5,9 +5,9 @@ const {addWeatherToDB} = require('../../mysqlConnect')
 const getYahoo = (req, res) => {
   const promise = yahooGetCurrentForecast(req.query.cityName)
     .then(data => {
-      console.log('--------------YAHOO---------------')
-      console.log(data)
-      console.log('--------------YAHOO---------------')
+      // console.log('--------------YAHOO---------------')
+      // console.log(data)
+      // console.log('--------------YAHOO---------------')
 
       return addWeatherToDB({
         name: data.location.city,
@@ -16,7 +16,9 @@ const getYahoo = (req, res) => {
         longitude: data.location.long,
         source: 'yahooWeather'
       }, {
-        temperature: data.current_observation.condition.temperature
+        temperature: data.current_observation.condition.temperature,
+        iconId: data.current_observation.condition.code,
+        iconPhrase: data.current_observation.condition.text
       }, data.forecasts.map(day => {
         console.log(day.date)
         return {

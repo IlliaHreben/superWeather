@@ -19,6 +19,14 @@ const Weathers = sequelize.define('weathers', {
     type: Sequelize.FLOAT,
     allowNull: false
   },
+  iconId: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  iconPhrase: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   cityId: {
     type: Sequelize.INTEGER,
     allowNull: false

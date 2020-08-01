@@ -5,6 +5,8 @@ const {addWeatherToDB} = require('../../mysqlConnect')
 const getOpen = (req, res) => {
   const promise = openGetCurrent(req.query.cityName)
     .then(data => {
+      // console.log('OPEN----------------------')
+      // console.log(data.list[0].weather)
       return openGetForecast(req.query.cityName)
         .then(forecast => {
           // console.log(forecast.daily)
@@ -15,7 +17,9 @@ const getOpen = (req, res) => {
             longitude: data.list[0].coord.lon,
             source: 'openWeather'
           }, {
-            temperature: data.list[0].main.temp
+            temperature: data.list[0].main.temp,
+            iconId: data.list[0].weather[0].icon,
+            iconPhrase: data.list[0].weather[0].description
           }, forecast.daily.map(day => {
             return {
               date: new Date(+(day.dt + '000')),

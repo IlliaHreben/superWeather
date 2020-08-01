@@ -12,6 +12,8 @@ const getAccu = (req, res) => {
 
       return accuGetCurrent(dataCity[0].Key)
         .then(data => {
+          // console.log('ACCU-----------------')
+          // console.log(data)
           return accuGetForecast(dataCity[0].Key)
             .then(forecast => {
               return addWeatherToDB({
@@ -21,7 +23,9 @@ const getAccu = (req, res) => {
                 longitude: dataCity[0].GeoPosition.Longitude,
                 source: 'accuWeather'
               }, {
-                temperature: data[0].Temperature.Metric.Value
+                temperature: data[0].Temperature.Metric.Value,
+                iconId: data[0].WeatherIcon,
+                iconPhrase: data[0].WeatherText
               }, forecast.DailyForecasts.map(day => {
                 return {
                   date: day.Date,

@@ -9,7 +9,7 @@ const addWeatherToDB = (cityData, weatherData, forecastData) => {
         cityId: city.id
       })
         .then(weather => {
-
+          // console.log(weather)
           return Forecasts.bulkCreate(forecastData.map(forecast => {
             forecast.cityId = city.id
             forecast.weatherId = weather.id
@@ -26,7 +26,8 @@ const addWeatherToDB = (cityData, weatherData, forecastData) => {
 const takeHistoryWeatherRequests = name => {
   return Weathers.findAll({include: {
     model: Cities,
-    where: {name}
+    where: {name},
+    raw: true
   }})
 }
 
