@@ -4,11 +4,11 @@ const {Cities, Weathers, Forecasts} = require('./mysqlSchemes')
 const addWeatherToDB = (cityData, weatherData, forecastData) => {
   return Cities.upsert(cityData)
     .then(([city]) => {
-      return Weathers.create({
+      return Weathers.upsert({
         ...weatherData,
         cityId: city.id
       })
-        .then(weather => {
+        .then(([weather]) => {
           // console.log(weather)
           return Forecasts.bulkCreate(forecastData.map(forecast => {
             forecast.cityId = city.id
@@ -23,19 +23,23 @@ const addWeatherToDB = (cityData, weatherData, forecastData) => {
     })
 }
 
-const takeHistoryWeatherRequests = name => {
-  return Weathers.findAll({include: {
-    model: Cities,
-    where: {name},
-    raw: true
-  }})
+const findCityWeatherRequests = () => {
+  return Weathers.findAll({
+    include: {
+      model: Cities
+    },
+    order: [
+      ['updatedAt', 'DESC'],
+      [Cities, 'name', 'ASC']
+    ],
+    limit: 9
+  })
 }
 
 const getAboutCity = name => {
   return Cities.findAll({
-    where: {name},
-    raw: true
+    where: {name}
   })
 }
 
-module.exports = {addWeatherToDB, takeHistoryWeatherRequests, getAboutCity}
+module.exports = {addWeatherToDB, findCityWeatherRequests, getAboutCity}

@@ -8,11 +8,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "country-codes-list": "^1.6.8",
     "express": "^4.17.1",
     "express-handlebars": "^3.1.0",
     "mysql2": "^2.1.0",
     "node-fetch": "^2.6.0",
-    "nodemon": "^2.0.2",
+    "nodemon": "^2.0.4",
     "oauth": "^0.9.15",
     "path": "^0.12.7",
     "sequelize": "^6.3.3",

@@ -31,6 +31,13 @@ const Weathers = sequelize.define('weathers', {
     type: Sequelize.INTEGER,
     allowNull: false
   }
+}, {
+    indexes: [
+        {
+            unique: true,
+            fields: ['cityId']
+        }
+    ]
 })
 
 const Cities = sequelize.define('cities', {
@@ -110,7 +117,7 @@ Cities.hasMany(Weathers, {onDelete: 'cascade'})
 Weathers.belongsTo(Cities, {onDelete: 'cascade'})
 Weathers.hasMany(Forecasts, {onDelete: 'cascade'})
 Cities.hasMany(Forecasts, {onDelete: 'cascade'})
-// Forecasts.belongsTo(Cities, {onDelete: 'cascade'})
+Forecasts.belongsTo(Cities, {onDelete: 'cascade'})
 
 sequelize.sync({force: true})
   .then(() => {
