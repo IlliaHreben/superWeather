@@ -108,6 +108,7 @@ label {
   transition: all 0.3s ease-out;
   font-family: Roboto;
   font-size: 15px;
+  cursor: text;
 }
 
 input:placeholder-shown + label {

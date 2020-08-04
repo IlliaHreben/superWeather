@@ -11,15 +11,8 @@ document.getElementById('search').onclick = () => {
   const promiseGetHistory = window.fetch(`/api/showhistory?cityName=${cityName}`)
 
   const widgetContainer = document.getElementsByClassName('widgetContainer')
-  console.log(widgetContainer)
   for(let container of widgetContainer) {container.style.display = 'inline-grid'}
 
-  jsonToData(promiseGetHistory)
-    .then(data => {
-      data.forEach(row => {
-        displayTempToUser(row, 'weatherHistory', 'weatherWidget')
-      })
-    })
 
   jsonToData(promiseAccu)
     .then(data => {
@@ -38,6 +31,14 @@ document.getElementById('search').onclick = () => {
       displayTempToUser(data, data.city.source.toLowerCase(), 'weatherWidget')
       displayForecastToUser(data,'forecastWidget')
     })
+
+  jsonToData(promiseGetHistory)
+    .then(data => {
+      console.log(data)
+      const lastSearchesContainer = document.getElementById('lastSearchesContainer')
+      data.forEach(city => lastSearchesContainer.appendChild(displayLastSearchesToUser(city)))
+    })
+
 }
 
 document.getElementById('about').onclick = () => {
@@ -159,12 +160,89 @@ const displayForecastToUser = (data, divClassName) => {
     forecastDiv.appendChild(temperatureMinContainer)
     forecastDiv.appendChild(descriptionContainer)
     forecastDiv.appendChild(sourceContainer)
+
     forecastsDiv.appendChild(forecastDiv)
   })
   widgetsConatainer.appendChild(forecastsDiv)
 }
 
-function formatDate (dateStr) {
+const displayLastSearchesToUser = (historyCitySearch) => {
+
+  const lastSearchDivCity = document.createElement('div')
+  lastSearchDivCity.className = 'lastSearchCity'
+
+  const date = document.createTextNode(`Not today, ${new Date(historyCitySearch.updatedAt).getDate()}th`)
+  const time = document.createTextNode(formatDate(historyCitySearch.updatedAt, 'time'))
+  const temperature = document.createTextNode(`${historyCitySearch.temperature}\u00B0C`)
+  const description = document.createTextNode(historyCitySearch.iconPhrase)
+  const cityCountry = document.createTextNode(`${historyCitySearch.city}, ${historyCitySearch.country}`)
+
+  const dateContainer = document.createElement('div')
+  const timeContainer = document.createElement('div')
+  const temperatureContainer = document.createElement('div')
+  const descriptionContainer = document.createElement('div')
+  const cityCountryContainer = document.createElement('div')
+
+  dateContainer.id = 'dateHistorySearch'
+  timeContainer.id = 'timeHistorySearch'
+  temperatureContainer.id = 'temperatureHistorySearch'
+  descriptionContainer.id = 'descriptionHistorySearch'
+  cityCountryContainer.id = 'cityCountryHistorySearch'
+
+  dateContainer.appendChild(date)
+  timeContainer.appendChild(time)
+  temperatureContainer.appendChild(temperature)
+  descriptionContainer.appendChild(description)
+  cityCountryContainer.appendChild(cityCountry)
+
+  const lastSearchDivWidget = document.createElement('div')
+  lastSearchDivWidget.className = 'lastSearchWidget'
+
+  lastSearchDivWidget.appendChild(dateContainer)
+  lastSearchDivWidget.appendChild(timeContainer)
+  lastSearchDivWidget.appendChild(temperatureContainer)
+  lastSearchDivWidget.appendChild(descriptionContainer)
+  lastSearchDivWidget.appendChild(cityCountryContainer)
+
+  lastSearchDivCity.appendChild(lastSearchDivWidget)
+
+  historyCitySearch.weathers.forEach(weather => {
+    const dateTime = document.createTextNode(formatDate(weather.updatedAt))
+    const temperature = document.createTextNode(`${weather.temperature}\u00B0C`)
+    const description = document.createTextNode(weather.iconPhrase)
+    const source = document.createTextNode(weather.source)
+    console.log(formatDate(weather.updatedAt))
+
+    const dateTimeContainer = document.createElement('div')
+    const temperatureContainer = document.createElement('div')
+    const descriptionContainer = document.createElement('div')
+    const sourceContainer = document.createElement('div')
+
+    dateTimeContainer.id = 'dateTimeHistorySearch'
+    temperatureContainer.id = 'temperatureHistorySearch'
+    descriptionContainer.id = 'descriptionHistorySearch'
+    sourceContainer.id = 'sourceHistorySearch'
+
+    dateTimeContainer.appendChild(dateTime)
+    temperatureContainer.appendChild(temperature)
+    descriptionContainer.appendChild(description)
+    sourceContainer.appendChild(source)
+
+    const lastSearchDivWidget = document.createElement('div')
+    lastSearchDivWidget.className = 'lastSearchWidget'
+
+    lastSearchDivWidget.appendChild(dateTimeContainer)
+    lastSearchDivWidget.appendChild(temperatureContainer)
+    lastSearchDivWidget.appendChild(descriptionContainer)
+    lastSearchDivWidget.appendChild(sourceContainer)
+
+    lastSearchDivCity.appendChild(lastSearchDivWidget)
+  })
+
+  return lastSearchDivCity
+}
+
+function formatDate (dateStr, timeOrDate) {
   const dateObj = new Date(dateStr)
 
   const formatedTime = [
@@ -179,5 +257,10 @@ function formatDate (dateStr) {
     dateObj.getFullYear()
   ].join('.')
 
+  if (timeOrDate === 'time') {
+    return formatedTime
+  } else if (timeOrDate === 'date') {
+    return formatedDate
+  }
   return `${formatedTime}, ${formatedDate}`
 }
