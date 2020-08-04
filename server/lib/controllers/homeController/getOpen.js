@@ -2,17 +2,20 @@ const {openGetCurrent, openGetForecast} = require('../interactors/openWeather')
 const {sendPromiseToClient, formatWeather, formatCity, formatForecasts} = require('./homeController')
 const {addWeatherToDB} = require('../../mysqlConnect')
 
+const countryCodes = require('country-codes-list')
+const countryNames = countryCodes.customList('countryCode', '{countryNameEn}')
+
+
 const getOpen = (req, res) => {
   const promise = openGetCurrent(req.query.cityName)
     .then(data => {
-      // console.log('OPEN----------------------')
       // console.log(data.list[0].weather)
       return openGetForecast(req.query.cityName)
         .then(forecast => {
           // console.log(forecast.daily)
           return addWeatherToDB({
             name: data.list[0].name,
-            country: data.list[0].sys.country,
+            country: countryNames[data.list[0].sys.country],
             latitude: data.list[0].coord.lat,
             longitude: data.list[0].coord.lon,
             source: 'openWeather'
