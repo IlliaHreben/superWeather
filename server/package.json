@@ -8,6 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "all-the-cities": "^3.1.0",
     "country-codes-list": "^1.6.8",
     "express": "^4.17.1",
     "express-handlebars": "^3.1.0",

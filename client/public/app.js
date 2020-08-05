@@ -56,15 +56,13 @@ document.getElementById('about').onclick = () => {
   const promiseAboutCity = window.fetch(`/api/aboutCity?cityName=${cityName}`)
 
   jsonToData(promiseAboutCity)
-    .then(data => {
+    .then(({city, country}) => {
       const aboutCityArea = document.getElementById('aboutCityArea')
-      data.forEach(raw => {
-        const inputAboutCity = document.createElement('textarea')
-        inputAboutCity.value = `${raw.name}, ${raw.country}. \rCoordinates: ${raw.latitude}, ${raw.longitude}. \rSource: ${raw.source} \rCreatedAt: ${formatDate(raw.createdAt)}`
-        inputAboutCity.style.width = '100%'
-        inputAboutCity.style.height = '70px'
-        aboutCityArea.appendChild(inputAboutCity)
-      })
+      const inputAboutCity = document.createElement('textarea')
+      inputAboutCity.value = `${city.name}, ${country.name} (${country.nameLocal}). \rPopulation: ${city.population} peoples.\rRegion: ${country.region}. \rCoordinates: ${city.coordinates}. \rCurrency code: ${country.currencyCode}. \rCountry calling code: ${country.callingCode}. \rOficial language: ${country.officialLanguageNameEn} - ${country.officialLanguageCode} (${country.officialLanguageNameLocal}).`
+      inputAboutCity.style.width = '100%'
+      inputAboutCity.style.height = '100px'
+      aboutCityArea.appendChild(inputAboutCity)
     })
 }
 
