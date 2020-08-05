@@ -45,7 +45,7 @@ const showHistory = (_, res) => {
             weathers: formatedWeathers
           }
         })
-        console.log(formatedHistory)
+        // console.log(formatedHistory)
         return formatedHistory
       })
   )
@@ -56,46 +56,3 @@ const getRandomInt = (max) => {
 }
 
 module.exports = showHistory
-
-
-
-// {
-//   // city:'',
-//   // country: '',
-//   // temperature: 0,
-//   // iconId: random,
-//   // iconPhrase: random,
-//   // data:
-//   [
-//       {
-//         source: city.source,
-//         temperature: 0,
-//         iconId: '',
-//         iconPhrase: ''
-//       }, {
-//         source: city.source,
-//         temperature: 0,
-//         iconId: '',
-//         iconPhrase: ''
-//       }
-//   ]
-// }, {
-//   city:'',
-//   country: '',
-//   temperature: 0,
-//   iconId: random,
-//   iconPhrase: random,
-//   data: [
-//       {
-//         source: city.source,
-//         temperature: 0,
-//         iconId: '',
-//         iconPhrase: ''
-//       }, {
-//         source: city.source,
-//         temperature: 0,
-//         iconId: '',
-//         iconPhrase: ''
-//       }
-//   ]
-// }

@@ -12,6 +12,11 @@ document.getElementById('search').onclick = () => {
 
   const widgetContainer = document.getElementsByClassName('widgetContainer')
   for(let container of widgetContainer) {container.style.display = 'inline-grid'}
+  const mainContainer = document.getElementsByClassName('mainContainer')
+  for(let container of mainContainer) {
+    container.style.backgroundColor = 'white'
+    container.style.boxShadow = '-2px 2px 10px rgba(0,0,0,0.7)'
+  }
 
 
   jsonToData(promiseAccu)
@@ -183,11 +188,11 @@ const displayLastSearchesToUser = (historyCitySearch) => {
   const descriptionContainer = document.createElement('div')
   const cityCountryContainer = document.createElement('div')
 
-  dateContainer.id = 'dateHistorySearch'
+  dateContainer.id = 'dayName'
   timeContainer.id = 'timeHistorySearch'
-  temperatureContainer.id = 'temperatureHistorySearch'
-  descriptionContainer.id = 'descriptionHistorySearch'
-  cityCountryContainer.id = 'cityCountryHistorySearch'
+  temperatureContainer.id = 'temperature'
+  descriptionContainer.id = 'description'
+  cityCountryContainer.id = 'cityCountry'
 
   dateContainer.appendChild(date)
   timeContainer.appendChild(time)
@@ -206,6 +211,10 @@ const displayLastSearchesToUser = (historyCitySearch) => {
 
   lastSearchDivCity.appendChild(lastSearchDivWidget)
 
+  const historySourcesWidgetsContainer = document.createElement('div')
+  historySourcesWidgetsContainer.className = 'sourcesWidgetsContainer'
+
+
   historyCitySearch.weathers.forEach(weather => {
     const dateTime = document.createTextNode(formatDate(weather.updatedAt))
     const temperature = document.createTextNode(`${weather.temperature}\u00B0C`)
@@ -219,8 +228,8 @@ const displayLastSearchesToUser = (historyCitySearch) => {
     const sourceContainer = document.createElement('div')
 
     dateTimeContainer.id = 'dateTimeHistorySearch'
-    temperatureContainer.id = 'temperatureHistorySearch'
-    descriptionContainer.id = 'descriptionHistorySearch'
+    temperatureContainer.id = 'temperature'
+    descriptionContainer.id = 'description'
     sourceContainer.id = 'sourceHistorySearch'
 
     dateTimeContainer.appendChild(dateTime)
@@ -236,8 +245,10 @@ const displayLastSearchesToUser = (historyCitySearch) => {
     lastSearchDivWidget.appendChild(descriptionContainer)
     lastSearchDivWidget.appendChild(sourceContainer)
 
-    lastSearchDivCity.appendChild(lastSearchDivWidget)
+    historySourcesWidgetsContainer.appendChild(lastSearchDivWidget)
   })
+
+  lastSearchDivCity.appendChild(historySourcesWidgetsContainer)
 
   return lastSearchDivCity
 }
