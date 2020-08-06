@@ -1,3 +1,6 @@
+// const geo = navigator.geolocation.getCurrentPosition()
+// console.log(geo)
+
 document.getElementById('search').onclick = () => {
   const cityName = document.getElementById('cityName').value
   if (!cityName || cityName === '') {
@@ -57,13 +60,90 @@ document.getElementById('about').onclick = () => {
 
   jsonToData(promiseAboutCity)
     .then(({city, country}) => {
-      const aboutCityArea = document.getElementById('aboutCityArea')
-      const inputAboutCity = document.createElement('textarea')
-      inputAboutCity.value = `${city.name}, ${country.name} (${country.nameLocal}). \rPopulation: ${city.population} peoples.\rRegion: ${country.region}. \rCoordinates: ${city.coordinates}. \rCurrency code: ${country.currencyCode}. \rCountry calling code: ${country.callingCode}. \rOficial language: ${country.officialLanguageNameEn} - ${country.officialLanguageCode} (${country.officialLanguageNameLocal}).`
-      inputAboutCity.style.width = '100%'
-      inputAboutCity.style.height = '100px'
-      aboutCityArea.appendChild(inputAboutCity)
+      const cityNameContainer = document.getElementById('cityNameContainer')
+      const aboutContainer = document.createElement('div')
+      aboutContainer.className = 'aboutContainer'
+      aboutContainer.id = 'aboutCityArea'
+      cityNameContainer.appendChild(aboutContainer)
+      const infoContainer = document.createElement('div')
+      infoContainer.className = 'infoContainer'
+      infoContainer.id = 'infoContainer'
+
+      const heading = createP('headingName', 'nameCountry',        `${city.name}, ${country.name} (${country.nameLocal})`, 'H1')
+      createDivText(infoContainer, 'headingContainer', [heading])
+
+      const iconPopulation = createI('fas fa-users fa-lg')
+      const populationHeading = createP('headingFat',  'populationHeading',  'Population: ')
+      const populationText = createP('infoText',    'populationText',     `${city.population} peoples.`)
+      createDivText(infoContainer, 'stringInfoContainer', [iconPopulation, populationHeading, populationText])
+
+      const iconRegion = createI('fas fa-globe fa-lg')
+      const regionHeading = createP('headingFat',  'regionHeading',      'Region: ')
+      const regionText = createP('infoText',    'regionText',         `${country.region}.`)
+      createDivText(infoContainer, 'stringInfoContainer', [iconRegion, regionHeading, regionText])
+
+      const iconCoordinates = createI('fas fa-map-marked-alt fa-lg')
+      const coordinatesHeading = createP('headingFat',  'coordinatesHeading', 'Coordinates: ')
+      const coordinatesText = createP('infoText',    'coordinatesText',    `${city.coordinates}.`)
+      createDivText(infoContainer, 'stringInfoContainer', [iconCoordinates, coordinatesHeading, coordinatesText])
+
+      const iconCurrency = createI('fas fa-wallet fa-lg')
+      const currencyHeading = createP('headingFat',  'currencyHeading',    'Currency code: ')
+      const currencyText = createP('infoText',    'currencyText',       `${country.currencyCode}.`)
+      createDivText(infoContainer, 'stringInfoContainer', [iconCurrency, currencyHeading, currencyText])
+
+      const iconCallingCode = createI('fas fa-phone fa-lg')
+      const callingCodeHeading = createP('headingFat',  'callingCodeHeading', 'Country calling code: ')
+      const callingCodeText = createP('infoText',    'callingCodeText',    `${country.callingCode}.`)
+      createDivText(infoContainer, 'stringInfoContainer', [iconCallingCode, callingCodeHeading, callingCodeText])
+
+      const iconLanguage = createI('fas fa-language fa-lg')
+      const languageHeading = createP('headingFat',  'languageHeading',    'Official language: ')
+      const languageText = createP('infoText',    'languageText',       `${country.officialLanguageNameEn} (${country.officialLanguageNameLocal}).`)
+      createDivText(infoContainer, 'stringInfoContainer', [iconLanguage, languageHeading, languageText])
+
+      const closeButton = createI('fas fa-times fa-lg', )
+      createDivText(infoContainer, 'closeButtonContainer', [closeButton], 'closeinfoButton')
+
+      aboutContainer.appendChild(infoContainer)
+
+      document.getElementById('closeinfoButton').onclick = () => {
+        document.getElementById('aboutCityArea').remove()
+      }
     })
+}
+
+
+
+function createDivText (parent, className, children, id) {
+  const div = document.createElement('div')
+  div.className = className
+  children.forEach(child => div.appendChild(child))
+  if (id) {
+    div.id = id
+  }
+  parent.appendChild(div)
+}
+
+function createI (className, id) {
+  const i = document.createElement('I')
+  i.className = className
+  if (id) {
+    i.id = id
+  }
+
+  return i
+}
+
+function createP (className, id, text, type) {
+  if (!type) {
+    type = 'P'
+  }
+  const p = document.createElement(type)
+  p.className = className
+  p.id = id
+  p.innerText = text
+  return p
 }
 
 const jsonToData = (promise) => {
@@ -100,7 +180,7 @@ function displayTempToUser (data, divTempId, divClassName) {
   const dayName = document.createTextNode('Today')
   const cityCountry = document.createTextNode(`${data.city.name}, ${data.city.country}`)
   const temperature = document.createTextNode(`${data.weather.temperature}\u00B0C`)
-  const description = document.createTextNode(data.weather.iconPhrase)
+  const description = document.createTextNode(`${data.weather.iconPhrase}.`)
   const source = document.createTextNode(data.city.source)
 
   dayNameContainer.appendChild(dayName)
@@ -148,7 +228,7 @@ const displayForecastToUser = (data, divClassName) => {
     const dayName = document.createTextNode(`Not today, ${new Date(day.date).getDate()}th`)
     const temperature = document.createTextNode(`${day.temperatureMax}\u00B0C`)
     const temperatureMin = document.createTextNode(`${day.temperatureMin}\u00B0C`)
-    const description = document.createTextNode(day.iconPhrase)
+    const description = document.createTextNode(`${day.iconPhrase}.`)
     const source = document.createTextNode(data.city.source)
 
     dayNameContainer.appendChild(dayName)
@@ -177,7 +257,7 @@ const displayLastSearchesToUser = (historyCitySearch) => {
   const date = document.createTextNode(`Not today, ${new Date(historyCitySearch.updatedAt).getDate()}th`)
   const time = document.createTextNode(formatDate(historyCitySearch.updatedAt, 'time'))
   const temperature = document.createTextNode(`${historyCitySearch.temperature}\u00B0C`)
-  const description = document.createTextNode(historyCitySearch.iconPhrase)
+  const description = document.createTextNode(`${historyCitySearch.iconPhrase}.`)
   const cityCountry = document.createTextNode(`${historyCitySearch.city}, ${historyCitySearch.country}`)
 
   const dateContainer = document.createElement('div')
