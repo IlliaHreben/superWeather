@@ -1,5 +1,8 @@
 // const geo = navigator.geolocation.getCurrentPosition()
 // console.log(geo)
+import moment from 'moment'
+import './styles.css'
+import '@openfonts/roboto_cyrillic'
 
 document.getElementById('search').onclick = () => {
   const cityName = document.getElementById('cityName').value

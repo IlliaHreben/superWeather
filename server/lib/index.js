@@ -17,7 +17,7 @@ const api = express.Router()
   .get('/yahoo', getYahoo)
 
 const app = express()
-  .use(serveStatic('../client/public', {extensions: ['html']}))
+  .use(serveStatic('../client/dist', {extensions: ['html']}))
   .use(bodyParser.json())
   .use('/api', api)
   .listen(port)
