@@ -32,6 +32,10 @@ const Weathers = sequelize.define('weathers', {
     type: Sequelize.INTEGER,
     allowNull: false
   },
+  countryId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
   source: {
     type: Sequelize.STRING,
     allowNull: false
@@ -176,6 +180,7 @@ Weathers.hasMany(Forecasts, {onDelete: 'cascade'})
 Cities.hasMany(Forecasts, {onDelete: 'cascade'})
 Forecasts.belongsTo(Cities, {onDelete: 'cascade'})
 
+Weathers.belongsTo(Countries, {onDelete: 'cascade'})
 Countries.hasMany(Cities, {onDelete: 'cascade'})
 Cities.belongsTo(Countries, {onDelete: 'cascade'})
 

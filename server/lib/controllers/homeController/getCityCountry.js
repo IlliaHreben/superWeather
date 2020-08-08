@@ -1,5 +1,5 @@
 const citiesBase = require('all-the-cities')
-const countryData = require('country-codes-list').customList('countryCode', '{countryNameEn},{countryNameLocal},{countryCode},{region},{currencyCode},{officialLanguageCode},{officialLanguageNameEn},{officialLanguageNameLocal},+{countryCallingCode}')
+const countryData = require('country-codes-list').customList('countryCode', '{countryNameEn},{countryNameLocal},{countryCode},{region},{currencyCode},{officialLanguageNameEn},{officialLanguageNameLocal},+{countryCallingCode}')
 
 function getCityCountry (cityName) {
   const [cityData] = citiesBase

@@ -63,7 +63,7 @@ document.getElementById('about').onclick = () => {
   const promiseAboutCity = window.fetch(`/api/aboutCity?cityName=${cityName}`)
 
   jsonToData(promiseAboutCity)
-    .then(({city, country}) => {
+    .then(({country, city}) => {
       const cityNameContainer = document.getElementById('cityNameContainer')
       const aboutContainer = document.createElement('div')
       aboutContainer.className = 'aboutContainer'
@@ -72,7 +72,7 @@ document.getElementById('about').onclick = () => {
       const infoContainer = document.createElement('div')
       infoContainer.className = 'infoContainer'
       infoContainer.id = 'infoContainer'
-
+      console.log(city, country)
       const heading             = createP('headingName', 'nameCountry',        `${city.name}, ${country.name} (${country.nameLocal})`, 'H1')
       createDivText(infoContainer, 'headingContainer', [heading])
 
@@ -88,7 +88,7 @@ document.getElementById('about').onclick = () => {
 
       const iconCoordinates     = createI('fas fa-map-marked-alt fa-lg')
       const coordinatesHeading  = createP('headingFat',  'coordinatesHeading', 'Coordinates: ')
-      const coordinatesText     = createP('infoText',    'coordinatesText',    `${city.coordinates}.`)
+      const coordinatesText     = createP('infoText',    'coordinatesText',    `${city.latitude}, ${city.longitude}.`)
       createDivText(infoContainer, 'stringInfoContainer', [iconCoordinates, coordinatesHeading, coordinatesText])
 
       const iconCurrency        = createI('fas fa-wallet fa-lg')
@@ -103,7 +103,7 @@ document.getElementById('about').onclick = () => {
 
       const iconLanguage        = createI('fas fa-language fa-lg')
       const languageHeading     = createP('headingFat',  'languageHeading',    'Official language: ')
-      const languageText        = createP('infoText',    'languageText',       `${country.officialLanguageNameEn} (${country.officialLanguageNameLocal}).`)
+      const languageText        = createP('infoText',    'languageText',       `${country.languageName} (${country.languageNameLocal}).`)
       createDivText(infoContainer, 'stringInfoContainer', [iconLanguage, languageHeading, languageText])
 
       const closeButton         = createI('fas fa-times fa-lg', )
@@ -299,7 +299,7 @@ const displayLastSearchesToUser = (historyCitySearch) => {
   historyCitySearch.weathers.forEach(weather => {
     const dateTime = document.createTextNode(formatDate(weather.updatedAt))
     const temperature = document.createTextNode(`${weather.temperature}\u00B0C`)
-    const description = document.createTextNode(weather.iconPhrase)
+    const description = document.createTextNode(`${weather.iconPhrase}.`)
     const source = document.createTextNode(weather.source)
     console.log(formatDate(weather.updatedAt))
 

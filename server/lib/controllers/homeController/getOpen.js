@@ -31,12 +31,6 @@ const getOpen = (req, res) => {
         })
     })
     .then(({country, city, weather, forecasts}) => {
-      console.log({
-        country: formatCountry(country),
-        city: formatCity(city),
-        weather: formatWeather(weather),
-        forecasts: formatForecasts(forecasts)
-      })
       return {
         country: formatCountry(country),
         city: formatCity(city),
