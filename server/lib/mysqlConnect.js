@@ -6,7 +6,8 @@ const addWeatherToDB = (countryData, cityData, weatherData, forecastData) => {
     .then(({country, city}) => {
       return Weathers.upsert({
         ...weatherData,
-        cityId: city.id
+        cityId: city.id,
+        countryId: country.id
       })
         .then(([weather]) => {
           return Forecasts.bulkCreate(forecastData.map(forecast => {
@@ -44,9 +45,10 @@ const addCityToDB = (countryData, cityData) => {
 
 const findCityWeatherRequests = () => {
   return Weathers.findAll({
-    include: {
-      model: Cities
-    },
+    include: [
+      {model: Cities},
+      {model: Countries}
+    ],
     order: [
       ['updatedAt', 'DESC'],
       [Cities, 'name', 'ASC']
@@ -55,13 +57,5 @@ const findCityWeatherRequests = () => {
   })
 }
 
-const getAboutCity = name => {
-  return Cities.findOne({
-    include: {
-      model: Countries
-    },
-    where: {name}
-  })
-}
 
-module.exports = {addWeatherToDB, findCityWeatherRequests, getAboutCity}
+module.exports = {addWeatherToDB, findCityWeatherRequests, addCityToDB}

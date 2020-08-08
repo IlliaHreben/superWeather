@@ -18,11 +18,18 @@ const showHistory = (_, res) => {
   sendPromiseToClient(res,
     findCityWeatherRequests()
       .then(data => {
-        const weatherByCity = groupBy(data, ({city}) => `${city.name}, ${city.country}`)
+        console.log('____________________________________________________________________')
+        console.log(data)
+        console.log('____________________________________________________________________')
 
+        const weatherByCity = groupBy(data, ({city}) => `${city.name}_${city.index}`)
+        console.log('++++++++++++++++++++++++++++++++++++++++++++')
+        console.log(weatherByCity)
+        console.log('++++++++++++++++++++++++++++++++++++++++++++')
         const formatedHistory =  Object.values(weatherByCity).map(weathers => {
           const randomWeatherSource = getRandomInt(weathers.length)
           const randomCity = weathers[randomWeatherSource].city
+          const randomCountry = weathers[randomWeatherSource].country
           const randomWeather = weathers[randomWeatherSource]
           const avgTemperature = +(weathers
             .map(weather => weather.temperature)
@@ -31,13 +38,14 @@ const showHistory = (_, res) => {
           )
 
           const formatedWeathers = weathers.map(weather => ({
-            source: weather.city.source,
+            country: weather.country.name,
+            city: weather.city.name,
             ...formatWeather(weather)
           }))
 
           return {
             city: randomCity.name,
-            country: randomCity.country,
+            country: randomCountry.name,
             temperature: avgTemperature,
             iconId: randomWeather.iconId,
             iconPhrase: randomWeather.iconPhrase,
@@ -45,7 +53,9 @@ const showHistory = (_, res) => {
             weathers: formatedWeathers
           }
         })
-        // console.log(formatedHistory)
+        console.log('formatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistory')
+        console.log(formatedHistory)
+        console.log('formatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistoryformatedHistory')
         return formatedHistory
       })
   )
