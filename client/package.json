@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@openfonts/roboto_cyrillic": "^1.44.1",
+    "lodash": "^4.17.19",
     "moment": "^2.27.0"
   }
 }

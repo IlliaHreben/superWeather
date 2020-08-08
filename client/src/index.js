@@ -1,8 +1,30 @@
 // const geo = navigator.geolocation.getCurrentPosition()
 // console.log(geo)
 import moment from 'moment'
+import _ from 'lodash'
 import './styles.css'
 import '@openfonts/roboto_cyrillic'
+
+const searchInput = document.getElementById('cityName')
+
+const onKeyupSearchCityDebouncer = _.debounce(cityName => {
+  const promiseSearchSentence = window.fetch(`/api/searchSentence?cityName=${cityName}`)
+
+  jsonToData(promiseSearchSentence)
+    .then(data => {
+      console.log(data)
+    })
+}, 1000)
+
+searchInput.oninput = () => {
+  const cityName = searchInput.value
+  if (!cityName || cityName === '') {
+    console.log(`You did not enter the city name.`)
+    return
+  }
+
+  onKeyupSearchCityDebouncer(cityName)
+}
 
 document.getElementById('search').onclick = () => {
   const cityName = document.getElementById('cityName').value
