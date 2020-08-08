@@ -1,26 +1,41 @@
 const ServiceError = require('../../ServiceError')
 
-const formatWeather = weather => {
+const formatCountry = country => {
   return {
-    temperature: weather.temperature,
-    iconId: weather.iconId,
-    iconPhrase: weather.iconPhrase,
-    createdAt: weather.createdAt,
-    updatedAt: weather.updatedAt
+    name: country.name,
+    nameLocal: country.nameLocal,
+    code: country.code,
+    region: country.region,
+    currencyCode: country.currencyCode,
+    languageName: country.languageName,
+    languageNameLocal: country.languageNameLocal,
+    callingCode: country.callingCode
   }
 }
 
 const formatCity = city => {
   return {
     name: city.name,
-    country: city.country,
+    index: city.index,
+    population: city.population,
     latitude: city.latitude,
     longitude: city.longitude,
-    source: city.source,
     createdAt: city.createdAt,
     updatedAt: city.updatedAt
   }
 }
+
+const formatWeather = weather => {
+  return {
+    temperature: weather.temperature,
+    iconId: weather.iconId,
+    iconPhrase: weather.iconPhrase,
+    source: weather.source,
+    createdAt: weather.createdAt,
+    updatedAt: weather.updatedAt
+  }
+}
+
 
 const formatForecasts = forecasts => {
   return forecasts.map(day => {
@@ -71,4 +86,4 @@ const sendPromiseToClient = (res, promise) => {
 //     console.log(res)
 //   })
 
-module.exports = {sendPromiseToClient, formatWeather, formatCity, formatForecasts}
+module.exports = {sendPromiseToClient, formatCountry, formatCity, formatWeather, formatForecasts}
