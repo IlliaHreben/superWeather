@@ -1,15 +1,14 @@
-const {Cities, Weathers, Forecasts} = require('./mysqlSchemes')
+const {Countries, Cities, Weathers, Forecasts} = require('./mysqlSchemes')
 
 
-const addWeatherToDB = (cityData, weatherData, forecastData) => {
-  return Cities.upsert(cityData)
-    .then(([city]) => {
+const addWeatherToDB = (countryData, cityData, weatherData, forecastData) => {
+  return addCityToDB(countryData, cityData)
+    .then(({country, city}) => {
       return Weathers.upsert({
         ...weatherData,
         cityId: city.id
       })
         .then(([weather]) => {
-          // console.log(weather)
           return Forecasts.bulkCreate(forecastData.map(forecast => {
             forecast.cityId = city.id
             forecast.weatherId = weather.id
@@ -17,11 +16,31 @@ const addWeatherToDB = (cityData, weatherData, forecastData) => {
           }))
             .then(forecasts => {
               console.log(`Sucessfuly added.`)
-              return {city, weather, forecasts}
+              return {country, city, weather, forecasts}
             })
         })
     })
 }
+
+
+
+const addCityToDB = (countryData, cityData) => {
+  return Countries.findOrCreate({
+    where: { name: countryData.name},
+    defaults: countryData
+  })
+    .then(([country]) => {
+      return Cities.findOrCreate({
+        where: { name: cityData.name},
+        defaults: {
+          ...cityData,
+          countryId: country.id
+        }
+      })
+        .then(([city]) => ({country, city}))
+    })
+}
+
 
 const findCityWeatherRequests = () => {
   return Weathers.findAll({
@@ -37,7 +56,10 @@ const findCityWeatherRequests = () => {
 }
 
 const getAboutCity = name => {
-  return Cities.findAll({
+  return Cities.findOne({
+    include: {
+      model: Countries
+    },
     where: {name}
   })
 }

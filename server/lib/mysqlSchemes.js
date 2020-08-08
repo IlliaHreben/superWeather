@@ -5,7 +5,8 @@ const {sqlPassword, host} = require('./config')
 
 const sequelize = new Sequelize('superweather', 'superweather', sqlPassword, {
   dialect: 'mysql',
-  host
+  host,
+  charset: 'utf8'
 })
 
 const Weathers = sequelize.define('weathers', {
@@ -30,12 +31,16 @@ const Weathers = sequelize.define('weathers', {
   cityId: {
     type: Sequelize.INTEGER,
     allowNull: false
+  },
+  source: {
+    type: Sequelize.STRING,
+    allowNull: false
   }
 }, {
     indexes: [
         {
             unique: true,
-            fields: ['cityId']
+            fields: ['cityId', 'source']
         }
     ]
 })
@@ -47,12 +52,16 @@ const Cities = sequelize.define('cities', {
     primaryKey: true,
     allowNull: false
   },
+  index: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
   name: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  country: {
-    type: Sequelize.STRING,
+  population: {
+    type: Sequelize.INTEGER,
     allowNull: false
   },
   latitude: {
@@ -63,15 +72,15 @@ const Cities = sequelize.define('cities', {
     type: Sequelize.FLOAT,
     allowNull: false
   },
-  source: {
-    type: Sequelize.STRING,
+  countryId: {
+    type: Sequelize.INTEGER,
     allowNull: false
   }
 }, {
     indexes: [
         {
             unique: true,
-            fields: ['name', 'source']
+            fields: ['index']
         }
     ]
 })
@@ -113,11 +122,62 @@ const Forecasts = sequelize.define('forecasts', {
   }
 })
 
+const Countries = sequelize.define('countries', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  nameLocal: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  code: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  region: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  currencyCode: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  languageName: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  languageNameLocal: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  callingCode: {
+    type: Sequelize.STRING,
+    allowNull: false
+  }
+}, {
+    indexes: [
+        {
+            unique: true,
+            fields: ['name']
+        }
+    ]
+})
+
 Cities.hasMany(Weathers, {onDelete: 'cascade'})
 Weathers.belongsTo(Cities, {onDelete: 'cascade'})
 Weathers.hasMany(Forecasts, {onDelete: 'cascade'})
 Cities.hasMany(Forecasts, {onDelete: 'cascade'})
 Forecasts.belongsTo(Cities, {onDelete: 'cascade'})
+
+Countries.hasMany(Cities, {onDelete: 'cascade'})
+Cities.belongsTo(Countries, {onDelete: 'cascade'})
 
 sequelize.sync({force: true})
   .then(() => {
@@ -126,4 +186,4 @@ sequelize.sync({force: true})
   .catch(err => console.log('ERROR!!! ' + err.message))
 
 
-module.exports = {Weathers, Cities, Forecasts}
+module.exports = {Countries, Cities, Weathers, Forecasts}

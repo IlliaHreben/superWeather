@@ -27,19 +27,20 @@ document.getElementById('search').onclick = () => {
 
   jsonToData(promiseAccu)
     .then(data => {
-      displayTempToUser(data, data.city.source.toLowerCase(), 'weatherWidget')
+      console.log(data)
+      displayTempToUser(data, data.weather.source.toLowerCase(), 'weatherWidget')
       displayForecastToUser(data,'forecastWidget')
     })
 
   jsonToData(promiseOpen)
     .then(data => {
-      displayTempToUser(data, data.city.source.toLowerCase(), 'weatherWidget')
+      displayTempToUser(data, data.weather.source.toLowerCase(), 'weatherWidget')
       displayForecastToUser(data,'forecastWidget')
     })
 
   jsonToData(promiseYahoo)
     .then(data => {
-      displayTempToUser(data, data.city.source.toLowerCase(), 'weatherWidget')
+      displayTempToUser(data, data.weather.source.toLowerCase(), 'weatherWidget')
       displayForecastToUser(data,'forecastWidget')
     })
 
@@ -72,40 +73,40 @@ document.getElementById('about').onclick = () => {
       infoContainer.className = 'infoContainer'
       infoContainer.id = 'infoContainer'
 
-      const heading = createP('headingName', 'nameCountry',        `${city.name}, ${country.name} (${country.nameLocal})`, 'H1')
+      const heading             = createP('headingName', 'nameCountry',        `${city.name}, ${country.name} (${country.nameLocal})`, 'H1')
       createDivText(infoContainer, 'headingContainer', [heading])
 
-      const iconPopulation = createI('fas fa-users fa-lg')
-      const populationHeading = createP('headingFat',  'populationHeading',  'Population: ')
-      const populationText = createP('infoText',    'populationText',     `${city.population} peoples.`)
+      const iconPopulation      = createI('fas fa-users fa-lg')
+      const populationHeading   = createP('headingFat',  'populationHeading',  'Population: ')
+      const populationText      = createP('infoText',    'populationText',     `${city.population} peoples.`)
       createDivText(infoContainer, 'stringInfoContainer', [iconPopulation, populationHeading, populationText])
 
-      const iconRegion = createI('fas fa-globe fa-lg')
-      const regionHeading = createP('headingFat',  'regionHeading',      'Region: ')
-      const regionText = createP('infoText',    'regionText',         `${country.region}.`)
+      const iconRegion          = createI('fas fa-globe fa-lg')
+      const regionHeading       = createP('headingFat',  'regionHeading',      'Region: ')
+      const regionText          = createP('infoText',    'regionText',         `${country.region}.`)
       createDivText(infoContainer, 'stringInfoContainer', [iconRegion, regionHeading, regionText])
 
-      const iconCoordinates = createI('fas fa-map-marked-alt fa-lg')
-      const coordinatesHeading = createP('headingFat',  'coordinatesHeading', 'Coordinates: ')
-      const coordinatesText = createP('infoText',    'coordinatesText',    `${city.coordinates}.`)
+      const iconCoordinates     = createI('fas fa-map-marked-alt fa-lg')
+      const coordinatesHeading  = createP('headingFat',  'coordinatesHeading', 'Coordinates: ')
+      const coordinatesText     = createP('infoText',    'coordinatesText',    `${city.coordinates}.`)
       createDivText(infoContainer, 'stringInfoContainer', [iconCoordinates, coordinatesHeading, coordinatesText])
 
-      const iconCurrency = createI('fas fa-wallet fa-lg')
-      const currencyHeading = createP('headingFat',  'currencyHeading',    'Currency code: ')
-      const currencyText = createP('infoText',    'currencyText',       `${country.currencyCode}.`)
+      const iconCurrency        = createI('fas fa-wallet fa-lg')
+      const currencyHeading     = createP('headingFat',  'currencyHeading',    'Currency code: ')
+      const currencyText        = createP('infoText',    'currencyText',       `${country.currencyCode}.`)
       createDivText(infoContainer, 'stringInfoContainer', [iconCurrency, currencyHeading, currencyText])
 
-      const iconCallingCode = createI('fas fa-phone fa-lg')
-      const callingCodeHeading = createP('headingFat',  'callingCodeHeading', 'Country calling code: ')
-      const callingCodeText = createP('infoText',    'callingCodeText',    `${country.callingCode}.`)
+      const iconCallingCode     = createI('fas fa-phone fa-lg')
+      const callingCodeHeading  = createP('headingFat',  'callingCodeHeading', 'Country calling code: ')
+      const callingCodeText     = createP('infoText',    'callingCodeText',    `${country.callingCode}.`)
       createDivText(infoContainer, 'stringInfoContainer', [iconCallingCode, callingCodeHeading, callingCodeText])
 
-      const iconLanguage = createI('fas fa-language fa-lg')
-      const languageHeading = createP('headingFat',  'languageHeading',    'Official language: ')
-      const languageText = createP('infoText',    'languageText',       `${country.officialLanguageNameEn} (${country.officialLanguageNameLocal}).`)
+      const iconLanguage        = createI('fas fa-language fa-lg')
+      const languageHeading     = createP('headingFat',  'languageHeading',    'Official language: ')
+      const languageText        = createP('infoText',    'languageText',       `${country.officialLanguageNameEn} (${country.officialLanguageNameLocal}).`)
       createDivText(infoContainer, 'stringInfoContainer', [iconLanguage, languageHeading, languageText])
 
-      const closeButton = createI('fas fa-times fa-lg', )
+      const closeButton         = createI('fas fa-times fa-lg', )
       createDivText(infoContainer, 'closeButtonContainer', [closeButton], 'closeinfoButton')
 
       aboutContainer.appendChild(infoContainer)
@@ -160,7 +161,7 @@ const jsonToData = (promise) => {
       throw body.error
     })
     .catch(err => {
-      displayTempToUser(`Error: ${err.message}. Code: ${err.code}`, 'error', 'errorMessage')
+      console.log(err)
     })
 }
 
@@ -181,10 +182,10 @@ function displayTempToUser (data, divTempId, divClassName) {
   sourceContainer.id = 'source'
 
   const dayName = document.createTextNode('Today')
-  const cityCountry = document.createTextNode(`${data.city.name}, ${data.city.country}`)
+  const cityCountry = document.createTextNode(`${data.city.name}, ${data.country.name}`)
   const temperature = document.createTextNode(`${data.weather.temperature}\u00B0C`)
   const description = document.createTextNode(`${data.weather.iconPhrase}.`)
-  const source = document.createTextNode(data.city.source)
+  const source = document.createTextNode(data.weather.source)
 
   dayNameContainer.appendChild(dayName)
   cityCountryContainer.appendChild(cityCountry)
@@ -209,12 +210,11 @@ function displayTempToUser (data, divTempId, divClassName) {
 const displayForecastToUser = (data, divClassName) => {
   const forecastsDiv = document.createElement('div')
   forecastsDiv.className = 'forecastsContainer'
-  const widgetsConatainer = document.getElementById(data.city.source + 'Container')
+  const widgetsConatainer = document.getElementById(data.weather.source + 'Container')
 
   data.forecasts.forEach(day => {
     const forecastDiv = document.createElement('div')
     forecastDiv.className = divClassName
-    // forecastDiv.style.display = 'block'
 
     const dayNameContainer = document.createElement('div')
     const temperatureContainer = document.createElement('div')
@@ -232,7 +232,7 @@ const displayForecastToUser = (data, divClassName) => {
     const temperature = document.createTextNode(`${day.temperatureMax}\u00B0C`)
     const temperatureMin = document.createTextNode(`${day.temperatureMin}\u00B0C`)
     const description = document.createTextNode(`${day.iconPhrase}.`)
-    const source = document.createTextNode(data.city.source)
+    const source = document.createTextNode(data.weather.source)
 
     dayNameContainer.appendChild(dayName)
     temperatureContainer.appendChild(temperature)

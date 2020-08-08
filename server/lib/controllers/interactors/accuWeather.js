@@ -20,7 +20,7 @@ const accuGetCurrent = cityKey => {
 }
 
 const accuGetForecast = cityKey => {
-  return fetch(`https://dataservice.accuweather.com/forecasts/v1/daily/5day/${cityKey}?apikey=8fcGrl6GYczUPQOshCeWIxss6guDWoKl&language=en-us`)
+  return fetch(`https://dataservice.accuweather.com/forecasts/v1/daily/5day/${cityKey}?apikey=3QLuy2M5kGA6GirTSuQXZVpj7gIDoP5R&language=en-us`)
     .then(resApi => resApi.json())
 }
 
