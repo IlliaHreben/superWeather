@@ -115,6 +115,13 @@ input:placeholder-shown + label {
   font-size: 18px;
 }
 
+/* ---------------CITY SENTENCE----------------- */
+
+#citySentences {
+  /* height: 50px; */
+  width: 70%;
+  position: absolute;
+}
 
 /* ---------------CURRENT CONDITION----------------- */
 

@@ -5,34 +5,55 @@ import _ from 'lodash'
 import './styles.css'
 import '@openfonts/roboto_cyrillic'
 
-const searchInput = document.getElementById('cityName')
 
-const onKeyupSearchCityDebouncer = _.debounce(cityName => {
+
+const onKeyupSearchCityDebouncer = _.debounce((cityName) => {
+  if (!cityName || cityName === '') {
+    console.log(`You did not enter the city name.`)
+    return
+  }
+  console.log(cityName)
+
   const promiseSearchSentence = window.fetch(`/api/searchSentence?cityName=${cityName}`)
 
-  jsonToData(promiseSearchSentence)
-    .then(data => {
-      console.log(data)
+  return jsonToData(promiseSearchSentence)
+    .then(citySentences => {
+      const citySentencesContainer = document.getElementById('citySentences')
+      citySentencesContainer.innerHTML = ''
+
+      return citySentences.map(citySentence => ([citySentence.cityName, displayCitySentence(citySentence, citySentencesContainer)]))
+    })
+    .then(citySentenceDivs => {
+      citySentenceDivs.forEach(citySentenceDiv => {
+        citySentenceDiv[1].onclick = () => {
+          fetchWeatherForecastsHistory(citySentenceDiv[0])
+        }
+      })
     })
 }, 1000)
 
-searchInput.oninput = () => {
-  const cityName = searchInput.value
-  if (!cityName || cityName === '') {
-    console.log(`You did not enter the city name.`)
-    return
-  }
+const displayCitySentence = ({cityName, countryName, popultaion}, parent) => {
 
-  onKeyupSearchCityDebouncer(cityName)
+  console.log(cityName, countryName, popultaion)
+  const cityNameSentence = createP('cityNameSentence', cityName)
+  const countryNameSentence = createP('countryNameSentence', countryName)
+  const populationSentence = createP('populationSentence', popultaion)
+
+  return createDivText(
+    parent,
+    'citySentenceContainer',
+    [cityNameSentence, countryNameSentence, populationSentence]
+  )
+
 }
 
-document.getElementById('search').onclick = () => {
-  const cityName = document.getElementById('cityName').value
-  if (!cityName || cityName === '') {
-    console.log(`You did not enter the city name.`)
-    return
-  }
+document.getElementById('cityName').oninput = () => {
+  onKeyupSearchCityDebouncer(document.getElementById('cityName').value)
 
+}
+
+
+const fetchWeatherForecastsHistory = (cityName) => {
   const promiseYahoo = window.fetch(`/api/yahoo?cityName=${cityName}`)
   const promiseOpen = window.fetch(`/api/open?cityName=${cityName}`)
   const promiseAccu = window.fetch(`/api/accu?cityName=${cityName}`)
@@ -72,7 +93,16 @@ document.getElementById('search').onclick = () => {
       const lastSearchesContainer = document.getElementById('lastSearchesContainer')
       data.forEach(city => lastSearchesContainer.appendChild(displayLastSearchesToUser(city)))
     })
+}
 
+document.getElementById('search').onclick = () => {
+  const cityName = document.getElementById('cityName').value
+  if (!cityName || cityName === '') {
+    console.log(`You did not enter the city name.`)
+    return
+  }
+
+  fetchWeatherForecastsHistory(cityName)
 }
 
 document.getElementById('about').onclick = () => {
@@ -95,37 +125,37 @@ document.getElementById('about').onclick = () => {
       infoContainer.className = 'infoContainer'
       infoContainer.id = 'infoContainer'
       console.log(city, country)
-      const heading             = createP('headingName', 'nameCountry',        `${city.name}, ${country.name} (${country.nameLocal})`, 'H1')
+      const heading             = createP('headingName',        `${city.name}, ${country.name} (${country.nameLocal})`, 'nameCountry', 'H1')
       createDivText(infoContainer, 'headingContainer', [heading])
 
       const iconPopulation      = createI('fas fa-users fa-lg')
-      const populationHeading   = createP('headingFat',  'populationHeading',  'Population: ')
-      const populationText      = createP('infoText',    'populationText',     `${city.population} peoples.`)
+      const populationHeading   = createP('headingFat',  'Population: ',  'populationHeading')
+      const populationText      = createP('infoText',     `${city.population} peoples.`,    'populationText')
       createDivText(infoContainer, 'stringInfoContainer', [iconPopulation, populationHeading, populationText])
 
       const iconRegion          = createI('fas fa-globe fa-lg')
-      const regionHeading       = createP('headingFat',  'regionHeading',      'Region: ')
-      const regionText          = createP('infoText',    'regionText',         `${country.region}.`)
+      const regionHeading       = createP('headingFat',      'Region: ',  'regionHeading')
+      const regionText          = createP('infoText',         `${country.region}.`,    'regionText')
       createDivText(infoContainer, 'stringInfoContainer', [iconRegion, regionHeading, regionText])
 
       const iconCoordinates     = createI('fas fa-map-marked-alt fa-lg')
-      const coordinatesHeading  = createP('headingFat',  'coordinatesHeading', 'Coordinates: ')
-      const coordinatesText     = createP('infoText',    'coordinatesText',    `${city.latitude}, ${city.longitude}.`)
+      const coordinatesHeading  = createP('headingFat', 'Coordinates: ',  'coordinatesHeading')
+      const coordinatesText     = createP('infoText',    `${city.latitude}, ${city.longitude}.`,    'coordinatesText')
       createDivText(infoContainer, 'stringInfoContainer', [iconCoordinates, coordinatesHeading, coordinatesText])
 
       const iconCurrency        = createI('fas fa-wallet fa-lg')
-      const currencyHeading     = createP('headingFat',  'currencyHeading',    'Currency code: ')
-      const currencyText        = createP('infoText',    'currencyText',       `${country.currencyCode}.`)
+      const currencyHeading     = createP('headingFat',    'Currency code: ',  'currencyHeading')
+      const currencyText        = createP('infoText',       `${country.currencyCode}.`,    'currencyText')
       createDivText(infoContainer, 'stringInfoContainer', [iconCurrency, currencyHeading, currencyText])
 
       const iconCallingCode     = createI('fas fa-phone fa-lg')
-      const callingCodeHeading  = createP('headingFat',  'callingCodeHeading', 'Country calling code: ')
-      const callingCodeText     = createP('infoText',    'callingCodeText',    `${country.callingCode}.`)
+      const callingCodeHeading  = createP('headingFat', 'Country calling code: ',  'callingCodeHeading')
+      const callingCodeText     = createP('infoText',    `${country.callingCode}.`,    'callingCodeText')
       createDivText(infoContainer, 'stringInfoContainer', [iconCallingCode, callingCodeHeading, callingCodeText])
 
       const iconLanguage        = createI('fas fa-language fa-lg')
-      const languageHeading     = createP('headingFat',  'languageHeading',    'Official language: ')
-      const languageText        = createP('infoText',    'languageText',       `${country.languageName} (${country.languageNameLocal}).`)
+      const languageHeading     = createP('headingFat',    'Official language: ',  'languageHeading')
+      const languageText        = createP('infoText',       `${country.languageName} (${country.languageNameLocal}).`,    'languageText')
       createDivText(infoContainer, 'stringInfoContainer', [iconLanguage, languageHeading, languageText])
 
       const closeButton         = createI('fas fa-times fa-lg', )
@@ -149,6 +179,7 @@ function createDivText (parent, className, children, id) {
     div.id = id
   }
   parent.appendChild(div)
+  return div
 }
 
 function createI (className, id) {
@@ -161,13 +192,11 @@ function createI (className, id) {
   return i
 }
 
-function createP (className, id, text, type) {
-  if (!type) {
-    type = 'P'
-  }
+function createP (className, text, id, type) {
+  if (!type) type = 'P'
   const p = document.createElement(type)
+  if (id) p.id = id
   p.className = className
-  p.id = id
   p.innerText = text
   return p
 }
