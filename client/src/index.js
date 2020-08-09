@@ -228,7 +228,7 @@ const displayForecastToUser = (data, divClassName) => {
     descriptionContainer.id = 'descriptionForecast'
     sourceContainer.id = 'sourceForecast'
 
-    const dayName = document.createTextNode(`Not today, ${new Date(day.date).getDate()}th`)
+    const dayName = document.createTextNode(moment(day.date).format('dddd, Do'))
     const temperature = document.createTextNode(`${day.temperatureMax}\u00B0C`)
     const temperatureMin = document.createTextNode(`${day.temperatureMin}\u00B0C`)
     const description = document.createTextNode(`${day.iconPhrase}.`)
@@ -257,8 +257,9 @@ const displayLastSearchesToUser = (historyCitySearch) => {
   const lastSearchDivCity = document.createElement('div')
   lastSearchDivCity.className = 'lastSearchCity'
 
-  const date = document.createTextNode(`Not today, ${new Date(historyCitySearch.updatedAt).getDate()}th`)
-  const time = document.createTextNode(formatDate(historyCitySearch.updatedAt, 'time'))
+  const momentDate = moment(historyCitySearch.updatedAt)
+  const date = document.createTextNode(momentDate.format('dddd, Do'))
+  const time = document.createTextNode(momentDate.format('HH:mm a'))
   const temperature = document.createTextNode(`${historyCitySearch.temperature}\u00B0C`)
   const description = document.createTextNode(`${historyCitySearch.iconPhrase}.`)
   const cityCountry = document.createTextNode(`${historyCitySearch.city}, ${historyCitySearch.country}`)
@@ -297,11 +298,11 @@ const displayLastSearchesToUser = (historyCitySearch) => {
 
 
   historyCitySearch.weathers.forEach(weather => {
-    const dateTime = document.createTextNode(formatDate(weather.updatedAt))
+
+    const dateTime = document.createTextNode(moment(weather.updatedAt).format('ddd, Do MMM, h:mm a'))
     const temperature = document.createTextNode(`${weather.temperature}\u00B0C`)
     const description = document.createTextNode(`${weather.iconPhrase}.`)
     const source = document.createTextNode(weather.source)
-    console.log(formatDate(weather.updatedAt))
 
     const dateTimeContainer = document.createElement('div')
     const temperatureContainer = document.createElement('div')
@@ -332,27 +333,4 @@ const displayLastSearchesToUser = (historyCitySearch) => {
   lastSearchDivCity.appendChild(historySourcesWidgetsContainer)
 
   return lastSearchDivCity
-}
-
-function formatDate (dateStr, timeOrDate) {
-  const dateObj = new Date(dateStr)
-
-  const formatedTime = [
-    dateObj.getHours(),
-    dateObj.getMinutes(),
-    dateObj.getSeconds()
-  ].join(':')
-
-  const formatedDate = [
-    dateObj.getDate(),
-    dateObj.getMonth() + 1,
-    dateObj.getFullYear()
-  ].join('.')
-
-  if (timeOrDate === 'time') {
-    return formatedTime
-  } else if (timeOrDate === 'date') {
-    return formatedDate
-  }
-  return `${formatedTime}, ${formatedDate}`
 }
