@@ -1,55 +1,69 @@
 // const geo = navigator.geolocation.getCurrentPosition()
-// console.log(geo)
 import moment from 'moment'
-import _ from 'lodash'
+import {debounce, deburr} from 'lodash'
 import './styles.css'
 import '@openfonts/roboto_cyrillic'
+import diacritics from 'diacritics'
 
+const onKeyupSearchCity = (cityName) => {
+  const citySentencesContainer = document.getElementById('citySentences')
+  citySentencesContainer.innerHTML = ''
+  citySentencesContainer.style.height = 'auto'
+  citySentencesContainer.style.visibility = 'visible'
+  citySentencesContainer.style.opacity = '1'
 
-
-const onKeyupSearchCityDebouncer = _.debounce((cityName) => {
   if (!cityName || cityName === '') {
     console.log(`You did not enter the city name.`)
-    return
+    citySentencesContainer.style.height = '0'
+    citySentencesContainer.style.visibility = 'hidden'
+    citySentencesContainer.style.opacity = '0'
+    return Promise.resolve([])
   }
-  console.log(cityName)
 
   const promiseSearchSentence = window.fetch(`/api/searchSentence?cityName=${cityName}`)
 
   return jsonToData(promiseSearchSentence)
     .then(citySentences => {
-      const citySentencesContainer = document.getElementById('citySentences')
-      citySentencesContainer.innerHTML = ''
 
       return citySentences.map(citySentence => ([citySentence.cityName, displayCitySentence(citySentence, citySentencesContainer)]))
     })
     .then(citySentenceDivs => {
       citySentenceDivs.forEach(citySentenceDiv => {
         citySentenceDiv[1].onclick = () => {
+          citySentencesContainer.style.height = '0'
+          citySentencesContainer.style.visibility = 'hidden'
+          citySentencesContainer.style.opacity = '0'
           fetchWeatherForecastsHistory(citySentenceDiv[0])
         }
       })
     })
-}, 1000)
 
-const displayCitySentence = ({cityName, countryName, popultaion}, parent) => {
+}
 
-  console.log(cityName, countryName, popultaion)
-  const cityNameSentence = createP('cityNameSentence', cityName)
-  const countryNameSentence = createP('countryNameSentence', countryName)
-  const populationSentence = createP('populationSentence', popultaion)
+const displayCitySentence = ({cityName, countryName, population}, parent) => {
+
+  const cityNameSentence = createP('cityNameSentence', `  ${diacritics.remove(deburr(cityName))}, `)
+  const countryNameSentence = createP('countryNameSentence', diacritics.remove(deburr(countryName)))
+  const populationSentence = createP('populationSentence', `${population} peoples`)
 
   return createDivText(
     parent,
     'citySentenceContainer',
     [cityNameSentence, countryNameSentence, populationSentence]
   )
-
 }
 
-document.getElementById('cityName').oninput = () => {
-  onKeyupSearchCityDebouncer(document.getElementById('cityName').value)
+const debouncer = debounce((event) => {
+  onKeyupSearchCity(event.target.value)
+    .then(() => {
+      document.getElementById('loadingIcon').style.opacity = '0'
+    })
+}, 600)
 
+document.getElementById('cityName').oninput = (event) => {
+  document.getElementById('loadingIcon').style.opacity = '1'
+
+  debouncer(event)
 }
 
 
@@ -70,7 +84,6 @@ const fetchWeatherForecastsHistory = (cityName) => {
 
   jsonToData(promiseAccu)
     .then(data => {
-      console.log(data)
       displayTempToUser(data, data.weather.source.toLowerCase(), 'weatherWidget')
       displayForecastToUser(data,'forecastWidget')
     })
@@ -89,7 +102,6 @@ const fetchWeatherForecastsHistory = (cityName) => {
 
   jsonToData(promiseGetHistory)
     .then(data => {
-      console.log(data)
       const lastSearchesContainer = document.getElementById('lastSearchesContainer')
       data.forEach(city => lastSearchesContainer.appendChild(displayLastSearchesToUser(city)))
     })
@@ -124,7 +136,6 @@ document.getElementById('about').onclick = () => {
       const infoContainer = document.createElement('div')
       infoContainer.className = 'infoContainer'
       infoContainer.id = 'infoContainer'
-      console.log(city, country)
       const heading             = createP('headingName',        `${city.name}, ${country.name} (${country.nameLocal})`, 'nameCountry', 'H1')
       createDivText(infoContainer, 'headingContainer', [heading])
 
@@ -352,7 +363,6 @@ const displayLastSearchesToUser = (historyCitySearch) => {
     const temperature = document.createTextNode(`${weather.temperature}\u00B0C`)
     const description = document.createTextNode(`${weather.iconPhrase}.`)
     const source = document.createTextNode(weather.source)
-    console.log(formatDate(weather.updatedAt))
 
     const dateTimeContainer = document.createElement('div')
     const temperatureContainer = document.createElement('div')

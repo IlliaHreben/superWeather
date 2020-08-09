@@ -7,6 +7,9 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   mode: 'development',
+  optimization: {
+    usedExports: true,
+  },
   module: {
      rules: [
        {

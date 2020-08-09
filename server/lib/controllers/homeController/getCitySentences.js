@@ -17,14 +17,13 @@ function getCityCountry (cityName) {
   const cityData = citiesBase
     .filter(city => city.name.match(cityName))
     .sort((curr, next) => next.population - curr.population)
-    .slice(-10)
+    .slice(0, 10)
 
   if (!cityData) {
     return new ServiceError('Cannot find city', 'CITY_NOT_FOUND')
   }
 
   return cityData.map(city => {
-    console.log(city.country)
     const formatedCountryData = countryData[city.country].split(',')
 
     return {

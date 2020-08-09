@@ -69,7 +69,10 @@ input[type="inputArea"] {
   width: 70%;
   color: #202020;
   padding-left: 30px;
-  font: 300 18px Roboto;
+  font: 400 18px Roboto;
+}
+input::placeholder {
+  font-weight: 300;
 }
 
 button[type="inputArea"] {
@@ -88,6 +91,8 @@ button[type="inputArea"] {
   transition: all 0.3s ease-out;
   cursor: pointer;
 }
+
+
 
 button[type="inputArea"]:hover {
   background: #549c53 !important;
@@ -115,13 +120,96 @@ input:placeholder-shown + label {
   font-size: 18px;
 }
 
+#loadingIcon {
+  color: #535353;
+  position: absolute;
+  left: 15.5%;
+  top: 50%;
+  opacity: 0;
+}
+
 /* ---------------CITY SENTENCE----------------- */
 
 #citySentences {
-  /* height: 50px; */
-  width: 70%;
+  width: 50%;
+  padding: 1em;
+  visibility: hidden;
+  opacity: 0;
+  box-sizing: border-box;
   position: absolute;
+  background-color: white;
+  -webkit-border-radius:  4px;
+      -moz-border-radius: 4px;
+    -khtml-border-radius: 4px;
+          border-radius:  4px;
+  left: 50%;
+  transform: translate(-70%, 0.5em);
+  box-shadow: -1px 1px 5px rgba(0,0,0,0.3);
+  z-index: 1;
+  height: 0;
+  transition: opacity 0.3s ease-out;
 }
+
+.cityNameSentence, .countryNameSentence, .populationSentence {
+  text-transform: uppercase;
+  font: 400 1em/1.6em Roboto;
+  color: #424242;
+  display: inline;
+  word-spacing: 1px;
+  letter-spacing: 0.03em;
+  text-align: left;
+  transition: inherit;
+  padding-left: 8px;
+}
+
+.countryNameSentence, .populationSentence {
+  font: 300 1em/1.6em Roboto;
+  color: #6E6E6E;
+  padding: 0;
+}
+
+.populationSentence {
+  text-transform: lowercase;
+  text-align: right;
+  position: absolute;
+  display: inline-grid;
+  right: 2em;
+  margin-right: 0;
+  margin-left: auto;
+  margin: auto;
+}
+
+.citySentenceContainer {
+  background-color: #E6E6E6;
+  cursor: pointer;
+  padding-left: 2em;
+  padding-right: 2em;
+  height: 3em;
+  transition: all 0.3s ease-out;
+  text-align: left;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.citySentenceContainer:hover {
+  background-color: #D8D8D8;
+}
+
+.citySentenceContainer:hover .countryNameSentence, .populationSentence {
+  color: #525252;
+}
+
+.citySentenceContainer:hover .populationSentence {
+  color: #525252;
+}
+
+.citySentenceContainer:hover .cityNameSentence {
+  color: #222222;
+}
+
+.citySentenceContainer:active {
+  background-color: #C9C9C9;
+}
+
 
 /* ---------------CURRENT CONDITION----------------- */
 
@@ -299,11 +387,6 @@ aside {
   -khtml-border-radius: 6px;
   transition: all 0.3s ease-out;
 }
-
-/* .lastSearchCity:hover .forecastWidget {
-  opacity: 1;
-  visibility: visible;
-} */
 
 .sourcesWidgetsContainer {
   opacity: 0;
