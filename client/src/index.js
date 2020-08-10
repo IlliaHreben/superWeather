@@ -117,7 +117,7 @@ document.getElementById('search').onclick = () => {
     return
   }
 
-  fetchWeatherForecastsHistory('city', cityName)
+  fetchWeatherForecastsHistory('cityName', cityName)
 }
 
 document.getElementById('about').onclick = () => {

@@ -1,6 +1,7 @@
 const citiesBase = require('all-the-cities')
 const countryData = require('country-codes-list').customList('countryCode', '{countryNameEn},{countryNameLocal},{countryCode},{region},{currencyCode},{officialLanguageNameEn},{officialLanguageNameLocal},+{countryCallingCode}')
 const diacriticsRemove = require ('diacritics').remove
+const ServiceError = require('../../ServiceError')
 
 function getCityCountryByName (cityName) {
   const cityData = formatCityData(cityName).slice(0, 10)
@@ -12,7 +13,7 @@ function getCityCountryByIndex (index) {
   const [cityData] = formatCityData(index)
 
 
-  return cityData.map(formatCityCountry)
+  return formatCityCountry(cityData)
 }
 
 function getOneCityCountryByName (cityName) {
@@ -22,12 +23,19 @@ function getOneCityCountryByName (cityName) {
 }
 
 function formatCityData (desiredValue) {
-  const suitableСities = citiesBase
-    .filter(city => city.name.match(desiredValue))
-    .sort((curr, next) => next.population - curr.population)
+  let cell
+  if (!+desiredValue) {
+    cell = 'name'
+  } else if (+desiredValue) {
+    cell = 'cityId'
+  }
 
-  if (suitableСities == []) {
-    return new ServiceError('Cannot find city', 'CITY_NOT_FOUND')
+  const suitableСities = citiesBase
+    .filter(city => city[cell].toString().match(desiredValue.toString()))
+    .sort((curr, next) => next.population - curr.population)
+    // console.log(suitableСities.slice(0,3))
+  if (!suitableСities[0]) {
+    throw new ServiceError('Cannot find city', 'CITY_NOT_FOUND')
   }
   return suitableСities
 }
@@ -40,8 +48,8 @@ function formatCityCountry (city) {
       index: city.cityId,
       name: diacriticsRemove(city.name),
       population: +(city.population),
-      latitude: city.loc.coordinates[0],
-      longitude: city.loc.coordinates[1]
+      latitude: city.loc.coordinates[1],
+      longitude: city.loc.coordinates[0]
     },
     country: {
       name: diacriticsRemove(country[0]),

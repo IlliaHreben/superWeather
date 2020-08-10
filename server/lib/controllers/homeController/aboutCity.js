@@ -1,10 +1,8 @@
-const getCityCountry = require('./getCityCountry')
-
-const {sendPromiseToClient, formatCountry, formatCity} = require('./homeController')
+const {sendPromiseToClient, getCityCountry, formatCountry, formatCity} = require('./homeController')
 const {addCityToDB} = require('../../mysqlConnect')
 
 const aboutCity = (req, res) => {
-  const {city, country} = getCityCountry(req.query.cityName)
+  const {city, country} = getCityCountry(req.query)
   const promise = addCityToDB(country, city)
     .then(cityСountry => {
       const cityCountryData = {
