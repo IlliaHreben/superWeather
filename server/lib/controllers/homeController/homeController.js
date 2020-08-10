@@ -1,5 +1,7 @@
 const ServiceError = require('../../ServiceError')
 
+const {getCityCountryByIndex, getOneCityCountryByName} = require('./getCityCountry')
+
 const formatCountry = country => {
   return {
     name: country.name,
@@ -51,6 +53,13 @@ const formatForecasts = forecasts => {
   })
 }
 
+const getCityCountry = (query) => {
+  if (query.index){
+    return getCityCountryByIndex(query.index)
+  } else if (query.cityName) {
+    return getOneCityCountryByName(query.cityName)
+  }
+}
 
 const sendPromiseToClient = (res, promise) => {
   promise
@@ -86,4 +95,4 @@ const sendPromiseToClient = (res, promise) => {
 //     console.log(res)
 //   })
 
-module.exports = {sendPromiseToClient, formatCountry, formatCity, formatWeather, formatForecasts}
+module.exports = {sendPromiseToClient, getCityCountry, formatCountry, formatCity, formatWeather, formatForecasts}

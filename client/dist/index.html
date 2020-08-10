@@ -1,7 +1,6 @@
 <html>
   <head>
     <title>superWeather</title>
-    <link rel='stylesheet' href='/styles.css'>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
   </head>
 
@@ -12,6 +11,8 @@
         <button type='inputArea' id='about'>About</button>
         <input type='inputArea' id='cityName' placeholder='Enter your city here'>
         <label for='cityName'>Enter your city here</label>
+        <i class='fas fa-spinner fa-spin' id='loadingIcon'></i>
+        <div id='citySentences'></div>
         <button type='inputArea' id='search'>Search</button>
       </div>
     </header>

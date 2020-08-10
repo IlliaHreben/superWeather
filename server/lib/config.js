@@ -4,7 +4,7 @@ const host = 'localhost'
 
 const port = '3000'
 
-const apiKeyAccuWeather = 'hoArfRosT1215'
+const apiKeyAccuWeather = '3QLuy2M5kGA6GirTSuQXZVpj7gIDoP5R'
 
 const apiKeyOpenWeather = '1aa104f66067dcf0b4baff605313f074'
 

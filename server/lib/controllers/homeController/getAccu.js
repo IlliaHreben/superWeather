@@ -1,20 +1,25 @@
 const {accuGetCity, accuGetCurrent, accuGetForecast} = require('../interactors/accuWeather')
-const {sendPromiseToClient, formatCountry, formatCity, formatWeather, formatForecasts} = require('./homeController')
+const {sendPromiseToClient, getCityCountry, formatCountry, formatCity, formatWeather, formatForecasts} = require('./homeController')
 const {addWeatherToDB} = require('../../mysqlConnect')
-const getCityCountry = require('./getCityCountry')
+const ServiceError = require('../../ServiceError')
 
 const getAccu = (req, res) => {
-  const promise = accuGetCity(req.query.cityName)
-    .then(dataCity => {
-      return accuGetCurrent(dataCity[0].Key)
-        .then(data => {
-          return accuGetForecast(dataCity[0].Key)
+  if (!req.query.index && !req.query.cityName) {
+    return Promise.reject(new ServiceError('Data did not come from the client', 'NO_DATA_COME'))
+  }
+
+  const {city, country} = getCityCountry(req.query)
+
+  const promise = accuGetCity(city.latitude, city.longitude)
+    .then(({Key: key}) => {
+      return accuGetCurrent(key)
+        .then(([current]) => {
+          return accuGetForecast(key)
             .then(forecast => {
-              const {city, country} = getCityCountry(dataCity[0].EnglishName)
               return addWeatherToDB(country, city, {
-                temperature: data[0].Temperature.Metric.Value,
-                iconId: data[0].WeatherIcon,
-                iconPhrase: data[0].WeatherText,
+                temperature: current.Temperature.Metric.Value,
+                iconId: current.WeatherIcon,
+                iconPhrase: current.WeatherText,
                 source: 'accuWeather'
               }, forecast.DailyForecasts.map(day => {
                 return {
@@ -38,5 +43,7 @@ const getAccu = (req, res) => {
     })
   sendPromiseToClient(res, promise)
 }
+
+
 
 module.exports = getAccu

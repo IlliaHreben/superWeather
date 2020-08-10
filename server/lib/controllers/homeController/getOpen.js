@@ -1,34 +1,36 @@
-const {openGetCurrent, openGetForecast} = require('../interactors/openWeather')
-const {sendPromiseToClient, formatCountry, formatCity, formatWeather, formatForecasts} = require('./homeController')
+const {openGetOneCall} = require('../interactors/openWeather')
+const {sendPromiseToClient, getCityCountry, formatCountry, formatCity, formatWeather, formatForecasts} = require('./homeController')
 const {addWeatherToDB} = require('../../mysqlConnect')
-const getCityCountry = require('./getCityCountry')
+const ServiceError = require('../../ServiceError')
+
 
 
 const getOpen = (req, res) => {
-  const promise = openGetCurrent(req.query.cityName)
-    .then(data => {
+  if (!req.query.index && !req.query.cityName) {
+    return Promise.reject(new ServiceError('Data did not come from the client', 'NO_DATA_COME'))
+  }
 
-      return openGetForecast(req.query.cityName)
-        .then(forecast => {
+  const {city, country} = getCityCountry(req.query)
 
-          const {city, country} = getCityCountry(data.list[0].name)
+  const promise = openGetOneCall(city.latitude, city.longitude)
+    .then(({current, daily}) => {
+
           return addWeatherToDB(country, city, {
 
-            temperature: +(data.list[0].main.temp.toFixed(1)),
-            iconId: data.list[0].weather[0].icon,
-            iconPhrase: data.list[0].weather[0].description,
+            temperature: +(current.temp.toFixed(1)),
+            iconId: current.weather[0].icon,
+            iconPhrase: current.weather[0].description,
             source: 'openWeather'
 
-          }, forecast.daily.map(day => {
+          }, daily.map(({dt, temp, weather}) => {
             return {
-              date: new Date(+(day.dt + '000')),
-              temperatureMin: +(day.temp.min.toFixed(1)),
-              temperatureMax: +(day.temp.max.toFixed(1)),
-              iconId: day.weather[0].icon,
-              iconPhrase: day.weather[0].description
+              date: new Date(+(dt + '000')),
+              temperatureMin: +(temp.min.toFixed(1)),
+              temperatureMax: +(temp.max.toFixed(1)),
+              iconId: weather[0].icon,
+              iconPhrase: weather[0].description
             }
           }))
-        })
     })
     .then(({country, city, weather, forecasts}) => {
       return {
