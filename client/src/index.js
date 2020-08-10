@@ -1,9 +1,21 @@
 // const geo = navigator.geolocation.getCurrentPosition()
 import moment from 'moment'
-import {debounce, deburr} from 'lodash'
+import {debounce} from 'lodash'
 import './styles.css'
 import '@openfonts/roboto_cyrillic'
-import diacritics from 'diacritics'
+
+document.getElementById('cityName').oninput = (event) => {
+  document.getElementById('loadingIcon').style.opacity = '1'
+
+  debouncer(event)
+}
+
+const debouncer = debounce((event) => {
+  onKeyupSearchCity(event.target.value)
+    .then(() => {
+      document.getElementById('loadingIcon').style.opacity = '0'
+    })
+}, 600)
 
 const onKeyupSearchCity = (cityName) => {
   const citySentencesContainer = document.getElementById('citySentences')
@@ -25,7 +37,7 @@ const onKeyupSearchCity = (cityName) => {
   return jsonToData(promiseSearchSentence)
     .then(citySentences => {
 
-      return citySentences.map(citySentence => ([citySentence.cityName, displayCitySentence(citySentence, citySentencesContainer)]))
+      return citySentences.map(citySentence => ([citySentence.city.index, displayCitySentence(citySentence, citySentencesContainer)]))
     })
     .then(citySentenceDivs => {
       citySentenceDivs.forEach(citySentenceDiv => {
@@ -33,18 +45,18 @@ const onKeyupSearchCity = (cityName) => {
           citySentencesContainer.style.height = '0'
           citySentencesContainer.style.visibility = 'hidden'
           citySentencesContainer.style.opacity = '0'
-          fetchWeatherForecastsHistory(citySentenceDiv[0])
+          fetchWeatherForecastsHistory('index', citySentenceDiv[0])
         }
       })
     })
 
 }
 
-const displayCitySentence = ({cityName, countryName, population}, parent) => {
+const displayCitySentence = ({country, city}, parent) => {
 
-  const cityNameSentence = createP('cityNameSentence', `  ${diacritics.remove(deburr(cityName))}, `)
-  const countryNameSentence = createP('countryNameSentence', diacritics.remove(deburr(countryName)))
-  const populationSentence = createP('populationSentence', `${population} peoples`)
+  const cityNameSentence = createP('cityNameSentence', `  ${city.name}, `)
+  const countryNameSentence = createP('countryNameSentence', country.name)
+  const populationSentence = createP('populationSentence', `${city.population} peoples`)
 
   return createDivText(
     parent,
@@ -53,25 +65,16 @@ const displayCitySentence = ({cityName, countryName, population}, parent) => {
   )
 }
 
-const debouncer = debounce((event) => {
-  onKeyupSearchCity(event.target.value)
-    .then(() => {
-      document.getElementById('loadingIcon').style.opacity = '0'
-    })
-}, 600)
-
-document.getElementById('cityName').oninput = (event) => {
-  document.getElementById('loadingIcon').style.opacity = '1'
-
-  debouncer(event)
-}
 
 
-const fetchWeatherForecastsHistory = (cityName) => {
-  const promiseYahoo = window.fetch(`/api/yahoo?cityName=${cityName}`)
-  const promiseOpen = window.fetch(`/api/open?cityName=${cityName}`)
-  const promiseAccu = window.fetch(`/api/accu?cityName=${cityName}`)
-  const promiseGetHistory = window.fetch(`/api/showhistory?cityName=${cityName}`)
+
+
+
+const fetchWeatherForecastsHistory = (key, desiredValue) => {
+  const promiseYahoo = window.fetch(`/api/yahoo?${key}=${desiredValue}`)
+  const promiseOpen = window.fetch(`/api/open?${key}=${desiredValue}`)
+  const promiseAccu = window.fetch(`/api/accu?${key}=${desiredValue}`)
+  const promiseGetHistory = window.fetch(`/api/showhistory`)
 
   const widgetContainer = document.getElementsByClassName('widgetContainer')
   for(let container of widgetContainer) {container.style.display = 'inline-grid'}
@@ -114,7 +117,7 @@ document.getElementById('search').onclick = () => {
     return
   }
 
-  fetchWeatherForecastsHistory(cityName)
+  fetchWeatherForecastsHistory('city', cityName)
 }
 
 document.getElementById('about').onclick = () => {
