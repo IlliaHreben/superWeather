@@ -19,7 +19,7 @@ const getAccu = (req, res) => {
               return addWeatherToDB(country, city, {
                 temperature: current.Temperature.Metric.Value,
                 iconId: current.WeatherIcon,
-                iconPhrase: current.WeatherText,
+                iconPhrase: current.WeatherText.replace(' w/', '.'),
                 source: 'accuWeather'
               }, forecast.DailyForecasts.map(day => {
                 return {
@@ -27,7 +27,7 @@ const getAccu = (req, res) => {
                   temperatureMin: +((day.Temperature.Minimum.Value - 32) * 5/9).toFixed(1),
                   temperatureMax: +((day.Temperature.Maximum.Value - 32) * 5/9).toFixed(1),
                   iconId: day.Day.Icon.toString(),
-                  iconPhrase: day.Day.IconPhrase
+                  iconPhrase: day.Day.IconPhrase.replace(' w/', '.')
                 }
               }))
             })
