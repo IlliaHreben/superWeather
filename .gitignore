@@ -57,5 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
-./client/dist/
-!./client/dist/index.html
+widgetPicksRaw/
+
+!client/dist/
+client/dist/*
+!client/dist/index.html

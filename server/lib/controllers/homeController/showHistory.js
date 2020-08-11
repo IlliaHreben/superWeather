@@ -44,7 +44,9 @@ const showHistory = (_, res) => {
             iconId: randomWeather.iconId,
             iconPhrase: randomWeather.iconPhrase,
             updatedAt: randomWeather.updatedAt,
-            weathers: formatedWeathers
+            source: randomWeather.source,
+            weathers: formatedWeathers,
+
           }
         })
         return formatedHistory

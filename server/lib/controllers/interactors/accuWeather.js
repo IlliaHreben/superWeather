@@ -7,6 +7,7 @@ const accuGetCity = (lat, lon) => {
   return fetch(`https://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${apiKeyAccuWeather}&q=${lat},${lon}&language=${language}`)
     .then(resApi => resApi.json())
     .then(data => {
+      console.log(data)
       if (!data.Key) {
         throw new ServiceError ('You entered the wrong city name', 'WRONG_CITY_NAME')
       }
