@@ -88,6 +88,7 @@ const fetchWeatherForecastsHistory = (key, desiredValue) => {
   const promiseAccu = window.fetch(`/api/accu?${key}=${desiredValue}`)
   const promiseGetHistory = window.fetch(`/api/showhistory`)
 
+  displayHeaderToUser('Current condition for requested city', 'currentCondition')
   const widgetContainer = document.getElementsByClassName('widgetContainer')
   for(let container of widgetContainer) {container.style.display = 'inline-grid'}
   const mainContainer = document.getElementsByClassName('mainContainer')
@@ -99,20 +100,20 @@ const fetchWeatherForecastsHistory = (key, desiredValue) => {
 
   jsonToData(promiseAccu)
     .then(data => {
-      displayTempToUser(data, data.weather.source.toLowerCase(), 'weatherWidget')
-      displayForecastToUser(data,'forecastWidget')
+      displayTempToUser(data)
+      displayForecastToUser(data)
     })
 
   jsonToData(promiseOpen)
     .then(data => {
-      displayTempToUser(data, data.weather.source.toLowerCase(), 'weatherWidget')
-      displayForecastToUser(data,'forecastWidget')
+      displayTempToUser(data)
+      displayForecastToUser(data)
     })
 
   jsonToData(promiseYahoo)
     .then(data => {
-      displayTempToUser(data, data.weather.source.toLowerCase(), 'weatherWidget')
-      displayForecastToUser(data,'forecastWidget')
+      displayTempToUser(data)
+      displayForecastToUser(data)
     })
 
   jsonToData(promiseGetHistory)
@@ -195,6 +196,13 @@ document.getElementById('about').onclick = () => {
     })
 }
 
+function displayHeaderToUser (requiredText, headingContainerId) {
+  const headingContainer = document.getElementById(headingContainerId)
+  headingContainer.style.backgroundColor = '#76b675'
+  headingContainer.style.borderBottom = '2px solid #549c53'
+  const headingText = createP('headerText', requiredText, '', 'H1')
+  return createDivText(headingContainer, 'headerTextContainer', [headingText])
+}
 
 
 function createDivText (parent, className, children, id) {
@@ -242,9 +250,10 @@ const jsonToData = (promise) => {
     })
 }
 
-function displayTempToUser (data, divTempId, divClassName) {
+function displayTempToUser (data) {
+
   const weatherDiv = document.createElement('div')
-  weatherDiv.className = divClassName
+  weatherDiv.className = 'weatherWidget'
 
 
   const dayNameContainer = document.createElement('div')
@@ -271,12 +280,10 @@ function displayTempToUser (data, divTempId, divClassName) {
   descriptionContainer.appendChild(description)
   sourceContainer.appendChild(source)
 
-
-  const divDisplayWeather = document.getElementById(divTempId)
+  const divDisplayWeather = document.createElement('div')
+  divDisplayWeather.id = data.weather.source.toLowerCase()
+  divDisplayWeather.className = 'weatherWidgetContainer'
   divDisplayWeather.style.backgroundImage = `url(${widgetBackgrounds[`${data.weather.source}/${data.weather.iconId}`]})`
-  divDisplayWeather.style.display = 'inline-block'
-  divDisplayWeather.style.visibility = 'visible'
-  divDisplayWeather.style.opacity = '1'
 
   weatherDiv.appendChild(dayNameContainer)
   weatherDiv.appendChild(cityCountryContainer)
@@ -284,16 +291,24 @@ function displayTempToUser (data, divTempId, divClassName) {
   weatherDiv.appendChild(descriptionContainer)
   weatherDiv.appendChild(sourceContainer)
   divDisplayWeather.appendChild(weatherDiv)
+
+  const allWeatherForcastContainer = document.createElement('div')
+  allWeatherForcastContainer.className = 'widgetContainer'
+  allWeatherForcastContainer.id = data.weather.source + 'Container'
+  allWeatherForcastContainer.appendChild(divDisplayWeather)
+
+  const mainContainer = document.getElementById('sectionContainer')
+  mainContainer.appendChild(allWeatherForcastContainer)
 }
 
-const displayForecastToUser = (data, divClassName) => {
+const displayForecastToUser = (data) => {
   const forecastsDiv = document.createElement('div')
   forecastsDiv.className = 'forecastsContainer'
   const widgetsConatainer = document.getElementById(data.weather.source + 'Container')
 
   data.forecasts.forEach(day => {
     const forecastDiv = document.createElement('div')
-    forecastDiv.className = divClassName
+    forecastDiv.className = 'forecastWidget'
     forecastDiv.style.backgroundImage = `url(${widgetBackgrounds[`${data.weather.source}/${day.iconId}`]})`
 
     const dayNameContainer = document.createElement('div')
