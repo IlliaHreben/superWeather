@@ -2,7 +2,7 @@ const sqlPassword = 'superweather'
 
 const host = 'localhost'
 
-const port = '3000'
+const port = '4000'
 
 const apiKeyAccuWeather = '3QLuy2M5kGA6GirTSuQXZVpj7gIDoP5R'
 
