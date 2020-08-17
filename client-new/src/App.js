@@ -27,6 +27,7 @@ class Header extends Component {
     this.handleAbout = this.handleAbout.bind(this)
     this.handleCityName = this.handleCityName.bind(this)
     this.handleCloseButton = this.handleCloseButton.bind(this)
+    this.citySentencesWillUnmount = this.citySentencesWillUnmount.bind(this)
   }
 
   handleAbout() {
@@ -45,9 +46,18 @@ class Header extends Component {
 
   handleCityName(e) {
     this.setState({city: e.target.value})
+    if (e.target.value || e.target.value !== '') {
+      this.debouncer(e.target.value)
+    }
+  }
 
-    jsonToData(
-      window.fetch(`/api/searchSentence?cityName=${e.target.value}`)
+  citySentencesWillUnmount() {
+    this.setState({sentencesStrings: []})
+  }
+
+  debouncer = debounce(cityName => {
+    return jsonToData(
+      window.fetch(`/api/searchSentence?cityName=${cityName}`)
     )
       .then(citySentences => {
         if (citySentences) {
@@ -64,7 +74,7 @@ class Header extends Component {
         } else {return []}
       })
       .then(sentencesStrings => this.setState({sentencesStrings}))
-  }
+  }, 600)
 
   render () {
     const headerContent = [
@@ -82,9 +92,11 @@ class Header extends Component {
         </div>
       )
     }
-    if (this.state.city || this.state.city !== '') headerContent.push(
-      <CitySentences sentencesStrings={this.state.sentencesStrings} />
-    )
+    if (this.state.city || this.state.city !== '') {
+      headerContent.push(
+        <CitySentences sentencesStrings={this.state.sentencesStrings} willUnmount={this.citySentencesWillUnmount}/>
+      )
+    }
 
     return (
       <header>
@@ -94,13 +106,21 @@ class Header extends Component {
   }
 }
 
-const CitySentences = props => {
-  return (
-    <i className='fas fa-spinner fa-spin' id='loadingIcon'></i>,
-    <div id='citySentences'>
-      {props.sentencesStrings.map(strings => strings[1])}
-    </div>
-  )
+class CitySentences extends Component {
+  constructor(props) {
+    super(props)
+  }
+  componentWillUnmount() {
+    this.props.willUnmount()
+  }
+  render() {
+    return (
+      <i className='fas fa-spinner fa-spin' id='loadingIcon'></i>,
+      <div id='citySentences'>
+        {this.props.sentencesStrings.map(strings => strings[1])}
+      </div>
+    )
+  }
     // .then(citySentenceDivs => {
     //   citySentenceDivs.forEach(citySentenceDiv => {
     //     citySentenceDiv[1].onclick = () => {
