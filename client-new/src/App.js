@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import './App.css';
+import debounce from 'lodash/debounce'
 
 class App extends Component {
   constructor(props) {
@@ -19,11 +20,13 @@ class Header extends Component {
     this.state = {
       isAboutClick: false,
       city: '',
-      cityCountryData: {}
+      cityCountryData: {},
+      sentencesStrings: []
     }
 
     this.handleAbout = this.handleAbout.bind(this)
     this.handleCityName = this.handleCityName.bind(this)
+    this.handleCloseButton = this.handleCloseButton.bind(this)
   }
 
   handleAbout() {
@@ -33,36 +36,55 @@ class Header extends Component {
           cityCountryData,
           isAboutClick: !this.state.isAboutClick
         })
-
-        document.getElementById('closeinfoButton').onclick = () => {
-          document.getElementById('aboutCityArea').remove()
-        }
       })
+  }
+
+  handleCloseButton() {
+    this.setState({isAboutClick: !this.state.isAboutClick})
   }
 
   handleCityName(e) {
     this.setState({city: e.target.value})
+
+    jsonToData(
+      window.fetch(`/api/searchSentence?cityName=${e.target.value}`)
+    )
+      .then(citySentences => {
+        if (citySentences) {
+          return citySentences.map(({country, city}) => ([
+            city.index,
+            (
+              <div className='citySentenceContainer'>
+                <p className='cityNameSentence'>{`  ${city.name}, `}</p>
+                <p className='countryNameSentence'>{country.name}</p>
+                <p className='populationSentence'>{`${city.population} peoples`}</p>
+              </div>
+            )
+          ]))
+        } else {return []}
+      })
+      .then(sentencesStrings => this.setState({sentencesStrings}))
   }
 
   render () {
     const headerContent = [
       <button type='inputArea' id='about' onClick={this.handleAbout}>About</button>,
-      <input type='inputArea' id='cityName' placeholder='Enter your city here' value={this.state.city} onChange={this.handleCityName}></input>,
-      <label for='cityName'>Enter your city here</label>,
-      <i class='fas fa-spinner fa-spin' id='loadingIcon'></i>,
-      <div id='citySentences'></div>,
+      <input type='inputArea' id='cityName' placeholder='Enter your city here' value={this.state.city} onChange={this.handleCityName} />,
+      <label htmlFor='cityName'>Enter your city here</label>,
       <button type='inputArea' id='search'>Search</button>
     ]
     if (this.state.isAboutClick) {
       headerContent.push(
-        <div class='aboutContainer' id='aboutCityArea'>
-          <div class='infoContainer' id='infoContainer'>
-            <InfoContainer cityInfo={this.state.cityCountryData}/>
+        <div className='aboutContainer' id='aboutCityArea'>
+          <div className='infoContainer' id='infoContainer'>
+            <InfoContainer cityInfo={this.state.cityCountryData} onClickClose={this.handleCloseButton}/>
           </div>
         </div>
       )
-
     }
+    if (this.state.city || this.state.city !== '') headerContent.push(
+      <CitySentences sentencesStrings={this.state.sentencesStrings} />
+    )
 
     return (
       <header>
@@ -70,6 +92,25 @@ class Header extends Component {
       </header>
     )
   }
+}
+
+const CitySentences = props => {
+  return (
+    <i className='fas fa-spinner fa-spin' id='loadingIcon'></i>,
+    <div id='citySentences'>
+      {props.sentencesStrings.map(strings => strings[1])}
+    </div>
+  )
+    // .then(citySentenceDivs => {
+    //   citySentenceDivs.forEach(citySentenceDiv => {
+    //     citySentenceDiv[1].onclick = () => {
+    //       citySentencesContainer.style.height = '0'
+    //       citySentencesContainer.style.visibility = 'hidden'
+    //       citySentencesContainer.style.opacity = '0'
+    //       fetchWeatherForecastsHistory('index', citySentenceDiv[0])
+    //     }
+    //   })
+    // })
 }
 
 class InfoContainer extends Component {
@@ -122,27 +163,41 @@ class InfoContainer extends Component {
         headerClass='headingFat' headerID='languageHeading' headerValue='Official language: '
         stringClass='infoText' stringID='languageText' value={`${country.languageName} (${country.languageNameLocal}).`}
       />,
-      <InfoAboutCityString
+      <CloseButton
         class='closeButtonContainer' key='closeButton'
         iconClass='fas fa-times fa-lg' iconID='closeinfoButton'
+        onClick={this.props.onClickClose}
       />,
     ])
   }
 }
 
-const InfoAboutCityString = (props) => {
+const InfoAboutCityString = props => {
   const outputElements = []
 
   if (props.iconClass) outputElements.push(
-    <i class={props.iconClass} id={props.iconID}/>
+    <i className={props.iconClass} id={props.iconID}/>
+  )
+  if (props.headerClass) outputElements.push(
+    <p className={props.headerClass} id={props.stringID}>{props.headerValue}</p>
   )
   if (props.stringClass) outputElements.push(
-    <p class={props.stringClass} id={props.stringID}>{props.value}</p>
+    <p className={props.stringClass} id={props.stringID}>{props.value}</p>
   )
-  if (props.stringHeaderClass) outputElements.push(
-    <p class={props.headerClass} id={props.stringID}>{props.value}</p>
+
+  return (
+    <div className={props.class}>
+      {outputElements}
+    </div>
   )
-  return outputElements
+}
+
+const CloseButton = props => {
+  return (
+    <div className={props.class}>
+      <i className={props.iconClass} id={props.iconID} onClick={props.onClick}/>
+    </div>
+  )
 }
 
 const jsonToData = (promise) => {
