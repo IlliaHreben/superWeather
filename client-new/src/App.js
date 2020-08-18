@@ -21,7 +21,9 @@ class Header extends Component {
       isAboutClick: false,
       city: '',
       cityCountryData: {},
-      sentencesStrings: []
+      sentencesStrings: [],
+      didRenderSentences: false,
+      didRenderLoading: false
     }
 
     this.handleAbout = this.handleAbout.bind(this)
@@ -47,12 +49,18 @@ class Header extends Component {
   handleCityName(e) {
     this.setState({city: e.target.value})
     if (e.target.value || e.target.value !== '') {
+      this.setState({didRenderLoading: true})
       this.debouncer(e.target.value)
-    }
+
+    } else {this.setState({didRenderSentences: false})}
   }
 
   citySentencesWillUnmount() {
-    this.setState({sentencesStrings: []})
+    this.setState({
+      sentencesStrings: [],
+      didRenderLoading: false
+    })
+    this.debouncer.cancel()
   }
 
   debouncer = debounce(cityName => {
@@ -73,34 +81,44 @@ class Header extends Component {
           ]))
         } else {return []}
       })
-      .then(sentencesStrings => this.setState({sentencesStrings}))
+      .then(sentencesStrings => this.setState({
+        sentencesStrings,
+        didRenderSentences: true
+      }))
+      .then(() => this.setState({didRenderLoading: false}))
   }, 600)
 
   render () {
-    const headerContent = [
-      <button type='inputArea' id='about' onClick={this.handleAbout}>About</button>,
-      <input type='inputArea' id='cityName' placeholder='Enter your city here' value={this.state.city} onChange={this.handleCityName} />,
-      <label htmlFor='cityName'>Enter your city here</label>,
-      <button type='inputArea' id='search'>Search</button>
-    ]
-    if (this.state.isAboutClick) {
-      headerContent.push(
-        <div className='aboutContainer' id='aboutCityArea'>
-          <div className='infoContainer' id='infoContainer'>
-            <InfoContainer cityInfo={this.state.cityCountryData} onClickClose={this.handleCloseButton}/>
-          </div>
-        </div>
-      )
-    }
-    if (this.state.city || this.state.city !== '') {
-      headerContent.push(
-        <CitySentences sentencesStrings={this.state.sentencesStrings} willUnmount={this.citySentencesWillUnmount}/>
-      )
-    }
-
     return (
       <header>
-        {headerContent}
+        <button type='inputArea' id='about' onClick={this.handleAbout}>About</button>
+        <input type='inputArea' id='cityName' placeholder='Enter your city here' value={this.state.city} onChange={this.handleCityName} />
+
+        <label htmlFor='cityName'>Enter your city here</label>
+        <button type='inputArea' id='search'>Search</button>
+        {this.state.didRenderLoading
+          ? <i className='fas fa-spinner fa-spin' id='loadingIcon' key='loadingIcon' />
+          : null
+        }
+
+
+        {this.state.isAboutClick ? (
+          <div className='aboutContainer' id='aboutCityArea'>
+            <div className='infoContainer' id='infoContainer'>
+              <InfoContainer
+                cityInfo={this.state.cityCountryData}
+                onClickClose={this.handleCloseButton}
+              />
+            </div>
+          </div>
+        ) : null}
+
+        {this.state.didRenderSentences ? (
+          <CitySentences
+            sentencesStrings={this.state.sentencesStrings}
+            willUnmount={this.citySentencesWillUnmount}
+          />
+        ) : null}
       </header>
     )
   }
@@ -115,8 +133,7 @@ class CitySentences extends Component {
   }
   render() {
     return (
-      <i className='fas fa-spinner fa-spin' id='loadingIcon'></i>,
-      <div id='citySentences'>
+      <div id='citySentences' key={'citySentences'}>
         {this.props.sentencesStrings.map(strings => strings[1])}
       </div>
     )
@@ -196,13 +213,13 @@ const InfoAboutCityString = props => {
   const outputElements = []
 
   if (props.iconClass) outputElements.push(
-    <i className={props.iconClass} id={props.iconID}/>
+    <i className={props.iconClass} id={props.iconID} key={props.iconID}/>
   )
   if (props.headerClass) outputElements.push(
-    <p className={props.headerClass} id={props.stringID}>{props.headerValue}</p>
+    <p className={props.headerClass} id={props.headerID} key={props.headerID}>{props.headerValue}</p>
   )
   if (props.stringClass) outputElements.push(
-    <p className={props.stringClass} id={props.stringID}>{props.value}</p>
+    <p className={props.stringClass} id={props.stringID} key={props.stringID}>{props.value}</p>
   )
 
   return (

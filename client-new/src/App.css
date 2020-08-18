@@ -93,9 +93,8 @@ input:placeholder-shown + label {
 #loadingIcon {
   color: #535353;
   position: absolute;
-  left: 15.5%;
-  top: 50%;
-  opacity: 0;
+  left: 16.5%;
+  top: 7%;
 }
 
 /* ---------------CITY SENTENCE----------------- */
