@@ -221,43 +221,44 @@ input:placeholder-shown + label {
   padding-bottom: 14px;
 }
 
-#cityCountry, #description, #source, #dayName, #temperature,
-#cityCountryForecast, #descriptionForecast, #sourceForecast, #dayNameForecast, #temperatureForecast, #temperatureMinForecast,
+.cityCountryCurrent, .description, #source, .mainString, .temperature, .temperatureMin, .leftBottomString,
+#sourceForecast,
 #dateHistorySearch, #timeHistorySearch, #temperatureHistorySearch, #descriptionHistorySearch, #cityCountryHistorySearch, #dateTimeHistorySearch, #sourceHistorySearch {
   font-family: Roboto;
+  margin: 0;
   display: block;
   position: absolute;
   color: #FFFFFF;
   text-shadow: -1px 1px 2px black;
 }
 
-#cityCountry {
+.cityCountryCurrent {
   text-align: left;
   right: 8%;
   top: 20%;
 }
 
-#dayName, #dayNameForecast, #dateHistorySearch, #sourceHistorySearch {
+.mainString {
   font: 900 30px Roboto;
   top: 10%;
 }
 
-#description, #descriptionForecast {
+.description {
   top: 37%;
 }
 
-#temperature, #temperatureForecast {
+.temperature {
   font: 900 40px Roboto;
   bottom: 5%;
   right: 20px;
 }
 
-#source, #sourceForecast, #timeHistorySearch, #dateTimeHistorySearch {
+.leftBottomString {
   bottom: 10px;
-  font-size: 13;
+  font-size: 13px;
 }
 
-#temperatureMinForecast {
+.temperatureMin {
   font: 600 20px Roboto;
   bottom: 35%;
   right: 20px;
@@ -266,6 +267,7 @@ input:placeholder-shown + label {
 
 /*_____________ЭТО КОНТЕЙНЕР СО ВСЕМИ ВИДЖЕТАМИ_____________*/
 .widgetContainer, .lastSearchCity {
+  color: #FFFFFF;
   display: inline-block;
   vertical-align: top;
   position: relative;

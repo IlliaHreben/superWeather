@@ -38,6 +38,10 @@ class App extends Component {
     this.setState({didRenderWeather: true, key: 'cityName'})
   }
 
+  handleOnClickSentence = index => {
+    this.setState({key: 'index', nameOrIndex: index, didRenderWeather: true})
+  }
+
   render () {
     return (
       <ErrorBoundary>
@@ -45,6 +49,7 @@ class App extends Component {
           city={this.state.city}
           handleCityName={this.handleCityName}
           handleSearchButton={this.handleSearchButton}
+          handleOnClickSentence={this.handleOnClickSentence}
         />
         {this.state.didRenderWeather
           ? <WeathersContainer keyRequest={this.state.key} desiredValue={this.state.nameOrIndex}/>
@@ -83,6 +88,11 @@ class Header extends Component {
         isAboutClick: !this.state.isAboutClick
       })
     })
+  }
+
+  handleOnClickSentence = index => {
+    this.setState({didRenderSentences: false})
+    this.props.handleOnClickSentence(index)
   }
 
   handleCloseButton = () => {
@@ -144,6 +154,7 @@ class Header extends Component {
             <CitySentences
               willUnmount={this.citySentencesWillUnmount}
               cityCountry={this.state.citySentences}
+              onClick={this.handleOnClickSentence}
             />
           </ErrorBoundarySentences>
           )
@@ -216,25 +227,26 @@ const OneWeatherContainer = props => {
 const WeatherWidget = props => {
   const capitalizer = string => string.charAt(0).toUpperCase() + string.slice(1)
   const {country, city, weather} = props
-
+  console.log(moment(weather.date).isSame(Date.now(), 'day'))
   let dayName
-  if (weather.date && moment(weather.date).isSame(Date.now(), 'day')) {
-    dayName = moment(weather.date).format('dddd, Do')
-  }
-  dayName = 'Today'
+  if (moment(weather.date).isSame(Date.now(), 'day')) {
+    dayName = 'Today'
+  } else if (weather.date) {dayName = moment(weather.date).format('dddd, Do')}
+
+  const cityDateStyle = weather.date ? 'leftBottomString' : 'cityCountryCurrent'
 
   return (
     <div
       className='weatherWidget'
       style={{ backgroundImage: props.backgroundPath }}
     >
-      {weather.date ? <p id='dayName'>{dayName}</p> : null}
-      {city.name ? <p id='cityCountry'>{`${city.name}, ${country.name}`}</p> : null}
-      {weather.temperatureMin ? <p id='temperatureMinForecast'>{`${weather.temperatureMin}\u00B0C`}</p> : null}
-      <p id='temperature'>{`${weather.temperature}\u00B0C`}</p>
-      <p id='description'>{`${capitalizer(weather.iconPhrase)}.`}</p>
-      {weather.source ? <p id='source'>{weather.source}</p> : null}
-      {/* {weather.updatedAt ? <p id='source'>{weather.source}</p> : null} */}
+      {dayName ? <p className='mainString'>{dayName}</p> : null}
+      <p className={cityDateStyle}>{`${city.name}, ${country.name}`}</p>
+      {weather.temperatureMin ? <p className='temperatureMin'>{`${weather.temperatureMin}\u00B0C`}</p> : null}
+      <p className='temperature'>{`${weather.temperature}\u00B0C`}</p>
+      <p className='description'>{`${capitalizer(weather.iconPhrase)}.`}</p>
+      {weather.source ? <p className='leftBottomString'>{weather.source}</p> : null}
+      {weather.updatedAt ? <p className='leftBottomString'>{moment(weather.updatedAt).format('dddd, Do')}</p> : null}
     </div>
   )
 }

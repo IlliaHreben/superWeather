@@ -44,11 +44,9 @@ const formatForecasts = forecasts => {
     return {
       date: day.date,
       temperatureMin: day.temperatureMin,
-      temperatureMax: day.temperatureMax,
+      temperature: day.temperatureMax,
       iconId: day.iconId,
-      iconPhrase: day.iconPhrase,
-      createdAt: day.createdAt,
-      updatedAt: day.updatedAt
+      iconPhrase: day.iconPhrase
     }
   })
 }

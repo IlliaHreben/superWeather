@@ -8,7 +8,11 @@ export class CitySentences extends Component {
     const cityCountryData = this.props.cityCountry
     const citySentencesStrings = cityCountryData.map(({country, city}) => (
       (
-        <div className='citySentenceContainer' key={city.index}>
+        <div
+          className='citySentenceContainer'
+          key={city.index}
+          onClick={() => {this.props.onClick(city.index)}}
+        >
           <p className='cityNameSentence'>{`  ${city.name}, `}</p>
           <p className='countryNameSentence'>{country.name}</p>
           <p className='populationSentence'>{`${city.population} peoples`}</p>
