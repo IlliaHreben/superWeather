@@ -179,6 +179,11 @@ input:placeholder-shown + label {
 
 /* ---------------CURRENT CONDITION----------------- */
 
+#currentCondition {
+  background-color: #76b675;
+  border-bottom: 2px solid #549c53;
+}
+
 .mainContainer {
   height: 240px;
   max-width: 980px;
@@ -188,6 +193,8 @@ input:placeholder-shown + label {
   -khtml-border-radius: 12px;
   white-space: nowrap;
   margin: 20px 20px 0 20px;
+  box-shadow: -2px 2px 10px rgba(0,0,0,0.7);
+  background-color: white;
 }
 
 #search::after .mainContainer {
@@ -205,16 +212,13 @@ input:placeholder-shown + label {
   border-radius: 12px 12px 0 0;
 }
 
-.headerTextContainer {
-  padding-bottom: 14px;
-}
-
 .headerText {
   font: 300 1.4em Roboto;
   color: #f1f1f1;
   text-align: center;
   margin: 0;
   text-shadow: -1px 1px 2px #00000099;
+  padding-bottom: 14px;
 }
 
 #cityCountry, #description, #source, #dayName, #temperature,
@@ -290,7 +294,7 @@ input:placeholder-shown + label {
 }
 
 /*_____________ЭТО САМИ ВИДЖЕТЫ_____________*/
-.weatherWidgetContainer, .forecastWidget, .lastSearchWidget {
+.weatherWidget, .forecastWidget, .lastSearchWidget {
   display: block;
   background: #4F4E4E;
   width: 250px;

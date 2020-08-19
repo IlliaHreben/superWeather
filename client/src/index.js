@@ -4,78 +4,78 @@ import {debounce} from 'lodash'
 import './styles.css'
 import '@openfonts/roboto_cyrillic'
 
-function importAll(r) {
-  let images = {}
-  r.keys().map(item => { images[item.replace('./', '').replace('.png', '')] = r(item).default })
-  return images
-}
+// function importAll(r) {
+//   let images = {}
+//   r.keys().map(item => { images[item.replace('./', '').replace('.png', '')] = r(item).default })
+//   return images
+// }
+//
+// const widgetBackgrounds = importAll(require.context('./pictures/widgetPics', true, /\.(png|jpe?g|svg)$/));
+//
+// function capitalizer(string) {
+//     return string.charAt(0).toUpperCase() + string.slice(1);
+// }
 
-const widgetBackgrounds = importAll(require.context('./pictures/widgetPics', true, /\.(png|jpe?g|svg)$/));
-
-function capitalizer(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-document.getElementById('cityName').oninput = (event) => {
-  document.getElementById('loadingIcon').style.opacity = '1'
-
-  debouncer(event)
-}
-
-const debouncer = debounce((event) => {
-  onKeyupSearchCity(event.target.value)
-    .then(() => {
-      document.getElementById('loadingIcon').style.opacity = '0'
-    })
-}, 600)
-
-const onKeyupSearchCity = (cityName) => {
-  const citySentencesContainer = document.getElementById('citySentences')
-  citySentencesContainer.innerHTML = ''
-  citySentencesContainer.style.height = 'auto'
-  citySentencesContainer.style.visibility = 'visible'
-  citySentencesContainer.style.opacity = '1'
-
-  if (!cityName || cityName === '') {
-    console.log(`You did not enter the city name.`)
-    citySentencesContainer.style.height = '0'
-    citySentencesContainer.style.visibility = 'hidden'
-    citySentencesContainer.style.opacity = '0'
-    return Promise.resolve([])
-  }
-
-  const promiseSearchSentence = window.fetch(`/api/searchSentence?cityName=${cityName}`)
-
-  return jsonToData(promiseSearchSentence)
-    .then(citySentences => {
-
-      return citySentences.map(citySentence => ([citySentence.city.index, displayCitySentence(citySentence, citySentencesContainer)]))
-    })
-    .then(citySentenceDivs => {
-      citySentenceDivs.forEach(citySentenceDiv => {
-        citySentenceDiv[1].onclick = () => {
-          citySentencesContainer.style.height = '0'
-          citySentencesContainer.style.visibility = 'hidden'
-          citySentencesContainer.style.opacity = '0'
-          fetchWeatherForecastsHistory('index', citySentenceDiv[0])
-        }
-      })
-    })
-
-}
-
-const displayCitySentence = ({country, city}, parent) => {
-
-  const cityNameSentence = createP('cityNameSentence', `  ${city.name}, `)
-  const countryNameSentence = createP('countryNameSentence', country.name)
-  const populationSentence = createP('populationSentence', `${city.population} peoples`)
-
-  return createDivText(
-    parent,
-    'citySentenceContainer',
-    [cityNameSentence, countryNameSentence, populationSentence]
-  )
-}
+// document.getElementById('cityName').oninput = (event) => {
+//   document.getElementById('loadingIcon').style.opacity = '1'
+//
+//   debouncer(event)
+// }
+//
+// const debouncer = debounce((event) => {
+//   onKeyupSearchCity(event.target.value)
+//     .then(() => {
+//       document.getElementById('loadingIcon').style.opacity = '0'
+//     })
+// }, 600)
+//
+// const onKeyupSearchCity = (cityName) => {
+//   const citySentencesContainer = document.getElementById('citySentences')
+//   citySentencesContainer.innerHTML = ''
+//   citySentencesContainer.style.height = 'auto'
+//   citySentencesContainer.style.visibility = 'visible'
+//   citySentencesContainer.style.opacity = '1'
+//
+//   if (!cityName || cityName === '') {
+//     console.log(`You did not enter the city name.`)
+//     citySentencesContainer.style.height = '0'
+//     citySentencesContainer.style.visibility = 'hidden'
+//     citySentencesContainer.style.opacity = '0'
+//     return Promise.resolve([])
+//   }
+//
+//   const promiseSearchSentence = window.fetch(`/api/searchSentence?cityName=${cityName}`)
+//
+//   return jsonToData(promiseSearchSentence)
+//     .then(citySentences => {
+//
+//       return citySentences.map(citySentence => ([citySentence.city.index, displayCitySentence(citySentence, citySentencesContainer)]))
+//     })
+//     .then(citySentenceDivs => {
+//       citySentenceDivs.forEach(citySentenceDiv => {
+//         citySentenceDiv[1].onclick = () => {
+//           citySentencesContainer.style.height = '0'
+//           citySentencesContainer.style.visibility = 'hidden'
+//           citySentencesContainer.style.opacity = '0'
+//           fetchWeatherForecastsHistory('index', citySentenceDiv[0])
+//         }
+//       })
+//     })
+//
+// }
+//
+// const displayCitySentence = ({country, city}, parent) => {
+//
+//   const cityNameSentence = createP('cityNameSentence', `  ${city.name}, `)
+//   const countryNameSentence = createP('countryNameSentence', country.name)
+//   const populationSentence = createP('populationSentence', `${city.population} peoples`)
+//
+//   return createDivText(
+//     parent,
+//     'citySentenceContainer',
+//     [cityNameSentence, countryNameSentence, populationSentence]
+//   )
+// }
 
 
 
@@ -133,68 +133,68 @@ document.getElementById('search').onclick = () => {
   fetchWeatherForecastsHistory('cityName', cityName)
 }
 
-document.getElementById('about').onclick = () => {
-  const cityName = document.getElementById('cityName').value
-  if (!cityName || cityName === '') {
-    console.log(`You did not enter the city name.`)
-    return
-  }
-
-  const promiseAboutCity = window.fetch(`/api/aboutCity?cityName=${cityName}`)
-
-  jsonToData(promiseAboutCity)
-    .then(({country, city}) => {
-      const cityNameContainer = document.getElementById('cityNameContainer')
-      const aboutContainer = document.createElement('div')
-      aboutContainer.className = 'aboutContainer'
-      aboutContainer.id = 'aboutCityArea'
-      cityNameContainer.appendChild(aboutContainer)
-      const infoContainer = document.createElement('div')
-      infoContainer.className = 'infoContainer'
-      infoContainer.id = 'infoContainer'
-      const heading             = createP('headingName',        `${city.name}, ${country.name} (${country.nameLocal})`, 'nameCountry', 'H1')
-      createDivText(infoContainer, 'headingContainer', [heading])
-
-      const iconPopulation      = createI('fas fa-users fa-lg')
-      const populationHeading   = createP('headingFat',  'Population: ',  'populationHeading')
-      const populationText      = createP('infoText',     `${city.population} peoples.`,    'populationText')
-      createDivText(infoContainer, 'stringInfoContainer', [iconPopulation, populationHeading, populationText])
-
-      const iconRegion          = createI('fas fa-globe fa-lg')
-      const regionHeading       = createP('headingFat',      'Region: ',  'regionHeading')
-      const regionText          = createP('infoText',         `${country.region}.`,    'regionText')
-      createDivText(infoContainer, 'stringInfoContainer', [iconRegion, regionHeading, regionText])
-
-      const iconCoordinates     = createI('fas fa-map-marked-alt fa-lg')
-      const coordinatesHeading  = createP('headingFat', 'Coordinates: ',  'coordinatesHeading')
-      const coordinatesText     = createP('infoText',    `${city.latitude}, ${city.longitude}.`,    'coordinatesText')
-      createDivText(infoContainer, 'stringInfoContainer', [iconCoordinates, coordinatesHeading, coordinatesText])
-
-      const iconCurrency        = createI('fas fa-wallet fa-lg')
-      const currencyHeading     = createP('headingFat',    'Currency code: ',  'currencyHeading')
-      const currencyText        = createP('infoText',       `${country.currencyCode}.`,    'currencyText')
-      createDivText(infoContainer, 'stringInfoContainer', [iconCurrency, currencyHeading, currencyText])
-
-      const iconCallingCode     = createI('fas fa-phone fa-lg')
-      const callingCodeHeading  = createP('headingFat', 'Country calling code: ',  'callingCodeHeading')
-      const callingCodeText     = createP('infoText',    `${country.callingCode}.`,    'callingCodeText')
-      createDivText(infoContainer, 'stringInfoContainer', [iconCallingCode, callingCodeHeading, callingCodeText])
-
-      const iconLanguage        = createI('fas fa-language fa-lg')
-      const languageHeading     = createP('headingFat',    'Official language: ',  'languageHeading')
-      const languageText        = createP('infoText',       `${country.languageName} (${country.languageNameLocal}).`,    'languageText')
-      createDivText(infoContainer, 'stringInfoContainer', [iconLanguage, languageHeading, languageText])
-
-      const closeButton         = createI('fas fa-times fa-lg', )
-      createDivText(infoContainer, 'closeButtonContainer', [closeButton], 'closeinfoButton')
-
-      aboutContainer.appendChild(infoContainer)
-
-      document.getElementById('closeinfoButton').onclick = () => {
-        document.getElementById('aboutCityArea').remove()
-      }
-    })
-}
+// document.getElementById('about').onclick = () => {
+//   const cityName = document.getElementById('cityName').value
+//   if (!cityName || cityName === '') {
+//     console.log(`You did not enter the city name.`)
+//     return
+//   }
+//
+//   const promiseAboutCity = window.fetch(`/api/aboutCity?cityName=${cityName}`)
+//
+//   jsonToData(promiseAboutCity)
+//     .then(({country, city}) => {
+//       const cityNameContainer = document.getElementById('cityNameContainer')
+//       const aboutContainer = document.createElement('div')
+//       aboutContainer.className = 'aboutContainer'
+//       aboutContainer.id = 'aboutCityArea'
+//       cityNameContainer.appendChild(aboutContainer)
+//       const infoContainer = document.createElement('div')
+//       infoContainer.className = 'infoContainer'
+//       infoContainer.id = 'infoContainer'
+//       const heading             = createP('headingName',        `${city.name}, ${country.name} (${country.nameLocal})`, 'nameCountry', 'H1')
+//       createDivText(infoContainer, 'headingContainer', [heading])
+//
+//       const iconPopulation      = createI('fas fa-users fa-lg')
+//       const populationHeading   = createP('headingFat',  'Population: ',  'populationHeading')
+//       const populationText      = createP('infoText',     `${city.population} peoples.`,    'populationText')
+//       createDivText(infoContainer, 'stringInfoContainer', [iconPopulation, populationHeading, populationText])
+//
+//       const iconRegion          = createI('fas fa-globe fa-lg')
+//       const regionHeading       = createP('headingFat',      'Region: ',  'regionHeading')
+//       const regionText          = createP('infoText',         `${country.region}.`,    'regionText')
+//       createDivText(infoContainer, 'stringInfoContainer', [iconRegion, regionHeading, regionText])
+//
+//       const iconCoordinates     = createI('fas fa-map-marked-alt fa-lg')
+//       const coordinatesHeading  = createP('headingFat', 'Coordinates: ',  'coordinatesHeading')
+//       const coordinatesText     = createP('infoText',    `${city.latitude}, ${city.longitude}.`,    'coordinatesText')
+//       createDivText(infoContainer, 'stringInfoContainer', [iconCoordinates, coordinatesHeading, coordinatesText])
+//
+//       const iconCurrency        = createI('fas fa-wallet fa-lg')
+//       const currencyHeading     = createP('headingFat',    'Currency code: ',  'currencyHeading')
+//       const currencyText        = createP('infoText',       `${country.currencyCode}.`,    'currencyText')
+//       createDivText(infoContainer, 'stringInfoContainer', [iconCurrency, currencyHeading, currencyText])
+//
+//       const iconCallingCode     = createI('fas fa-phone fa-lg')
+//       const callingCodeHeading  = createP('headingFat', 'Country calling code: ',  'callingCodeHeading')
+//       const callingCodeText     = createP('infoText',    `${country.callingCode}.`,    'callingCodeText')
+//       createDivText(infoContainer, 'stringInfoContainer', [iconCallingCode, callingCodeHeading, callingCodeText])
+//
+//       const iconLanguage        = createI('fas fa-language fa-lg')
+//       const languageHeading     = createP('headingFat',    'Official language: ',  'languageHeading')
+//       const languageText        = createP('infoText',       `${country.languageName} (${country.languageNameLocal}).`,    'languageText')
+//       createDivText(infoContainer, 'stringInfoContainer', [iconLanguage, languageHeading, languageText])
+//
+//       const closeButton         = createI('fas fa-times fa-lg', )
+//       createDivText(infoContainer, 'closeButtonContainer', [closeButton], 'closeinfoButton')
+//
+//       aboutContainer.appendChild(infoContainer)
+//
+//       document.getElementById('closeinfoButton').onclick = () => {
+//         document.getElementById('aboutCityArea').remove()
+//       }
+//     })
+// }
 
 function displayHeaderToUser (requiredText, headingContainerId) {
   const headingContainer = document.getElementById(headingContainerId)
@@ -205,35 +205,35 @@ function displayHeaderToUser (requiredText, headingContainerId) {
 }
 
 
-function createDivText (parent, className, children, id) {
-  const div = document.createElement('div')
-  div.className = className
-  children.forEach(child => div.appendChild(child))
-  if (id) {
-    div.id = id
-  }
-  parent.appendChild(div)
-  return div
-}
-
-function createI (className, id) {
-  const i = document.createElement('I')
-  i.className = className
-  if (id) {
-    i.id = id
-  }
-
-  return i
-}
-
-function createP (className, text, id, type) {
-  if (!type) type = 'P'
-  const p = document.createElement(type)
-  if (id) p.id = id
-  p.className = className
-  p.innerText = text
-  return p
-}
+// function createDivText (parent, className, children, id) {
+//   const div = document.createElement('div')
+//   div.className = className
+//   children.forEach(child => div.appendChild(child))
+//   if (id) {
+//     div.id = id
+//   }
+//   parent.appendChild(div)
+//   return div
+// }
+//
+// function createI (className, id) {
+//   const i = document.createElement('I')
+//   i.className = className
+//   if (id) {
+//     i.id = id
+//   }
+//
+//   return i
+// }
+//
+// function createP (className, text, id, type) {
+//   if (!type) type = 'P'
+//   const p = document.createElement(type)
+//   if (id) p.id = id
+//   p.className = className
+//   p.innerText = text
+//   return p
+// }
 
 const jsonToData = (promise) => {
   return promise

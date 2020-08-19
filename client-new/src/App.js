@@ -2,14 +2,55 @@ import React, {Component} from 'react'
 import './App.css'
 import debounce from 'lodash/debounce'
 import InfoContainer from './Components/InfoContainer'
+import {CitySentences, ErrorBoundarySentences} from './Components/CitySentences'
+import moment from 'moment'
+
+
+// import images from './pictures/widgetPics'
+
+// const importAll = r => {
+//   let images = {}
+//   r.keys().map(item => { images[item.replace('/', '').replace('.png', '')] = r(item).default })
+//   return images
+// }
+
+const widgetBackgrounds = require.context('./pictures/widgetPics', true, /\.(png|jpe?g|svg)$/)
+
+function getImageUrl (source, imgName) {
+  const path = `./${source}/${imgName}.png`
+  return `url(${widgetBackgrounds(path)}`
+}
 
 class App extends Component {
+  state = {
+    didRenderWeather: false,
+    city: '',
+    nameOrIndex: null,
+    key: ''
+
+  }
+
+  handleCityName = cityName => {
+    this.setState({nameOrIndex: cityName, city: cityName})
+  }
+
+  handleSearchButton = () => {
+    this.setState({didRenderWeather: true, key: 'cityName'})
+  }
 
   render () {
     return (
       <ErrorBoundary>
-        <Header id='cityNameContainer'/>
-      </ErrorBoundary>
+        <Header
+          city={this.state.city}
+          handleCityName={this.handleCityName}
+          handleSearchButton={this.handleSearchButton}
+        />
+        {this.state.didRenderWeather
+          ? <WeathersContainer keyRequest={this.state.key} desiredValue={this.state.nameOrIndex}/>
+          : null
+        }
+            </ErrorBoundary>
     )
   }
 }
@@ -18,34 +59,34 @@ class Header extends Component {
 
   state = {
     isAboutClick: false,
-    city: '',
     cityCountryData: {},
     citySentences: [],
     didRenderSentences: false,
     didRenderLoading: false
   }
 
+  onInputChange = e => {
+    const cityName = e.target.value
+    this.props.handleCityName(cityName)
+    if (cityName && cityName !== '') {
+      this.setState({didRenderLoading: true})
+      return this.fetchCitySentences(cityName)
+
+    } else {this.setState({didRenderSentences: false})}
+  }
+
   handleAbout = () => {
-    jsonToData(fetch(`/api/aboutCity?cityName=${this.state.city}`))
-      .then(cityCountryData => {
-        this.setState({
-          cityCountryData,
-          isAboutClick: !this.state.isAboutClick
-        })
+    jsonToData(fetch(`/api/aboutCity?cityName=${this.props.city}`))
+    .then(cityCountryData => {
+      this.setState({
+        cityCountryData,
+        isAboutClick: !this.state.isAboutClick
       })
+    })
   }
 
   handleCloseButton = () => {
     this.setState({isAboutClick: !this.state.isAboutClick})
-  }
-
-  handleCityName = e => {
-    this.setState({city: e.target.value})
-    if (e.target.value || e.target.value !== '') {
-      this.setState({didRenderLoading: true})
-      return this.fetchCitySentences(e.target.value)
-
-    } else {this.setState({didRenderSentences: false})}
   }
 
   citySentencesWillUnmount = () => {
@@ -55,12 +96,12 @@ class Header extends Component {
 
   fetchCitySentences = debounce(cityName => {
     return jsonToData( fetch(`/api/searchSentence?cityName=${cityName}`) )
-      .catch(() => [] )
-      .then(citySentences => this.setState({
-        citySentences,
-        didRenderSentences: true,
-        didRenderLoading: false
-      }))
+    .catch(() => [] )
+    .then(citySentences => this.setState({
+      citySentences,
+      didRenderSentences: true,
+      didRenderLoading: false
+    }))
 
   }, 600)
 
@@ -68,19 +109,19 @@ class Header extends Component {
 
   render () {
     return (
-      <header>
+      <header id='cityNameContainer'>
         <button type='inputArea' id='about' onClick={this.handleAbout}>About</button>
         <input
           type='inputArea'
           id='cityName'
           placeholder='Enter your city here'
-          value={this.state.city}
-          onChange={this.handleCityName}
+          value={this.props.city}
+          onChange={this.onInputChange}
           autoComplete='off'
         />
 
         <label htmlFor='cityName'>Enter your city here</label>
-        <button type='inputArea' id='search'>Search</button>
+        <button type='inputArea' id='search' onClick={this.props.handleSearchButton}>Search</button>
         {this.state.didRenderLoading
           ? <i className='fas fa-spinner fa-spin' id='loadingIcon' key='loadingIcon' />
           : null
@@ -112,54 +153,92 @@ class Header extends Component {
   }
 }
 
-
-class CitySentences extends Component {
-  componentWillUnmount() {
-    this.props.willUnmount()
+class WeathersContainer extends Component {
+  state = {
+    sources: []
   }
+
+  componentDidMount() {
+    const key = this.props.keyRequest
+    const desiredValue = this.props.desiredValue
+    jsonToData(fetch(`/api/accu?${key}=${desiredValue}`))
+      .then(data => {
+        this.setState(state => ({sources: [...state.sources, data]} ))
+      })
+
+    jsonToData(fetch(`/api/open?${key}=${desiredValue}`))
+      .then(data => {
+        this.setState(state => ({sources: [...state.sources, data]} ))
+      })
+
+    jsonToData(fetch(`/api/yahoo?${key}=${desiredValue}`))
+      .then(data => {
+        this.setState(state => ({sources: [...state.sources, data]} ))
+      })
+  }
+
   render() {
-    const cityCountryData = this.props.cityCountry
-    const citySentencesStrings = cityCountryData.map(({country, city}) => (
-      (
-        <div className='citySentenceContainer' key={city.index}>
-          <p className='cityNameSentence'>{`  ${city.name}, `}</p>
-          <p className='countryNameSentence'>{country.name}</p>
-          <p className='populationSentence'>{`${city.population} peoples`}</p>
-        </div>
-      )
-    ))
+    console.log(this.state.sources)
     return (
-      <div id='citySentences' key={'citySentences'}>
-        {citySentencesStrings}
+      <div className='mainContainer' id='sectionContainer'>
+        <div className='mainContainerHeader' id='currentCondition'>
+          <h1 className='headerText'>Current condition for requested city</h1>
+        </div>
+        {this.state.sources.map(source => {
+          return <OneWeatherContainer source={source} />
+        })}
       </div>
     )
   }
 }
 
-class ErrorBoundarySentences extends Component {
-  state = { error: null, errorInfo: null }
+const OneWeatherContainer = props => {
+  const {country, city, weather, forecasts} = props.source
+  return (
+    <div
+      id={weather.source.toLowerCase()}
+      className='widgetContainer'
+    >
+      <WeatherWidget country={country} city={city} weather={weather} backgroundPath={getImageUrl(weather.source, weather.iconId)}/>
+      <div className='forecastsContainer'>
+        {forecasts.map(day => {
+          return (
 
-  componentDidCatch(error, errorInfo) {
-    console.log(error.message)
-    this.setState({
-      error: error,
-      errorInfo: errorInfo
-    })
-  }
+              <WeatherWidget country={country} city={city} weather={day} backgroundPath={getImageUrl(weather.source, day.iconId)}/>
 
-  render() {
-    if (this.state.errorInfo) {
-      return [
-        <div id='citySentences'>
-          <div className='citySentenceContainer'>
-            <p className='countryNameSentence'>Can'not find city.</p>
-          </div>
-        </div>
-      ]
-    }
-    return this.props.children;
-  }
+          )
+        })}
+      </div>
+    </div>
+  )
 }
+
+const WeatherWidget = props => {
+  const capitalizer = string => string.charAt(0).toUpperCase() + string.slice(1)
+  const {country, city, weather} = props
+
+  let dayName
+  if (weather.date && moment(weather.date).isSame(Date.now(), 'day')) {
+    dayName = moment(weather.date).format('dddd, Do')
+  }
+  dayName = 'Today'
+
+  return (
+    <div
+      className='weatherWidget'
+      style={{ backgroundImage: props.backgroundPath }}
+    >
+      {weather.date ? <p id='dayName'>{dayName}</p> : null}
+      {city.name ? <p id='cityCountry'>{`${city.name}, ${country.name}`}</p> : null}
+      {weather.temperatureMin ? <p id='temperatureMinForecast'>{`${weather.temperatureMin}\u00B0C`}</p> : null}
+      <p id='temperature'>{`${weather.temperature}\u00B0C`}</p>
+      <p id='description'>{`${capitalizer(weather.iconPhrase)}.`}</p>
+      {weather.source ? <p id='source'>{weather.source}</p> : null}
+      {/* {weather.updatedAt ? <p id='source'>{weather.source}</p> : null} */}
+    </div>
+  )
+}
+
 
 class ErrorBoundary extends Component {
   state = { error: null, errorInfo: null }
