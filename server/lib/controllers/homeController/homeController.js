@@ -56,7 +56,7 @@ const getCityCountry = (query) => {
     return getCityCountryByIndex(query.index)
   } else if (query.cityName) {
     return getOneCityCountryByName(query.cityName)
-  }
+  } else if (query.coordinates) {}
 }
 
 const sendPromiseToClient = (res, promise) => {
@@ -87,10 +87,5 @@ const sendPromiseToClient = (res, promise) => {
       }
     })
 }
-
-// fetch('https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBlZzpcj22jqN3A4IpBzygaB1XmlVGA3zM')
-//   .then(res => {
-//     console.log(res)
-//   })
 
 module.exports = {sendPromiseToClient, getCityCountry, formatCountry, formatCity, formatWeather, formatForecasts}

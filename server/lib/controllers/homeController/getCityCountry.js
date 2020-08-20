@@ -2,6 +2,7 @@ const citiesBase = require('all-the-cities')
 const countryData = require('country-codes-list').customList('countryCode', '{countryNameEn},{countryNameLocal},{countryCode},{region},{currencyCode},{officialLanguageNameEn},{officialLanguageNameLocal},+{countryCallingCode}')
 const diacriticsRemove = require ('diacritics').remove
 const ServiceError = require('../../ServiceError')
+const {inRange} = require('lodash')
 
 function getCityCountryByName (cityName) {
   const cityData = formatCityData(cityName).slice(0, 10)
@@ -22,6 +23,31 @@ function getOneCityCountryByName (cityName) {
   return formatCityCountry(cityData)
 }
 
+function getOneCityCountryByCoords (cityInfo) {
+  const [cityData] = formatCityDataByCoords(cityInfo)
+
+  return formatCityCountry(cityData)
+}
+
+function formatCityDataByCoords (cityData) {
+  const middleSuitableСities = citiesBase
+    .filter(city => {
+      return  city.name.match(cityData.cityName) &&
+              city.country.match(cityData.countryCode)
+    })
+    .sort((curr, next) => next.population - curr.population)
+
+  const suitableСities = middleSuitableСities.filter(city => {
+    return  inRange(city.loc.coordinates[1], +cityData.lat - 0.5, +cityData.lat + 0.5) &&
+            inRange(city.loc.coordinates[0], +cityData.lon - 0.5, +cityData.lon + 0.5)
+  })
+
+  if (!suitableСities[0]) {
+    throw new ServiceError('Cannot find city', 'CITY_NOT_FOUND')
+  }
+  return suitableСities
+}
+
 function formatCityData (desiredValue) {
   let cell
   if (!+desiredValue) {
@@ -33,7 +59,7 @@ function formatCityData (desiredValue) {
   const suitableСities = citiesBase
     .filter(city => city[cell].toString().match(desiredValue.toString()))
     .sort((curr, next) => next.population - curr.population)
-    // console.log(suitableСities.slice(0,3))
+
   if (!suitableСities[0]) {
     throw new ServiceError('Cannot find city', 'CITY_NOT_FOUND')
   }
@@ -65,4 +91,4 @@ function formatCityCountry (city) {
 }
 
 
-module.exports = {getCityCountryByName, getCityCountryByIndex, getOneCityCountryByName}
+module.exports = {getCityCountryByName, getCityCountryByIndex, getOneCityCountryByName, getOneCityCountryByCoords}

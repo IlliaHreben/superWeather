@@ -18,12 +18,35 @@ function getImageUrl (source, imgName) {
 
 const capitalizer = string => string.charAt(0).toUpperCase() + string.slice(1)
 
+const getPosition = () => {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject)
+  })
+}
+
 class App extends Component {
   state = {
     didRenderWeather: false,
     city: '',
     nameOrIndex: null,
     key: ''
+
+  }
+
+  componentDidMount () {
+    getPosition()
+      .then(({coords: {latitude, longitude}}) => {
+        jsonToData(fetch(`/api/getGeolocation?lat=${latitude}&lon=${longitude}`))
+          .then(data => {
+            console.log(data)
+            this.setState({
+              city: data.city.name,
+              nameOrIndex: data.city.index,
+              key: 'index',
+              didRenderWeather: true
+            })
+          })
+      })
 
   }
 
@@ -183,9 +206,9 @@ class HistorySearchContainer extends Component {
         <div className='mainContainerHeader' id='lastSearches'>
           <h1 className='headerText'>Last condition searches</h1>
         </div>
-        {this.state.cities.map(city => {
-          return <OneWeatherContainer source={city} key={city.city.index}/>
-        })}
+          {this.state.cities.map(city => {
+            return <OneWeatherContainer source={city} key={city.city.index}/>
+          })}
       </div>
     )
   }
@@ -221,9 +244,9 @@ class WeathersContainer extends Component {
         <div className='mainContainerHeader' id='currentCondition'>
           <h1 className='headerText'>Current condition for requested city</h1>
         </div>
-        {this.state.sources.map(source => {
-          return <OneWeatherContainer source={source} key={source.weather.source}/>
-        })}
+          {this.state.sources.map(source => {
+            return <OneWeatherContainer source={source} key={source.weather.source}/>
+          })}
       </div>
     )
   }
