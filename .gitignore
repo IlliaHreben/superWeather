@@ -59,5 +59,6 @@ typings/
 
 widgetPicksRaw/
 
-client/dist/
+!client/dist/	client/dist/
+client/dist/*
 !client/dist/index.html
