@@ -6,20 +6,14 @@ import {CitySentences, ErrorBoundarySentences} from './Components/CitySentences'
 import moment from 'moment'
 
 
-// import images from './pictures/widgetPics'
-
-// const importAll = r => {
-//   let images = {}
-//   r.keys().map(item => { images[item.replace('/', '').replace('.png', '')] = r(item).default })
-//   return images
-// }
-
 const widgetBackgrounds = require.context('./pictures/widgetPics', true, /\.(png|jpe?g|svg)$/)
 
 function getImageUrl (source, imgName) {
   const path = `./${source}/${imgName}.png`
   return `url(${widgetBackgrounds(path)}`
 }
+
+const capitalizer = string => string.charAt(0).toUpperCase() + string.slice(1)
 
 class App extends Component {
   state = {
@@ -52,7 +46,10 @@ class App extends Component {
           handleOnClickSentence={this.handleOnClickSentence}
         />
         {this.state.didRenderWeather
-          ? <WeathersContainer keyRequest={this.state.key} desiredValue={this.state.nameOrIndex}/>
+          ? ([
+              <WeathersContainer keyRequest={this.state.key} desiredValue={this.state.nameOrIndex} key='weathersContainer'/>,
+              <HistorySearchContainer key='historySearchContainer'/>
+            ])
           : null
         }
             </ErrorBoundary>
@@ -119,47 +116,74 @@ class Header extends Component {
 
   render () {
     return (
-      <header id='cityNameContainer'>
-        <button type='inputArea' id='about' onClick={this.handleAbout}>About</button>
-        <input
-          type='inputArea'
-          id='cityName'
-          placeholder='Enter your city here'
-          value={this.props.city}
-          onChange={this.onInputChange}
-          autoComplete='off'
-        />
+      <header>
+        <div id='cityNameContainer'>
+          <button className='headerButton' id='about' onClick={this.handleAbout}>About</button>
+          <input
+            type='text'
+            id='cityName'
+            // placeholder='Enter your city here'
+            value={this.props.city}
+            onChange={this.onInputChange}
+            autoComplete='off'
+            required
+          />
 
-        <label htmlFor='cityName'>Enter your city here</label>
-        <button type='inputArea' id='search' onClick={this.props.handleSearchButton}>Search</button>
-        {this.state.didRenderLoading
-          ? <i className='fas fa-spinner fa-spin' id='loadingIcon' key='loadingIcon' />
-          : null
-        }
+          <label htmlFor='cityName' className='cityNameLabel'>Enter your city here</label>
+          <button className='headerButton' id='search' onClick={this.props.handleSearchButton}>Search</button>
+          {this.state.didRenderLoading
+            ? <i className='fas fa-spinner fa-spin' id='loadingIcon' key='loadingIcon' />
+            : null
+          }
 
 
-        {this.state.isAboutClick ? (
-          <div className='aboutContainer' id='aboutCityArea'>
-            <div className='infoContainer' id='infoContainer'>
-              <InfoContainer
-                cityInfo={this.state.cityCountryData}
-                onClickClose={this.handleCloseButton}
-              />
+          {this.state.isAboutClick ? (
+            <div className='aboutContainer' id='aboutCityArea'>
+              <div className='infoContainer' id='infoContainer'>
+                <InfoContainer
+                  cityInfo={this.state.cityCountryData}
+                  onClickClose={this.handleCloseButton}
+                />
+              </div>
             </div>
-          </div>
-        ) : null}
+          ) : null}
 
-        {this.state.didRenderSentences
-          ? (<ErrorBoundarySentences>
-            <CitySentences
-              willUnmount={this.citySentencesWillUnmount}
-              cityCountry={this.state.citySentences}
-              onClick={this.handleOnClickSentence}
-            />
-          </ErrorBoundarySentences>
-          )
-          : null}
+          {this.state.didRenderSentences
+            ? (<ErrorBoundarySentences>
+              <CitySentences
+                willUnmount={this.citySentencesWillUnmount}
+                cityCountry={this.state.citySentences}
+                onClick={this.handleOnClickSentence}
+              />
+            </ErrorBoundarySentences>
+            )
+            : null}
+        </div>
       </header>
+    )
+  }
+}
+
+class HistorySearchContainer extends Component {
+  state = {
+    cities: []
+  }
+
+  componentDidMount() {
+    jsonToData( fetch(`/api/showhistory`) )
+      .then(data => { this.setState({cities: data}) })
+  }
+
+  render() {
+    return (
+      <div className='mainContainer' id='lastSearchesContainer'>
+        <div className='mainContainerHeader' id='lastSearches'>
+          <h1 className='headerText'>Last condition searches</h1>
+        </div>
+        {this.state.cities.map(city => {
+          return <OneWeatherContainer source={city} key={city.city.index}/>
+        })}
+      </div>
     )
   }
 }
@@ -189,14 +213,13 @@ class WeathersContainer extends Component {
   }
 
   render() {
-    console.log(this.state.sources)
     return (
       <div className='mainContainer' id='sectionContainer'>
         <div className='mainContainerHeader' id='currentCondition'>
           <h1 className='headerText'>Current condition for requested city</h1>
         </div>
         {this.state.sources.map(source => {
-          return <OneWeatherContainer source={source} />
+          return <OneWeatherContainer source={source} key={source.weather.source}/>
         })}
       </div>
     )
@@ -204,19 +227,24 @@ class WeathersContainer extends Component {
 }
 
 const OneWeatherContainer = props => {
-  const {country, city, weather, forecasts} = props.source
+  const {country, city, weather, forecasts, weathers} = props.source
+  const dropDownElements = forecasts ? forecasts : weathers
+  const backgroundSource = weather.backgroundSource || weather.source
+
   return (
-    <div
-      id={weather.source.toLowerCase()}
-      className='widgetContainer'
-    >
-      <WeatherWidget country={country} city={city} weather={weather} backgroundPath={getImageUrl(weather.source, weather.iconId)}/>
+    <div className='widgetContainer' >
+      <WeatherWidget country={country} city={city} weather={weather} backgroundPath={getImageUrl(backgroundSource, weather.iconId)}/>
       <div className='forecastsContainer'>
-        {forecasts.map(day => {
+        {dropDownElements.map(dropDownElement => {
+          const source = weathers ? dropDownElement.source : backgroundSource
           return (
-
-              <WeatherWidget country={country} city={city} weather={day} backgroundPath={getImageUrl(weather.source, day.iconId)}/>
-
+            <WeatherWidget
+              country={country}
+              city={city}
+              weather={dropDownElement}
+              backgroundPath={getImageUrl(source, dropDownElement.iconId)}
+              key={dropDownElement.source || dropDownElement.date}
+            />
           )
         })}
       </div>
@@ -225,15 +253,21 @@ const OneWeatherContainer = props => {
 }
 
 const WeatherWidget = props => {
-  const capitalizer = string => string.charAt(0).toUpperCase() + string.slice(1)
+
   const {country, city, weather} = props
-  console.log(moment(weather.date).isSame(Date.now(), 'day'))
   let dayName
-  if (moment(weather.date).isSame(Date.now(), 'day')) {
+  if (!weather.updatedAt && moment(weather.date).isSame(Date.now(), 'day')) {
     dayName = 'Today'
   } else if (weather.date) {dayName = moment(weather.date).format('dddd, Do')}
 
-  const cityDateStyle = weather.date ? 'leftBottomString' : 'cityCountryCurrent'
+  let cityCountryClass
+  if (weather.date) {cityCountryClass = 'leftBottomString'}
+  else if (weather.updatedAt && !weather.source) {cityCountryClass = 'mainString'}
+  else {cityCountryClass = 'cityCountryCurrent'}
+
+   // weather.date ? 'leftBottomString' : 'cityCountryCurrent'
+  const sourceClass = weather.updatedAt ? 'mainString' : 'leftBottomString'
+  // const cityCountryClass = weather.updatedAt && !weather.source ? 'mainString' : 'leftBottomString'
 
   return (
     <div
@@ -241,11 +275,11 @@ const WeatherWidget = props => {
       style={{ backgroundImage: props.backgroundPath }}
     >
       {dayName ? <p className='mainString'>{dayName}</p> : null}
-      <p className={cityDateStyle}>{`${city.name}, ${country.name}`}</p>
+      {!(weather.updatedAt && weather.source) ? <p className={cityCountryClass}>{`${city.name}, ${country.name}`}</p> : null}
       {weather.temperatureMin ? <p className='temperatureMin'>{`${weather.temperatureMin}\u00B0C`}</p> : null}
       <p className='temperature'>{`${weather.temperature}\u00B0C`}</p>
       <p className='description'>{`${capitalizer(weather.iconPhrase)}.`}</p>
-      {weather.source ? <p className='leftBottomString'>{weather.source}</p> : null}
+      {weather.source ? <p className={sourceClass}>{weather.source}</p> : null}
       {weather.updatedAt ? <p className='leftBottomString'>{moment(weather.updatedAt).format('dddd, Do')}</p> : null}
     </div>
   )

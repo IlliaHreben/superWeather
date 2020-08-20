@@ -1,4 +1,6 @@
 body {
+  height: 100%;
+  width: 100%;
   margin: 0;
   background-image: url(./pictures/background.png);
   background-size: 25%;
@@ -9,7 +11,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-
+#root {
+  position: absolute;
+    height: inherit;
+    width: inherit;
+}
 ::-webkit-scrollbar {
     width: 6px;
     right: 2px;

@@ -51,17 +51,17 @@ import '@openfonts/roboto_cyrillic'
 //
 //       return citySentences.map(citySentence => ([citySentence.city.index, displayCitySentence(citySentence, citySentencesContainer)]))
 //     })
-//     .then(citySentenceDivs => {
-//       citySentenceDivs.forEach(citySentenceDiv => {
-//         citySentenceDiv[1].onclick = () => {
-//           citySentencesContainer.style.height = '0'
-//           citySentencesContainer.style.visibility = 'hidden'
-//           citySentencesContainer.style.opacity = '0'
-//           fetchWeatherForecastsHistory('index', citySentenceDiv[0])
-//         }
-//       })
-//     })
-//
+    // .then(citySentenceDivs => {
+      citySentenceDivs.forEach(citySentenceDiv => {
+        citySentenceDiv[1].onclick = () => {
+          citySentencesContainer.style.height = '0'
+          citySentencesContainer.style.visibility = 'hidden'
+          citySentencesContainer.style.opacity = '0'
+          fetchWeatherForecastsHistory('index', citySentenceDiv[0])
+        }
+      })
+    // })
+
 // }
 //
 // const displayCitySentence = ({country, city}, parent) => {
@@ -88,33 +88,33 @@ const fetchWeatherForecastsHistory = (key, desiredValue) => {
   const promiseAccu = window.fetch(`/api/accu?${key}=${desiredValue}`)
   const promiseGetHistory = window.fetch(`/api/showhistory`)
 
-  displayHeaderToUser('Current condition for requested city', 'currentCondition')
+  // displayHeaderToUser('Current condition for requested city', 'currentCondition')
   const widgetContainer = document.getElementsByClassName('widgetContainer')
   for(let container of widgetContainer) {container.style.display = 'inline-grid'}
-  const mainContainer = document.getElementsByClassName('mainContainer')
-  for(let container of mainContainer) {
-    container.style.backgroundColor = 'white'
-    container.style.boxShadow = '-2px 2px 10px rgba(0,0,0,0.7)'
-  }
-
-
-  jsonToData(promiseAccu)
-    .then(data => {
-      displayTempToUser(data)
-      displayForecastToUser(data)
-    })
-
-  jsonToData(promiseOpen)
-    .then(data => {
-      displayTempToUser(data)
-      displayForecastToUser(data)
-    })
-
-  jsonToData(promiseYahoo)
-    .then(data => {
-      displayTempToUser(data)
-      displayForecastToUser(data)
-    })
+  // const mainContainer = document.getElementsByClassName('mainContainer')
+  // for(let container of mainContainer) {
+  //   container.style.backgroundColor = 'white'
+  //   container.style.boxShadow = '-2px 2px 10px rgba(0,0,0,0.7)'
+  // }
+  //
+  //
+  // jsonToData(promiseAccu)
+  //   .then(data => {
+  //     displayTempToUser(data)
+  //     displayForecastToUser(data)
+  //   })
+  //
+  // jsonToData(promiseOpen)
+  //   .then(data => {
+  //     displayTempToUser(data)
+  //     displayForecastToUser(data)
+  //   })
+  //
+  // jsonToData(promiseYahoo)
+  //   .then(data => {
+  //     displayTempToUser(data)
+  //     displayForecastToUser(data)
+  //   })
 
   jsonToData(promiseGetHistory)
     .then(data => {
@@ -308,7 +308,7 @@ const displayForecastToUser = (data) => {
 
   data.forecasts.forEach(day => {
     const forecastDiv = document.createElement('div')
-    forecastDiv.className = 'forecastWidget'
+    forecastDiv.className = ''
     forecastDiv.style.backgroundImage = `url(${widgetBackgrounds[`${data.weather.source}/${day.iconId}`]})`
 
     const dayNameContainer = document.createElement('div')

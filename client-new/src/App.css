@@ -19,15 +19,20 @@ header {
   background-size: cover;
   background-repeat: no-repeat;
   margin: 0;
-  padding: 3.5em;
+  padding: 0 3.5em 0 3.5em;
   box-sizing: border-box;
   text-align: center;
+  display: flex;
+  align-items: center;
 }
 
+#cityNameContainer {
+  width: 100%;
+}
 
-input[type="inputArea"] {
+#cityName {
   border: 0px solid #A9A9A9;
-  box-shadow: -1px 1px 5px rgba(0,0,0,0.3);
+  box-shadow: -2px 2px 5px rgba(0,0,0,0.3);
   border-radius: 6px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -39,55 +44,52 @@ input[type="inputArea"] {
   color: #202020;
   padding-left: 30px;
   font: 400 18px Roboto;
-}
-input::placeholder {
-  font-weight: 300;
+  margin: 0 0.2em 0 0.2em;
 }
 
-button[type="inputArea"] {
+.headerButton {
   border: 0px solid #A9A9A9;
-  box-shadow: -1px 1px 5px rgba(0,0,0,0.3);
+  box-shadow: -2px 2px 5px rgba(0,0,0,0.3);
   border-radius: 6px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   -khtml-border-radius: 6px;
-  background: #76B675 !important;
+  background: #76B675;
   outline: none;
   height: 50px;
-  width: 8%;
+  width: 9%;
+  min-width: 70px;
   color: #FFFFFF;
   font: 300 18px Roboto;
   transition: all 0.3s ease-out;
   cursor: pointer;
+  padding: 0;
 }
 
-
-
-button[type="inputArea"]:hover {
-  background: #549c53 !important;
+.headerButton:hover {
+  background: #549c53;
 }
 
-button[type="inputArea"]:active {
-  background: #437d42 !important;
+.headerButton:active {
+  background: #437d42;
 }
 
-label {
+.cityNameLabel {
   position: absolute;
+  pointer-events: none;
   color: #535353;
-  top: 1.5em;
-  left: 17.5%;
-  opacity: 1;
+  top: 3.6em;
+  left: 19.5%;
   transform: translateY(0);
-  transition: transform 0.3s, font-size 0.3s;
-  font: 300 15px Roboto;
+  transition: .3s;
+  font: 300 18px Roboto;
   cursor: text;
 }
 
-input:placeholder-shown + label {
-  opacity: 0;
-  transform: translateY(3rem);
-  font-size: 18px;
-  transition: all 0.3s ease-in-out;
+#cityName:focus~.cityNameLabel,
+#cityName:not(:focus):valid~.cityNameLabel {
+  transform: translateY(-2.2em);
+  font-size: 15px;
 }
 
 #loadingIcon {
@@ -101,6 +103,7 @@ input:placeholder-shown + label {
 
 #citySentences {
   width: 50%;
+  min-width: 570px;
   padding: 1em;
   box-sizing: border-box;
   position: absolute;
@@ -109,7 +112,7 @@ input:placeholder-shown + label {
       -moz-border-radius: 4px;
     -khtml-border-radius: 4px;
           border-radius:  4px;
-  left: 50%;
+  left: 51%;
   transform: translate(-70%, 0.5em);
   box-shadow: -1px 1px 5px rgba(0,0,0,0.3);
   z-index: 1;
@@ -179,7 +182,7 @@ input:placeholder-shown + label {
 
 /* ---------------CURRENT CONDITION----------------- */
 
-#currentCondition {
+.mainContainerHeader {
   background-color: #76b675;
   border-bottom: 2px solid #549c53;
 }

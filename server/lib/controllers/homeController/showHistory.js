@@ -38,13 +38,15 @@ const showHistory = (_, res) => {
           }))
 
           return {
-            city: randomCity.name,
-            country: randomCountry.name,
-            temperature: avgTemperature,
-            iconId: randomWeather.iconId,
-            iconPhrase: randomWeather.iconPhrase,
-            updatedAt: randomWeather.updatedAt,
-            source: randomWeather.source,
+            city: randomCity,
+            country: randomCountry,
+            weather: {
+              temperature: avgTemperature,
+              iconId: randomWeather.iconId,
+              iconPhrase: randomWeather.iconPhrase,
+              updatedAt: randomWeather.updatedAt,
+              backgroundSource: randomWeather.source
+            },
             weathers: formatedWeathers,
 
           }
