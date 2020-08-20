@@ -79,7 +79,7 @@ header {
   pointer-events: none;
   color: #535353;
   top: 3.6em;
-  left: 19.5%;
+  left: 18%;
   transform: translateY(0);
   transition: .3s;
   font: 300 18px Roboto;
@@ -93,10 +93,10 @@ header {
 }
 
 #loadingIcon {
-  color: #535353;
+  color: #202020;
   position: absolute;
-  left: 16.5%;
-  top: 7%;
+  left: 16.6%;
+  top: 7.3%;
 }
 
 /* ---------------CITY SENTENCE----------------- */
@@ -182,6 +182,15 @@ header {
 
 /* ---------------CURRENT CONDITION----------------- */
 
+section {
+  position: relative;
+  margin-top: 30px;
+  width: 100%;
+  overflow: auto;
+  height: 80%;
+  overflow: hidden;
+}
+
 .mainContainerHeader {
   background-color: #76b675;
   border-bottom: 2px solid #549c53;
@@ -224,9 +233,8 @@ header {
   padding-bottom: 14px;
 }
 
-.cityCountryCurrent, .description, #source, .mainString, .temperature, .temperatureMin, .leftBottomString,
-#sourceForecast,
-#dateHistorySearch, #timeHistorySearch, #temperatureHistorySearch, #descriptionHistorySearch, #cityCountryHistorySearch, #dateTimeHistorySearch, #sourceHistorySearch {
+.cityCountryCurrent, .description, .mainString,
+.temperature, .temperatureMin, .leftBottomString {
   font-family: Roboto;
   margin: 0;
   display: block;
@@ -269,7 +277,7 @@ header {
 
 
 /*_____________ЭТО КОНТЕЙНЕР СО ВСЕМИ ВИДЖЕТАМИ_____________*/
-.widgetContainer, .lastSearchCity {
+.widgetContainer {
   color: #FFFFFF;
   display: inline-block;
   vertical-align: top;
@@ -278,7 +286,6 @@ header {
   width: 300px;
   height: 150px;
   transition: all 0.5s ease-out;
-  /* overflow: hidden; */
   padding: 8px;
   border-radius: 8px;
   -webkit-border-radius: 8px;
@@ -288,7 +295,7 @@ header {
 
 
 /*_____________ЭТО КОНТЕЙНЕРЫ С НЕВИДИМЫМИ ВИДЖЕТАМИ_____________*/
-.forecastsContainer, .sourcesWidgetsContainer {
+.dropDownContainer {
   opacity: 0;
   visibility: visible;
   height: 300px;
@@ -299,7 +306,7 @@ header {
 }
 
 /*_____________ЭТО САМИ ВИДЖЕТЫ_____________*/
-.weatherWidget, .forecastWidget, .lastSearchWidget {
+.weatherWidget {
   display: block;
   background: #4F4E4E;
   width: 250px;
@@ -315,13 +322,13 @@ header {
   background-size: cover;
 }
 
-.widgetContainer:hover .forecastsContainer {
+.widgetContainer:hover .dropDownContainer {
   opacity: 1;
   visibility: visible;
   display: block;
 }
 
-.widgetContainer:hover, .lastSearchCity:hover {
+.widgetContainer:hover {
   background-color: rgba(0,0,0,0.7);
   height: 500px;
   position: relative;
@@ -331,36 +338,6 @@ header {
   z-index: 1;
 }
 
-
-
-
-section {
-  position: relative;
-  margin-top: 30px;
-  width: 100%;
-  overflow: auto;
-  height: 80%;
-  overflow: hidden;
-}
-
-aside {
-  position: relative;
-  margin-top: 30px;
-  width: 100%;
-  overflow: auto;
-}
-
-
-.lastSearchCity:hover .sourcesWidgetsContainer {
-  opacity: 1;
-  visibility: visible;
-  display: block;
-}
-
-.lastSearchCity:hover {
-  height: 300px;
-  z-index: auto;
-}
 
 /* ----------------ABOUT-------------------- */
 
@@ -438,16 +415,16 @@ aside {
   text-transform: uppercase;
 }
 
-i {
+.aboutIcon {
   position: absolute;
   left: 5%;
-  margin-top: 5px;
+  margin-top: 3px;
 }
 
 .closeButtonContainer {
   position: absolute;
   display: block;
   top: 0.4em;
-  right: 1.5em;
+  right: 0.6em;
   cursor: pointer;
 }

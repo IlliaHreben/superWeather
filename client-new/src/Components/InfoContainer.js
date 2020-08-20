@@ -1,4 +1,6 @@
 import React, {Component} from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUsers, faGlobe, faMapMarkedAlt, faWallet, faPhone, faLanguage, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 class InfoContainer extends Component {
 
@@ -13,43 +15,43 @@ class InfoContainer extends Component {
       />,
       <InfoAboutCityString
         class='stringInfoContainer' key='population'
-        iconClass='fas fa-users fa-lg'
+        icon={faUsers}
         headerClass='headingFat' headerValue='Population: '
         stringClass='infoText' value={`${city.population} peoples.`}
       />,
       <InfoAboutCityString
         class='stringInfoContainer' key='region'
-        iconClass='fas fa-globe fa-lg'
+        icon={faGlobe}
         headerClass='headingFat' headerValue='Region: '
         stringClass='infoText' value={`${country.region}.`}
       />,
       <InfoAboutCityString
         class='stringInfoContainer' key='coordinates'
-        iconClass='fas fa-map-marked-alt fa-lg'
+        icon={faMapMarkedAlt}
         headerClass='headingFat' headerValue='Coordinates: '
         stringClass='infoText' value={`${city.latitude}, ${city.longitude}.`}
       />,
       <InfoAboutCityString
         class='stringInfoContainer' key='currency'
-        iconClass='fas fa-wallet fa-lg'
+        icon={faWallet}
         headerClass='headingFat' headerValue='Currency code: '
         stringClass='infoText' value={`${country.currencyCode}.`}
       />,
       <InfoAboutCityString
         class='stringInfoContainer' key='callingCode'
-        iconClass='fas fa-phone fa-lg'
+        icon={faPhone}
         headerClass='headingFat' headerValue='Country calling code: '
         stringClass='infoText' value={`${country.callingCode}.`}
       />,
       <InfoAboutCityString
         class='stringInfoContainer' key='language'
-        iconClass='fas fa-language fa-lg'
+        icon={faLanguage}
         headerClass='headingFat' headerValue='Official language: '
         stringClass='infoText' value={`${country.languageName} (${country.languageNameLocal}).`}
       />,
       <CloseButton
         class='closeButtonContainer' key='closeButton'
-        iconClass='fas fa-times fa-lg' iconKey='closeinfoButton'
+        icon={faTimes}
         onClick={this.props.onClickClose}
       />,
     ])
@@ -60,8 +62,8 @@ const InfoAboutCityString = props => {
   return (
     <div className={props.class}>
       {
-        props.iconClass
-          ? <i className={props.iconClass}/>
+        props.icon
+          ? <FontAwesomeIcon icon={props.icon} size='lg' className='aboutIcon'/>
           : null
       } {
         props.headerClass
@@ -79,7 +81,7 @@ const InfoAboutCityString = props => {
 const CloseButton = props => {
   return (
     <div className={props.class}>
-      <i className={props.iconClass} id={props.iconID} onClick={props.onClick}/>
+      <FontAwesomeIcon icon={props.icon} size='lg' onClick={props.onClick}/>
     </div>
   )
 }

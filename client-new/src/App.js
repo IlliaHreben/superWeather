@@ -5,6 +5,9 @@ import InfoContainer from './Components/InfoContainer'
 import {CitySentences, ErrorBoundarySentences} from './Components/CitySentences'
 import moment from 'moment'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+
 
 const widgetBackgrounds = require.context('./pictures/widgetPics', true, /\.(png|jpe?g|svg)$/)
 
@@ -132,7 +135,7 @@ class Header extends Component {
           <label htmlFor='cityName' className='cityNameLabel'>Enter your city here</label>
           <button className='headerButton' id='search' onClick={this.props.handleSearchButton}>Search</button>
           {this.state.didRenderLoading
-            ? <i className='fas fa-spinner fa-spin' id='loadingIcon' key='loadingIcon' />
+            ? <FontAwesomeIcon icon={faSpinner} spin id='loadingIcon'/>
             : null
           }
 
@@ -234,7 +237,7 @@ const OneWeatherContainer = props => {
   return (
     <div className='widgetContainer' >
       <WeatherWidget country={country} city={city} weather={weather} backgroundPath={getImageUrl(backgroundSource, weather.iconId)}/>
-      <div className='forecastsContainer'>
+      <div className='dropDownContainer'>
         {dropDownElements.map(dropDownElement => {
           const source = weathers ? dropDownElement.source : backgroundSource
           return (
