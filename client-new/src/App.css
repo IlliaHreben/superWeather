@@ -1,0 +1,430 @@
+body {
+  margin: 0;
+  background-image: url(./pictures/background.png);
+  background-size: 25%;
+  font: 300 15px 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+header {
+  color: #FFFFFF;
+  position: static;
+  width: 100%;
+  height: 20%;
+  max-height: 10em;
+  background-image: url(./pictures/searchBackground.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 0 3.5em 0 3.5em;
+  box-sizing: border-box;
+  text-align: center;
+  display: flex;
+  align-items: center;
+}
+
+#cityNameContainer {
+  width: 100%;
+}
+
+#cityName {
+  border: 0px solid #A9A9A9;
+  box-shadow: -2px 2px 5px rgba(0,0,0,0.3);
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -khtml-border-radius: 6px;
+  background: #ffffff !important;
+  outline: none;
+  height: 50px;
+  width: 70%;
+  color: #202020;
+  padding-left: 30px;
+  font: 400 18px Roboto;
+  margin: 0 0.2em 0 0.2em;
+}
+
+.headerButton {
+  border: 0px solid #A9A9A9;
+  box-shadow: -2px 2px 5px rgba(0,0,0,0.3);
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -khtml-border-radius: 6px;
+  background: #76B675;
+  outline: none;
+  height: 50px;
+  width: 9%;
+  min-width: 70px;
+  color: #FFFFFF;
+  font: 300 18px Roboto;
+  transition: all 0.3s ease-out;
+  cursor: pointer;
+  padding: 0;
+}
+
+.headerButton:hover {
+  background: #549c53;
+}
+
+.headerButton:active {
+  background: #437d42;
+}
+
+.cityNameLabel {
+  position: absolute;
+  pointer-events: none;
+  color: #535353;
+  top: 3.6em;
+  left: 18%;
+  transform: translateY(0);
+  transition: .3s;
+  font: 300 18px Roboto;
+  cursor: text;
+}
+
+#cityName:focus~.cityNameLabel,
+#cityName:not(:focus):valid~.cityNameLabel {
+  transform: translateY(-2.2em);
+  font-size: 15px;
+}
+
+#loadingIcon {
+  color: #202020;
+  position: absolute;
+  left: 16.6%;
+  top: 7.3%;
+}
+
+/* ---------------CITY SENTENCE----------------- */
+
+#citySentences {
+  width: 50%;
+  min-width: 570px;
+  padding: 1em;
+  box-sizing: border-box;
+  position: absolute;
+  background-color: white;
+  -webkit-border-radius:  4px;
+      -moz-border-radius: 4px;
+    -khtml-border-radius: 4px;
+          border-radius:  4px;
+  left: 51%;
+  transform: translate(-70%, 0.5em);
+  box-shadow: -1px 1px 5px rgba(0,0,0,0.3);
+  z-index: 1;
+  transition: opacity 0.3s ease-out;
+}
+
+.cityNameSentence, .countryNameSentence, .populationSentence {
+  text-transform: uppercase;
+  font: 400 1em/1.6em Roboto;
+  color: #424242;
+  display: inline;
+  word-spacing: 1px;
+  letter-spacing: 0.03em;
+  text-align: left;
+  transition: inherit;
+  padding-left: 8px;
+}
+
+.countryNameSentence, .populationSentence {
+  font: 300 1em/1.6em Roboto;
+  color: #6E6E6E;
+  padding: 0;
+}
+
+.populationSentence {
+  text-transform: lowercase;
+  text-align: right;
+  position: absolute;
+  display: inline-grid;
+  right: 2em;
+  margin-right: 0;
+  margin-left: auto;
+  margin: auto;
+}
+
+.citySentenceContainer {
+  background-color: #E6E6E6;
+  cursor: pointer;
+  padding-left: 2em;
+  padding-right: 2em;
+  height: 3em;
+  transition: all 0.3s ease-out;
+  text-align: left;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.citySentenceContainer:hover {
+  background-color: #D8D8D8;
+}
+
+.citySentenceContainer:hover .countryNameSentence, .populationSentence {
+  color: #525252;
+}
+
+.citySentenceContainer:hover .populationSentence {
+  color: #525252;
+}
+
+.citySentenceContainer:hover .cityNameSentence {
+  color: #222222;
+}
+
+.citySentenceContainer:active {
+  background-color: #C9C9C9;
+}
+
+
+/* ---------------CURRENT CONDITION----------------- */
+
+section {
+  position: relative;
+  margin-top: 30px;
+  width: 100%;
+  overflow: auto;
+  height: 80%;
+  overflow: hidden;
+}
+
+.mainContainerHeader {
+  background-color: #76b675;
+  border-bottom: 2px solid #549c53;
+}
+
+.mainContainer {
+  height: 240px;
+  max-width: 980px;
+  border-radius: 12px;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -khtml-border-radius: 12px;
+  white-space: nowrap;
+  margin: 20px 20px 0 20px;
+  box-shadow: -2px 2px 10px rgba(0,0,0,0.7);
+  background-color: white;
+}
+
+#search::after .mainContainer {
+  background: white !important;
+}
+
+.mainContainerHeader {
+  padding-left: 3.5em;
+  padding-right: 3.5em;
+  margin-bottom: 12px;
+  padding-top: 16px;
+  -webkit-border-radius: 12px 12px 0px 0px;
+  -moz-border-radius: 12px;
+  -khtml-border-radius: 12px;
+  border-radius: 12px 12px 0 0;
+}
+
+.headerText {
+  font: 300 1.4em Roboto;
+  color: #f1f1f1;
+  text-align: center;
+  margin: 0;
+  text-shadow: -1px 1px 2px #00000099;
+  padding-bottom: 14px;
+}
+
+.cityCountryCurrent, .description, .mainString,
+.temperature, .temperatureMin, .leftBottomString {
+  font-family: Roboto;
+  margin: 0;
+  display: block;
+  position: absolute;
+  color: #FFFFFF;
+  text-shadow: -1px 1px 2px black;
+}
+
+.cityCountryCurrent {
+  text-align: left;
+  right: 8%;
+  top: 20%;
+}
+
+.mainString {
+  font: 900 30px Roboto;
+  top: 10%;
+}
+
+.description {
+  top: 37%;
+}
+
+.temperature {
+  font: 900 40px Roboto;
+  bottom: 5%;
+  right: 20px;
+}
+
+.leftBottomString {
+  bottom: 10px;
+  font-size: 13px;
+}
+
+.temperatureMin {
+  font: 600 20px Roboto;
+  bottom: 35%;
+  right: 20px;
+}
+
+
+/*_____________ЭТО КОНТЕЙНЕР СО ВСЕМИ ВИДЖЕТАМИ_____________*/
+.widgetContainer {
+  color: #FFFFFF;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  margin-left: 20px; margin-right: -20px;
+  width: 300px;
+  height: 150px;
+  transition: all 0.5s ease-out;
+  padding: 8px;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -khtml-border-radius: 8px;
+}
+
+
+/*_____________ЭТО КОНТЕЙНЕРЫ С НЕВИДИМЫМИ ВИДЖЕТАМИ_____________*/
+.dropDownContainer {
+  opacity: 0;
+  visibility: visible;
+  height: 300px;
+  position: relative;
+  display: none;
+  border-top: 1px dashed rgb(255 255 255 / 30%);
+  padding-top: 10px;
+}
+
+/*_____________ЭТО САМИ ВИДЖЕТЫ_____________*/
+.weatherWidget {
+  display: block;
+  background: #4F4E4E;
+  width: 250px;
+  height: 100px;
+  position: relative;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -khtml-border-radius: 6px;
+  padding: 20px;
+  transition: all 0.2s ease-out;
+  background-size: cover;
+}
+
+.widgetContainer:hover .dropDownContainer {
+  opacity: 1;
+  visibility: visible;
+  display: block;
+}
+
+.widgetContainer:hover {
+  background-color: rgba(0,0,0,0.7);
+  height: 500px;
+  position: relative;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  top: 0;
+  z-index: 1;
+}
+
+
+/* ----------------ABOUT-------------------- */
+
+.aboutContainer {
+  top: 11%; left: 6.5%;
+  padding-top: 20px;
+  width: 25%;
+  height: 17em;
+  box-sizing: border-box;
+  position: absolute;
+  margin-top: 1em;
+  z-index: 2;
+}
+
+.infoContainer {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding-bottom: 10px; padding-left: 60px; padding-top: 15px; padding-right: 20px;
+  position: relative;
+  background: #76B675;
+  box-shadow: -2px 2px 10px rgba(0,0,0,0.7);
+  box-sizing: inherit;
+  text-align: left;
+  min-width: 220px;
+  display: table;
+}
+
+.infoContainer::after, .infoContainer::before {
+  content: '';
+  position: absolute;
+  width: 30px; height: 30px;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  z-index: -1;
+}
+.infoContainer::after {
+  -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+      -o-filter: blur(5px);
+     -ms-filter: blur(5px);
+         filter: blur(5px);
+  left: 20.2%; top: -13px;
+  background: black;
+  opacity: .7;
+}
+
+ .infoContainer::before {
+  left: 20.5%; top: -15px;
+  z-index: 2;
+  background: #76B675;
+}
+
+.headingName {
+  font: 500 1.5em Roboto;
+  color: white;
+  text-align: center;
+  margin-top: 0;
+  text-transform: uppercase;
+  transform: translate(-20px, 0);
+}
+
+.headingFat, .infoText {
+  font: 300 1em/1.6em Roboto;
+  color: white;
+  display: inline;
+  word-spacing: 1px;
+  letter-spacing: 0.03em;
+  line-height: 1.8em;
+}
+
+.headingFat {
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.aboutIcon {
+  position: absolute;
+  left: 5%;
+  margin-top: 3px;
+}
+
+.closeButtonContainer {
+  position: absolute;
+  display: block;
+  top: 0.4em;
+  right: 0.6em;
+  cursor: pointer;
+}

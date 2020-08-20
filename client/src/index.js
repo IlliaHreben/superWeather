@@ -4,18 +4,6 @@ import {debounce} from 'lodash'
 import './styles.css'
 import '@openfonts/roboto_cyrillic'
 
-function importAll(r) {
-  let images = {}
-  r.keys().map(item => { images[item.replace('./', '').replace('.png', '')] = r(item).default })
-  return images
-}
-
-const widgetBackgrounds = importAll(require.context('./pictures/widgetPics', true, /\.(png|jpe?g|svg)$/));
-
-function capitalizer(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
 document.getElementById('cityName').oninput = (event) => {
   document.getElementById('loadingIcon').style.opacity = '1'
 
@@ -246,7 +234,6 @@ function displayTempToUser (data, divTempId, divClassName) {
   const weatherDiv = document.createElement('div')
   weatherDiv.className = divClassName
 
-
   const dayNameContainer = document.createElement('div')
   const cityCountryContainer = document.createElement('div')
   const temperatureContainer = document.createElement('div')
@@ -262,7 +249,7 @@ function displayTempToUser (data, divTempId, divClassName) {
   const dayName = document.createTextNode('Today')
   const cityCountry = document.createTextNode(`${data.city.name}, ${data.country.name}`)
   const temperature = document.createTextNode(`${data.weather.temperature}\u00B0C`)
-  const description = document.createTextNode(`${capitalizer(data.weather.iconPhrase)}.`)
+  const description = document.createTextNode(`${data.weather.iconPhrase}.`)
   const source = document.createTextNode(data.weather.source)
 
   dayNameContainer.appendChild(dayName)
@@ -273,7 +260,6 @@ function displayTempToUser (data, divTempId, divClassName) {
 
 
   const divDisplayWeather = document.getElementById(divTempId)
-  divDisplayWeather.style.backgroundImage = `url(${widgetBackgrounds[`${data.weather.source}/${data.weather.iconId}`]})`
   divDisplayWeather.style.display = 'inline-block'
   divDisplayWeather.style.visibility = 'visible'
   divDisplayWeather.style.opacity = '1'
@@ -294,7 +280,6 @@ const displayForecastToUser = (data, divClassName) => {
   data.forecasts.forEach(day => {
     const forecastDiv = document.createElement('div')
     forecastDiv.className = divClassName
-    forecastDiv.style.backgroundImage = `url(${widgetBackgrounds[`${data.weather.source}/${day.iconId}`]})`
 
     const dayNameContainer = document.createElement('div')
     const temperatureContainer = document.createElement('div')
@@ -311,7 +296,7 @@ const displayForecastToUser = (data, divClassName) => {
     const dayName = document.createTextNode(moment(day.date).format('dddd, Do'))
     const temperature = document.createTextNode(`${day.temperatureMax}\u00B0C`)
     const temperatureMin = document.createTextNode(`${day.temperatureMin}\u00B0C`)
-    const description = document.createTextNode(`${capitalizer(day.iconPhrase)}.`)
+    const description = document.createTextNode(`${day.iconPhrase}.`)
     const source = document.createTextNode(data.weather.source)
 
     dayNameContainer.appendChild(dayName)
@@ -341,7 +326,7 @@ const displayLastSearchesToUser = (historyCitySearch) => {
   const date = document.createTextNode(momentDate.format('dddd, Do'))
   const time = document.createTextNode(momentDate.format('HH:mm a'))
   const temperature = document.createTextNode(`${historyCitySearch.temperature}\u00B0C`)
-  const description = document.createTextNode(`${capitalizer(historyCitySearch.iconPhrase)}.`)
+  const description = document.createTextNode(`${historyCitySearch.iconPhrase}.`)
   const cityCountry = document.createTextNode(`${historyCitySearch.city}, ${historyCitySearch.country}`)
 
   const dateContainer = document.createElement('div')
@@ -364,7 +349,6 @@ const displayLastSearchesToUser = (historyCitySearch) => {
 
   const lastSearchDivWidget = document.createElement('div')
   lastSearchDivWidget.className = 'lastSearchWidget'
-  lastSearchDivWidget.style.backgroundImage = `url(${widgetBackgrounds[`${historyCitySearch.source}/${historyCitySearch.iconId}`]})`
 
   lastSearchDivWidget.appendChild(dateContainer)
   lastSearchDivWidget.appendChild(timeContainer)
@@ -382,7 +366,7 @@ const displayLastSearchesToUser = (historyCitySearch) => {
 
     const dateTime = document.createTextNode(moment(weather.updatedAt).format('ddd, Do MMM, h:mm a'))
     const temperature = document.createTextNode(`${weather.temperature}\u00B0C`)
-    const description = document.createTextNode(`${capitalizer(weather.iconPhrase)}.`)
+    const description = document.createTextNode(`${weather.iconPhrase}.`)
     const source = document.createTextNode(weather.source)
 
     const dateTimeContainer = document.createElement('div')
@@ -402,7 +386,6 @@ const displayLastSearchesToUser = (historyCitySearch) => {
 
     const lastSearchDivWidget = document.createElement('div')
     lastSearchDivWidget.className = 'lastSearchWidget'
-    lastSearchDivWidget.style.backgroundImage = `url(${widgetBackgrounds[`${weather.source}/${weather.iconId}`]})`
 
     lastSearchDivWidget.appendChild(dateTimeContainer)
     lastSearchDivWidget.appendChild(temperatureContainer)

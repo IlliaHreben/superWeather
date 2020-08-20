@@ -2,9 +2,9 @@ const sqlPassword = 'superweather'
 
 const host = 'localhost'
 
-const port = '3000'
+const port = '4000'
 
-const apiKeyAccuWeather = '8fcGrl6GYczUPQOshCeWIxss6guDWoKl'
+const apiKeyAccuWeather = '3QLuy2M5kGA6GirTSuQXZVpj7gIDoP5R'
 
 const apiKeyOpenWeather = '1aa104f66067dcf0b4baff605313f074'
 
@@ -16,4 +16,6 @@ const consumerSecretYahoo = '5838d4ce9cbaab52e5e533ec1c79e5654745ec8a'
 
 const newsApiKey = 'cbf8e3dc2a8f422d877d59d057697167'
 
-module.exports = {sqlPassword, host, port, apiKeyAccuWeather, apiKeyOpenWeather, language, consumerKeyYahoo, consumerSecretYahoo, newsApiKey}
+const openCageApiKey = '4359316482df47e0bf8479658ec97e55'
+
+module.exports = {sqlPassword, host, port, apiKeyAccuWeather, apiKeyOpenWeather, language, consumerKeyYahoo, consumerSecretYahoo, newsApiKey, openCageApiKey}
