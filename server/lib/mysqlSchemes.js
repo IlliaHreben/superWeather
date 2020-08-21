@@ -153,6 +153,10 @@ const Countries = sequelize.define('countries', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  languageCode: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   languageName: {
     type: Sequelize.STRING,
     allowNull: false

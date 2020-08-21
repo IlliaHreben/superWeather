@@ -56,7 +56,7 @@ const getCityCountry = (query) => {
     return getCityCountryByIndex(query.index)
   } else if (query.cityName) {
     return getOneCityCountryByName(query.cityName)
-  } else if (query.coordinates) {}
+  }
 }
 
 const sendPromiseToClient = (res, promise) => {

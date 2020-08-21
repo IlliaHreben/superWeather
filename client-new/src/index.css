@@ -2,8 +2,7 @@ body {
   height: 100%;
   width: 100%;
   margin: 0;
-  background-image: url(./pictures/background.png);
-  background-size: 25%;
+  background-color: #DCDCDC;
   font: 300 15px 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -13,8 +12,9 @@ body {
 
 #root {
   position: absolute;
-    height: inherit;
-    width: inherit;
+  height: inherit;
+  width: inherit;
+  white-space: nowrap;
 }
 ::-webkit-scrollbar {
     width: 6px;
