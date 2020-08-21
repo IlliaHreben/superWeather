@@ -58,6 +58,7 @@ typings/
 .env
 
 widgetPicksRaw/
+originalWidgetPics
 
 !client/dist/	client/dist/
 client/dist/*

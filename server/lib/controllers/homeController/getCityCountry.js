@@ -1,5 +1,5 @@
 const citiesBase = require('all-the-cities')
-const countryData = require('country-codes-list').customList('countryCode', '{countryNameEn},{countryNameLocal},{countryCode},{region},{currencyCode},{officialLanguageNameEn},{officialLanguageNameLocal},+{countryCallingCode}')
+const countryData = require('country-codes-list').customList('countryCode', '{countryNameEn},{countryNameLocal},{countryCode},{region},{currencyCode},{officialLanguageNameEn},{officialLanguageNameLocal},{officialLanguageCode},+{countryCallingCode}')
 const diacriticsRemove = require ('diacritics').remove
 const ServiceError = require('../../ServiceError')
 const {inRange} = require('lodash')
@@ -85,7 +85,8 @@ function formatCityCountry (city) {
       currencyCode: country[4],
       languageName: country[5],
       languageNameLocal: country[6],
-      callingCode: country[7]
+      languageCode: country[7],
+      callingCode: country[8]
     }
   }
 }

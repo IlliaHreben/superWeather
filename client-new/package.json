@@ -21,7 +21,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "compress-images": "node ./scripts/imageCompressor"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -37,5 +38,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "imagemin": "^7.0.1",
+    "imagemin-optipng": "^8.0.0",
+    "imagemin-pngquant": "^9.0.0"
   }
 }
