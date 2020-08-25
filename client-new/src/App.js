@@ -6,7 +6,7 @@ import {CitySentences, ErrorBoundarySentences} from './Components/CitySentences'
 import moment from 'moment'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSpinner, faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner, faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons'
 
 
 const widgetBackgrounds = require.context('./pictures/widgetPics', true, /\.(png|jpe?g|svg)$/)
@@ -58,8 +58,13 @@ class App extends Component {
     this.setState({didRenderWeather: true, key: 'cityName'})
   }
 
-  handleOnClickSentence = index => {
-    this.setState({key: 'index', nameOrIndex: index, didRenderWeather: true})
+  handleOnClickSentence = (index, name) => {
+    this.setState({
+      key: 'index',
+      nameOrIndex: index,
+      didRenderWeather: true,
+      city: name
+    })
   }
 
   render () {
@@ -160,9 +165,9 @@ class Header extends Component {
     })
   }
 
-  handleOnClickSentence = index => {
+  handleOnClickSentence = (index, name) => {
     this.setState({didRenderSentences: false})
-    this.props.handleOnClickSentence(index)
+    this.props.handleOnClickSentence(index, name)
   }
 
   handleCloseButton = () => {
@@ -247,26 +252,17 @@ class HistorySearchContainer extends Component {
 
   render() {
     return (
-      <div className='mainContainer' id='lastSearchesContainer'>
-        <div className='mainContainerHeader' id='lastSearches'>
-          <h1 className='headerText'>Last condition searches</h1>
-        </div>
-          {this.state.cities.map(city => {
-            return <OneWeatherContainer {...city} key={city.city.index}/>
-          })}
-      </div>
+      <ContentColumnsContainer
+        headerText='Last condition searches'
+        data={this.state.cities}
+      />
     )
   }
 }
 
 class WeathersContainer extends Component {
   state = {
-    sources: [],
-    position: 0,
-    overflowActive: false,
-    rightDisabled: false,
-    fullWidth: null,
-    visibleWidth: null,
+    sources: []
   }
 
   componentDidMount() {
@@ -280,25 +276,44 @@ class WeathersContainer extends Component {
           'yahoo'
         ].map(sourceName => handleApiResponse(fetch(`/api/${sourceName}?${key}=${desiredValue}`)) )
       )
-      // .then(rawData => {console.log(rawData)
-      //   return rawData.map(data => handleApiResponse(data))})
       .catch(err => console.log(err))
       .then(sourcesData => this.setState({sources: sourcesData}) )
-      .then(() => this.setState({ overflowActive: this.isContentOverflowed(this.div) }))
   }
 
-  sourcesCount = this.state.sources.length
+  render() {
+    return (
+      <ContentColumnsContainer
+        headerText='Current condition for requested city'
+        data={this.state.sources}
+      />
+    )
+  }
+}
+
+class ContentColumnsContainer extends Component {
+  state = {
+    position: 0,
+    overflowActive: false,
+    rightDisabled: false,
+    fullWidth: null,
+    visibleWidth: null,
+  }
+
+  componentDidUpdate (prevProps) {
+    if (prevProps.data !== this.props.data)
+    this.setState({ overflowActive: this.isContentOverflowed(this.div) })
+  }
 
   isContentOverflowed = e => {
-    console.log(e.scrollWidth, e.clientWidth)
     this.setState({fullWidth: e.scrollWidth, visibleWidth: e.offsetWidth})
+    console.log(e.scrollWidth, e.clientWidth, e.offsetWidth)
     return e.scrollWidth > e.clientWidth;
   }
 
   moveLeft = () => {
     const fullWidth = this.state.fullWidth
     const visibleWidth = this.state.visibleWidth
-    const moveDistance = (fullWidth - visibleWidth - 326) < 0 ? fullWidth - visibleWidth +20 : 326
+    const moveDistance = (fullWidth - visibleWidth - 326) < 0 ? fullWidth - visibleWidth + 60 : 326
     this.setState(({position}) => ({
       position: position + moveDistance,
       rightDisabled: false
@@ -308,39 +323,51 @@ class WeathersContainer extends Component {
   moveRight = () => {
     const fullWidth = this.state.fullWidth
     const visibleWidth = this.state.visibleWidth
-    const moveDistance = (fullWidth - visibleWidth - 326) < 0 ? fullWidth - visibleWidth + 20 : 326
+    const moveDistance = (fullWidth - visibleWidth - 326) < 0 ? fullWidth - visibleWidth + 60 : 326
     if ((fullWidth - visibleWidth - 326) < 0) this.setState({rightDisabled: true})
     this.setState(({position}) => ({position: position - moveDistance}) )
   }
 
+
   render() {
     const columnsPosition = this.state.position
     return (
-      <div className='mainContainer' id='sectionContainer'>
-        <div className='mainContainerHeader' id='currentCondition'>
-          <h1 className='headerText'>Current condition for requested city</h1>
+      <div className='mainContainer'>
+
+        <div className='mainContainerHeader'>
+          <h1 className='headerText'>{this.props.headerText}</h1>
         </div>
+
         <div className='mainContainerContent'>
+
           {this.state.overflowActive ? <button
             className='left'
             onClick={this.moveLeft}
             disabled={!columnsPosition}
           >
-            <FontAwesomeIcon icon={faAngleLeft} />
+            <FontAwesomeIcon icon={faCaretLeft} size='3x' />
           </button> : null}
-          <div className='columnsContainer' style={{left: columnsPosition + 'px'}}  ref={ref => (this.div = ref)}>
-            {this.state.sources.map(source =>
-              <OneWeatherContainer {...source} key={source.weather.source}/>
+
+          <div
+            className='columnsContainer'
+            style={{left: columnsPosition + 'px'}}
+            ref={ref => (this.div = ref)}
+          >
+            {this.props.data.map(source =>
+              <OneWeatherContainer {...source}/>
             )}
           </div>
+
           {this.state.overflowActive ? <button
             className='right'
             onClick={this.moveRight}
             disabled={this.state.rightDisabled}
           >
-            <FontAwesomeIcon icon={faAngleRight} />
+            <FontAwesomeIcon icon={faCaretRight} size='3x' />
           </button> : null}
+
         </div>
+
       </div>
     )
   }

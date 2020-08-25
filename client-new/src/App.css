@@ -262,38 +262,44 @@ section {
 }
 
 .mainContainerContent {
-  margin-top: 12px;
+  /* margin-top: 12px; */
   white-space: nowrap;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  height: 173px;
+  height: 185px;
   /* max-height: 173px; */
 }
 
+.fa-caret-right {
+  transform: scaleY(3);
+}
+
+.fa-caret-left {
+  transform: scaleY(3);
+}
 
 .left, .right {
   position: relative;
   display: inline-block;
-  height: 120px;
+  height: 100%;
   width: 40px;
   align-self: center;
   border: none;
   border-radius: 0.5em;
   cursor: pointer;
-  background-color: #5B5B5B;
-  color: white;
+  background-color: #00000000;
+  color: #5B5B5B;
   transition: .3s;
+
 }
 
 .left:hover, .right:hover {
-  background-color: #464646;
-
+  color: #464646;
 }
 
 .left:active, .right:active {
-  background-color: #2E2E2E;
-
+  color: #2E2E2E;
 }
 
 .left:disabled, .right:disabled {
@@ -302,19 +308,23 @@ section {
 }
 
 .left {
-  transform: translateX(-50%);
-  margin-right: -2em;
+  /* transform: translateX(-50%); */
+  /* margin-right: 0.5em; */
+  padding-right: 0.3em;
 }
 
 .right {
-  transform: translateX(50%);
-  margin-left: -2em;
+  /* transform: translateX(50%); */
+  /* margin-left: 0.5em; */
+  padding: 0.3em;
 }
 
 .columnsContainer {
   display: inline-block;
   /* width: 100%; */
   overflow-x: hidden;
+  /* justify-content: center; */
+  margin-top: 10px;
 }
 
 /*_____________ЭТО КОНТЕЙНЕР СО ВСЕМИ ВИДЖЕТАМИ_____________*/
@@ -351,7 +361,7 @@ section {
   width: 250px;
   height: 100px;
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: 4px; margin-top: 4px;
   border-radius: 6px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;

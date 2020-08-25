@@ -11,7 +11,7 @@ export class CitySentences extends Component {
         <div
           className='citySentenceContainer'
           key={city.index}
-          onClick={() => {this.props.onClick(city.index)}}
+          onClick={() => {this.props.onClick(city.index, city.name)}}
         >
           <p className='cityNameSentence'>{`  ${city.name}, `}</p>
           <p className='countryNameSentence'>{country.name}</p>
