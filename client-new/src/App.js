@@ -1,22 +1,14 @@
 import React, {Component} from 'react'
-import './App.css'
 import debounce from 'lodash/debounce'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+
+import HistorySearch from './Components/HistorySearch'
+import Weathers from './Components/Weathers'
+import News from './Components/News'
 import InfoContainer from './Components/InfoContainer'
 import {CitySentences, ErrorBoundarySentences} from './Components/CitySentences'
-import moment from 'moment'
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSpinner, faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons'
-
-
-const widgetBackgrounds = require.context('./pictures/widgetPics', true, /\.(png|jpe?g|svg)$/)
-
-function getImageUrl (source, imgName) {
-  const path = `./${source}/${imgName}.png`
-  return `url(${widgetBackgrounds(path)}`
-}
-
-const capitalizer = string => string.charAt(0).toUpperCase() + string.slice(1)
+import './App.css'
 
 const getPosition = () => {
   return new Promise((resolve, reject) => {
@@ -35,19 +27,16 @@ class App extends Component {
 
   componentDidMount () {
     getPosition()
-      .then(({coords: {latitude, longitude}}) => {
-        handleApiResponse(fetch(`/api/getGeolocation?lat=${latitude}&lon=${longitude}`))
-          .then(data => {
-            console.log(data)
-            this.setState({
-              city: data.city.name,
-              nameOrIndex: data.city.index,
-              key: 'index',
-              didRenderWeather: true
-            })
-          })
+      .then(({coords: {latitude, longitude}}) => handleApiResponse(
+        fetch(`/api/getGeolocation?lat=${latitude}&lon=${longitude}`)) )
+      .then(data => {
+        this.setState({
+          city: data.city.name,
+          nameOrIndex: data.city.index,
+          key: 'index',
+          didRenderWeather: true
+        })
       })
-
   }
 
   handleCityName = cityName => {
@@ -79,8 +68,8 @@ class App extends Component {
         {this.state.didRenderWeather
           ? ([
               <div className='containerForMainContainers' key='containerForMainContainers'>
-                <WeathersContainer keyRequest={this.state.key} desiredValue={this.state.nameOrIndex} key='weathersContainer'/>
-                <HistorySearchContainer key='historySearchContainer'/>
+                <Weathers keyRequest={this.state.key} desiredValue={this.state.nameOrIndex} key='weathersContainer'/>
+                <HistorySearch key='historySearchContainer'/>
               </div>,
               <News key='news' keyRequest={this.state.key} nameOrIndex={this.state.nameOrIndex}/>
             ])
@@ -89,50 +78,6 @@ class App extends Component {
             </ErrorBoundary>
     )
   }
-}
-
-class News extends Component {
-  state = {
-    news: []
-  }
-
-  componentDidMount () {
-    handleApiResponse(fetch(`/api/news?${this.props.keyRequest}=${this.props.nameOrIndex}`))
-    .then(news => {
-      this.setState({news})
-    })
-  }
-
-  render () {
-    return (
-      <div className='newsContainer'>
-        <div className='newsHeader'>
-          <p className='headerText'>HOT NEWS FROM YOURE CITY! ENJOY :)</p>
-        </div>
-        {this.state.news.map(oneNew => <OneNew newData={oneNew}/>)}
-      </div>
-    )
-  }
-}
-
-const OneNew = props => {
-  const {source, title, author, description, url, imageUrl, publishedAt, content} = props.newData
-
-  return (
-    <a href={url}>
-      <div className='oneNew'>
-        <div className='newsTextContainer'>
-          <img className='newsFavicon' src={url.match(/([^/]*\/){3}/)[0] + 'favicon.ico'} alt=''/>
-          <p className='newsSource'>{source}</p>
-          <p className='newsAuthor'>{author}</p>
-          <p className='newsTitle'>{title}</p>
-          <p className='newsDescription'>{description}</p>
-          <p className='newsPublishedAt'>{moment(publishedAt).fromNow()}</p>
-        </div>
-        <img className='newsImage' src={imageUrl} alt=''/>
-      </div>
-    </a>
-  )
 }
 
 class Header extends Component {
@@ -240,199 +185,6 @@ class Header extends Component {
   }
 }
 
-class HistorySearchContainer extends Component {
-  state = {
-    cities: []
-  }
-
-  componentDidMount() {
-    handleApiResponse( fetch(`/api/showhistory`) )
-      .then(data => { this.setState({cities: data}) })
-  }
-
-  render() {
-    return (
-      <ContentColumnsContainer
-        headerText='Last condition searches'
-        data={this.state.cities}
-      />
-    )
-  }
-}
-
-class WeathersContainer extends Component {
-  state = {
-    sources: []
-  }
-
-  componentDidMount() {
-    const key = this.props.keyRequest
-    const desiredValue = this.props.desiredValue
-    Promise
-      .all(
-        [
-
-          'open',
-          'yahoo'
-        ].map(sourceName => handleApiResponse(fetch(`/api/${sourceName}?${key}=${desiredValue}`)) )
-      )
-      .catch(err => console.log(err))
-      .then(sourcesData => this.setState({sources: sourcesData}) )
-  }
-
-  render() {
-    return (
-      <ContentColumnsContainer
-        headerText='Current condition for requested city'
-        data={this.state.sources}
-      />
-    )
-  }
-}
-
-class ContentColumnsContainer extends Component {
-  state = {
-    position: 0,
-    overflowActive: false,
-    rightDisabled: false,
-    fullWidth: null,
-    visibleWidth: null,
-  }
-
-  componentDidUpdate (prevProps) {
-    if (prevProps.data !== this.props.data)
-    this.setState({ overflowActive: this.isContentOverflowed(this.div) })
-  }
-
-  isContentOverflowed = e => {
-    this.setState({fullWidth: e.scrollWidth, visibleWidth: e.offsetWidth})
-    console.log(e.scrollWidth, e.clientWidth, e.offsetWidth)
-    return e.scrollWidth > e.clientWidth;
-  }
-
-  moveLeft = () => {
-    const fullWidth = this.state.fullWidth
-    const visibleWidth = this.state.visibleWidth
-    const moveDistance = (fullWidth - visibleWidth - 326) < 0 ? fullWidth - visibleWidth + 60 : 326
-    this.setState(({position}) => ({
-      position: position + moveDistance,
-      rightDisabled: false
-    }) )
-  }
-
-  moveRight = () => {
-    const fullWidth = this.state.fullWidth
-    const visibleWidth = this.state.visibleWidth
-    const moveDistance = (fullWidth - visibleWidth - 326) < 0 ? fullWidth - visibleWidth + 60 : 326
-    if ((fullWidth - visibleWidth - 326) < 0) this.setState({rightDisabled: true})
-    this.setState(({position}) => ({position: position - moveDistance}) )
-  }
-
-
-  render() {
-    const columnsPosition = this.state.position
-    return (
-      <div className='mainContainer'>
-
-        <div className='mainContainerHeader'>
-          <h1 className='headerText'>{this.props.headerText}</h1>
-        </div>
-
-        <div className='mainContainerContent'>
-
-          {this.state.overflowActive ? <button
-            className='left'
-            onClick={this.moveLeft}
-            disabled={!columnsPosition}
-          >
-            <FontAwesomeIcon icon={faCaretLeft} size='3x' />
-          </button> : null}
-
-          <div
-            className='columnsContainer'
-            style={{left: columnsPosition + 'px'}}
-            ref={ref => (this.div = ref)}
-          >
-            {this.props.data.map(source =>
-              <OneWeatherContainer {...source}/>
-            )}
-          </div>
-
-          {this.state.overflowActive ? <button
-            className='right'
-            onClick={this.moveRight}
-            disabled={this.state.rightDisabled}
-          >
-            <FontAwesomeIcon icon={faCaretRight} size='3x' />
-          </button> : null}
-
-        </div>
-
-      </div>
-    )
-  }
-}
-
-const OneWeatherContainer = props => {
-  const {country, city, weather, forecasts, weathers} = props
-  const dropDownElements = forecasts ? forecasts : weathers
-  const backgroundSource = weather.backgroundSource || weather.source
-
-  return (
-    <div className='widgetContainer' >
-      <WeatherWidget country={country} city={city} weather={weather} backgroundPath={getImageUrl(backgroundSource, weather.iconId)}/>
-      <div className='dropDownContainer'>
-        {dropDownElements.map(dropDownElement => {
-          const source = weathers ? dropDownElement.source : backgroundSource
-          return (
-            <WeatherWidget
-              country={country}
-              city={city}
-              weather={dropDownElement}
-              backgroundPath={getImageUrl(source, dropDownElement.iconId)}
-              key={dropDownElement.source || dropDownElement.date}
-            />
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
-const WeatherWidget = props => {
-
-  const {country, city, weather} = props
-  let dayName
-  if (!weather.updatedAt && moment(weather.date).isSame(Date.now(), 'day')) {
-    dayName = 'Today'
-  } else if (weather.date) {dayName = moment(weather.date).format('dddd, Do')}
-
-  let cityCountryClass
-  if (weather.date) {cityCountryClass = 'leftBottomString'}
-  else if (weather.updatedAt && !weather.source) {cityCountryClass = 'mainString'}
-  else {cityCountryClass = 'cityCountryCurrent'}
-
-   // weather.date ? 'leftBottomString' : 'cityCountryCurrent'
-  const sourceClass = weather.updatedAt ? 'mainString' : 'leftBottomString'
-  // const cityCountryClass = weather.updatedAt && !weather.source ? 'mainString' : 'leftBottomString'
-
-  return (
-    <div
-      className='weatherWidget'
-      style={{ backgroundImage: props.backgroundPath }}
-    >
-      {dayName ? <p className='mainString'>{dayName}</p> : null}
-      {!(weather.updatedAt && weather.source) ? <p className={cityCountryClass}>{`${city.name}, ${country.name}`}</p> : null}
-      {weather.temperatureMin ? <p className='temperatureMin'>{`${weather.temperatureMin}\u00B0C`}</p> : null}
-      <p className='temperature'>{`${weather.temperature}\u00B0C`}</p>
-      <p className='description'>{`${capitalizer(weather.iconPhrase)}.`}</p>
-      {weather.source ? <p className={sourceClass}>{weather.source}</p> : null}
-      {weather.updatedAt ? <p className='leftBottomString'>{moment(weather.updatedAt).format('dddd, Do')}</p> : null}
-    </div>
-  )
-}
-
-
 class ErrorBoundary extends Component {
   state = { error: null, errorInfo: null }
 
@@ -461,7 +213,7 @@ class ErrorBoundary extends Component {
   }
 }
 
-const handleApiResponse = promise => {
+export const handleApiResponse = promise => {
   return promise
     .then(res => res.text())
     .then(JSON.parse)
@@ -474,4 +226,4 @@ const handleApiResponse = promise => {
 }
 
 
-export default App;
+export default App
