@@ -6,7 +6,7 @@ import {CitySentences, ErrorBoundarySentences} from './Components/CitySentences'
 import moment from 'moment'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner, faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 
 
 const widgetBackgrounds = require.context('./pictures/widgetPics', true, /\.(png|jpe?g|svg)$/)
@@ -36,7 +36,7 @@ class App extends Component {
   componentDidMount () {
     getPosition()
       .then(({coords: {latitude, longitude}}) => {
-        jsonToData(fetch(`/api/getGeolocation?lat=${latitude}&lon=${longitude}`))
+        handleApiResponse(fetch(`/api/getGeolocation?lat=${latitude}&lon=${longitude}`))
           .then(data => {
             console.log(data)
             this.setState({
@@ -92,7 +92,7 @@ class News extends Component {
   }
 
   componentDidMount () {
-    jsonToData(fetch(`/api/news?${this.props.keyRequest}=${this.props.nameOrIndex}`))
+    handleApiResponse(fetch(`/api/news?${this.props.keyRequest}=${this.props.nameOrIndex}`))
     .then(news => {
       this.setState({news})
     })
@@ -151,7 +151,7 @@ class Header extends Component {
   }
 
   handleAbout = () => {
-    jsonToData(fetch(`/api/aboutCity?cityName=${this.props.city}`))
+    handleApiResponse(fetch(`/api/aboutCity?cityName=${this.props.city}`))
     .then(cityCountryData => {
       this.setState({
         cityCountryData,
@@ -175,7 +175,7 @@ class Header extends Component {
   }
 
   fetchCitySentences = debounce(cityName => {
-    return jsonToData( fetch(`/api/searchSentence?cityName=${cityName}`) )
+    return handleApiResponse( fetch(`/api/searchSentence?cityName=${cityName}`) )
     .catch(() => [] )
     .then(citySentences => this.setState({
       citySentences,
@@ -195,13 +195,11 @@ class Header extends Component {
           <input
             type='text'
             id='cityName'
-            // placeholder='Enter your city here'
             value={this.props.city}
             onChange={this.onInputChange}
             autoComplete='off'
             required
           />
-
           <label htmlFor='cityName' className='cityNameLabel'>Enter your city here</label>
           <button className='headerButton' id='search' onClick={this.props.handleSearchButton}>Search</button>
           {this.state.didRenderLoading
@@ -243,7 +241,7 @@ class HistorySearchContainer extends Component {
   }
 
   componentDidMount() {
-    jsonToData( fetch(`/api/showhistory`) )
+    handleApiResponse( fetch(`/api/showhistory`) )
       .then(data => { this.setState({cities: data}) })
   }
 
@@ -254,7 +252,7 @@ class HistorySearchContainer extends Component {
           <h1 className='headerText'>Last condition searches</h1>
         </div>
           {this.state.cities.map(city => {
-            return <OneWeatherContainer source={city} key={city.city.index}/>
+            return <OneWeatherContainer {...city} key={city.city.index}/>
           })}
       </div>
     )
@@ -263,44 +261,93 @@ class HistorySearchContainer extends Component {
 
 class WeathersContainer extends Component {
   state = {
-    sources: []
+    sources: [],
+    position: 0,
+    overflowActive: false,
+    rightDisabled: false,
+    fullWidth: null,
+    visibleWidth: null,
   }
 
   componentDidMount() {
     const key = this.props.keyRequest
     const desiredValue = this.props.desiredValue
-    jsonToData(fetch(`/api/accu?${key}=${desiredValue}`))
-      .then(data => {
-        this.setState(state => ({sources: [...state.sources, data]} ))
-      })
+    Promise
+      .all(
+        [
 
-    jsonToData(fetch(`/api/open?${key}=${desiredValue}`))
-      .then(data => {
-        this.setState(state => ({sources: [...state.sources, data]} ))
-      })
+          'open',
+          'yahoo'
+        ].map(sourceName => handleApiResponse(fetch(`/api/${sourceName}?${key}=${desiredValue}`)) )
+      )
+      // .then(rawData => {console.log(rawData)
+      //   return rawData.map(data => handleApiResponse(data))})
+      .catch(err => console.log(err))
+      .then(sourcesData => this.setState({sources: sourcesData}) )
+      .then(() => this.setState({ overflowActive: this.isContentOverflowed(this.div) }))
+  }
 
-    jsonToData(fetch(`/api/yahoo?${key}=${desiredValue}`))
-      .then(data => {
-        this.setState(state => ({sources: [...state.sources, data]} ))
-      })
+  sourcesCount = this.state.sources.length
+
+  isContentOverflowed = e => {
+    console.log(e.scrollWidth, e.clientWidth)
+    this.setState({fullWidth: e.scrollWidth, visibleWidth: e.offsetWidth})
+    return e.scrollWidth > e.clientWidth;
+  }
+
+  moveLeft = () => {
+    const fullWidth = this.state.fullWidth
+    const visibleWidth = this.state.visibleWidth
+    const moveDistance = (fullWidth - visibleWidth - 326) < 0 ? fullWidth - visibleWidth +20 : 326
+    this.setState(({position}) => ({
+      position: position + moveDistance,
+      rightDisabled: false
+    }) )
+  }
+
+  moveRight = () => {
+    const fullWidth = this.state.fullWidth
+    const visibleWidth = this.state.visibleWidth
+    const moveDistance = (fullWidth - visibleWidth - 326) < 0 ? fullWidth - visibleWidth + 20 : 326
+    if ((fullWidth - visibleWidth - 326) < 0) this.setState({rightDisabled: true})
+    this.setState(({position}) => ({position: position - moveDistance}) )
   }
 
   render() {
+    const columnsPosition = this.state.position
     return (
       <div className='mainContainer' id='sectionContainer'>
         <div className='mainContainerHeader' id='currentCondition'>
           <h1 className='headerText'>Current condition for requested city</h1>
         </div>
-          {this.state.sources.map(source => {
-            return <OneWeatherContainer source={source} key={source.weather.source}/>
-          })}
+        <div className='mainContainerContent'>
+          {this.state.overflowActive ? <button
+            className='left'
+            onClick={this.moveLeft}
+            disabled={!columnsPosition}
+          >
+            <FontAwesomeIcon icon={faAngleLeft} />
+          </button> : null}
+          <div className='columnsContainer' style={{left: columnsPosition + 'px'}}  ref={ref => (this.div = ref)}>
+            {this.state.sources.map(source =>
+              <OneWeatherContainer {...source} key={source.weather.source}/>
+            )}
+          </div>
+          {this.state.overflowActive ? <button
+            className='right'
+            onClick={this.moveRight}
+            disabled={this.state.rightDisabled}
+          >
+            <FontAwesomeIcon icon={faAngleRight} />
+          </button> : null}
+        </div>
       </div>
     )
   }
 }
 
 const OneWeatherContainer = props => {
-  const {country, city, weather, forecasts, weathers} = props.source
+  const {country, city, weather, forecasts, weathers} = props
   const dropDownElements = forecasts ? forecasts : weathers
   const backgroundSource = weather.backgroundSource || weather.source
 
@@ -387,7 +434,7 @@ class ErrorBoundary extends Component {
   }
 }
 
-const jsonToData = promise => {
+const handleApiResponse = promise => {
   return promise
     .then(res => res.text())
     .then(JSON.parse)

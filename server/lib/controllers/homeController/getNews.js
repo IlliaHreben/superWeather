@@ -16,7 +16,7 @@ const getNews = (req, res) => {
   const {country, city} = getCityCountry(req.query)
 
   const promise =  newsApi.v2.everything({
-    q: city.name,
+    q: country.name,
     language: country.languageCode || language,
     sortBy: 'publishedAt',
     pageSize: 5

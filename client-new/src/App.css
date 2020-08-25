@@ -177,13 +177,12 @@ section {
 }
 
 .containerForMainContainers {
-  box-sizing: border-box;
   overflow-x: scroll;
   overflow-y: hidden;
   width: 51%;
   display: inline-block;
   vertical-align: top;
-  margin: 20px 10px 0 20px;
+  padding: 20px 20px 0 20px;
 }
 
 .mainContainer {
@@ -196,19 +195,19 @@ section {
   box-shadow: -2px 2px 10px rgba(0,0,0,0.1);
   background-color: white;
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .mainContainerHeader, .newsHeader {
   background-color: #76b675;
   padding-left: 3.5em;
   padding-right: 3.5em;
-  margin-bottom: 12px;
   padding-top: 16px;
   -webkit-border-radius: 12px 12px 0px 0px;
   -moz-border-radius: 12px;
   -khtml-border-radius: 12px;
   border-radius: 12px 12px 0 0;
-    /* border-bottom: 2px solid #549c53; */
 }
 
 .headerText {
@@ -262,6 +261,61 @@ section {
   right: 20px;
 }
 
+.mainContainerContent {
+  margin-top: 12px;
+  white-space: nowrap;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  height: 173px;
+  /* max-height: 173px; */
+}
+
+
+.left, .right {
+  position: relative;
+  display: inline-block;
+  height: 120px;
+  width: 40px;
+  align-self: center;
+  border: none;
+  border-radius: 0.5em;
+  cursor: pointer;
+  background-color: #5B5B5B;
+  color: white;
+  transition: .3s;
+}
+
+.left:hover, .right:hover {
+  background-color: #464646;
+
+}
+
+.left:active, .right:active {
+  background-color: #2E2E2E;
+
+}
+
+.left:disabled, .right:disabled {
+  opacity: 0.5;
+  cursor: auto;
+}
+
+.left {
+  transform: translateX(-50%);
+  margin-right: -2em;
+}
+
+.right {
+  transform: translateX(50%);
+  margin-left: -2em;
+}
+
+.columnsContainer {
+  display: inline-block;
+  /* width: 100%; */
+  overflow-x: hidden;
+}
 
 /*_____________ЭТО КОНТЕЙНЕР СО ВСЕМИ ВИДЖЕТАМИ_____________*/
 .widgetContainer {
@@ -269,15 +323,13 @@ section {
   display: inline-block;
   vertical-align: top;
   position: relative;
-  margin-left: 20px; margin-right: -20px;
+  /* margin-left: 5px; margin-right: 5px; */
   width: 300px;
   height: 150px;
   transition: all 0.5s ease-out;
   padding: 8px;
   border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -khtml-border-radius: 8px;
+  left: inherit;
 }
 
 
@@ -427,7 +479,7 @@ section {
   box-shadow: -2px 2px 10px rgba(0,0,0,0.1);
   display: inline-block;
   vertical-align: top;
-  margin: 20px 10px 0 10px;
+  margin-top: 20px;
 }
 
 .oneNew {
