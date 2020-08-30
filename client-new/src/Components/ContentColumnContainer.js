@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import moment from 'moment'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons'
+import debounce from 'lodash/debounce'
 
 const capitalizer = string => string.charAt(0).toUpperCase() + string.slice(1)
 
@@ -13,45 +14,56 @@ function getImageUrl (source, imgName) {
 
 export default class ContentColumnsContainer extends Component {
   state = {
-    position: 0,
     overflowActive: false,
     rightDisabled: false,
-    fullWidth: null,
-    visibleWidth: null,
+    startScroll: null
   }
 
   componentDidUpdate (prevProps) {
-    if (prevProps.data !== this.props.data)
+    if (prevProps.data !== this.props.data) {
+      this.setState({ overflowActive: this.isContentOverflowed(this.div) })
+    }
+  }
+
+
+  updateDimensions = debounce(() => {
     this.setState({ overflowActive: this.isContentOverflowed(this.div) })
+  }, 200)
+  componentDidMount() {
+    window.addEventListener('resize', this.updateDimensions)
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions)
   }
 
   isContentOverflowed = e => {
     this.setState({fullWidth: e.scrollWidth, visibleWidth: e.offsetWidth})
-    console.log(e.scrollWidth, e.clientWidth, e.offsetWidth)
     return e.scrollWidth > e.clientWidth;
   }
 
-  moveLeft = () => {
-    const fullWidth = this.state.fullWidth
-    const visibleWidth = this.state.visibleWidth
-    const moveDistance = (fullWidth - visibleWidth - 326) < 0 ? fullWidth - visibleWidth + 60 : 326
-    this.setState(({position}) => ({
-      position: position + moveDistance,
-      rightDisabled: false
-    }) )
-  }
 
-  moveRight = () => {
-    const fullWidth = this.state.fullWidth
-    const visibleWidth = this.state.visibleWidth
-    const moveDistance = (fullWidth - visibleWidth - 326) < 0 ? fullWidth - visibleWidth + 60 : 326
-    if ((fullWidth - visibleWidth - 326) < 0) this.setState({rightDisabled: true})
-    this.setState(({position}) => ({position: position - moveDistance}) )
-  }
+  scrollLeft = (element, change, duration) => {
+    const start = element.scrollLeft
+    const increment = 20
+    let currentTime = 0
+    console.log(start)
+    this.setState({startScroll: start})
 
+    const animateScroll = () => {
+      currentTime += increment
+      const val = easeInOutQuad(currentTime, start, change, duration)
+      element.scrollLeft = val
+      if(currentTime < duration) {
+          setTimeout(animateScroll, increment)
+      }
+    }
+    animateScroll()
+  }
 
   render() {
-    const columnsPosition = this.state.position
+    const overflowActive = this.state.overflowActive
+    const marginColumnsContainer = overflowActive ? 'auto' : '1.5em'
+
     return (
       <div className='mainContainer'>
 
@@ -61,28 +73,28 @@ export default class ContentColumnsContainer extends Component {
 
         <div className='mainContainerContent'>
 
-          {this.state.overflowActive ? <button
+          {overflowActive ? <button
             className='left'
-            onClick={this.moveLeft}
-            disabled={!columnsPosition}
+            onClick={() => this.scrollLeft(this.div, -300, 1000)}
+            disabled={!(this.state.startScroll === 0)}
           >
             <FontAwesomeIcon icon={faCaretLeft} size='3x' />
           </button> : null}
 
           <div
             className='columnsContainer'
-            style={{left: columnsPosition + 'px'}}
             ref={ref => (this.div = ref)}
+            style={{marginLeft: marginColumnsContainer, marginRight: marginColumnsContainer}}
           >
             {this.props.data.map(source =>
               <OneWeatherContainer {...source}/>
             )}
           </div>
 
-          {this.state.overflowActive ? <button
+          {overflowActive ? <button
             className='right'
-            onClick={this.moveRight}
-            disabled={this.state.rightDisabled}
+            onClick={() => this.scrollLeft(this.div, 300, 1000)}
+            disabled={this.state.startScroll === 0}
           >
             <FontAwesomeIcon icon={faCaretRight} size='3x' />
           </button> : null}
@@ -154,4 +166,12 @@ const WeatherWidget = props => {
       {weather.updatedAt ? <p className='leftBottomString'>{moment(weather.updatedAt).format('dddd, Do')}</p> : null}
     </div>
   )
+}
+
+
+const easeInOutQuad = (t, b, c, d) => {
+  t /= d/2
+	if (t < 1) return c/2*t*t + b
+	t--
+	return -c/2 * (t*(t-2) - 1) + b
 }
