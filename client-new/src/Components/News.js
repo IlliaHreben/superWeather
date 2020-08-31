@@ -8,7 +8,17 @@ export default class News extends Component {
   }
 
   componentDidMount () {
-    handleApiResponse(fetch(`/api/news?${this.props.keyRequest}=${this.props.nameOrIndex}`))
+    this.fetchNews(this.props.keyRequest, this.props.nameOrIndex)
+  }
+
+  componentDidUpdate (prevProps) {
+    if (prevProps !== this.props) {
+      this.fetchNews(this.props.keyRequest, this.props.nameOrIndex)
+    }
+  }
+
+  fetchNews = (key, value) => {
+    return handleApiResponse(fetch(`/api/news?${key}=${value}`))
     .then(news => {
       this.setState({news})
     })
@@ -20,7 +30,7 @@ export default class News extends Component {
         <div className='newsHeader'>
           <p className='headerText'>HOT NEWS FROM YOURE CITY! ENJOY :)</p>
         </div>
-        {this.state.news.map(oneNew => <OneNew newData={oneNew}/>)}
+        {this.state.news.map(oneNew => <OneNew key={oneNew.url} newData={oneNew}/>)}
       </div>
     )
   }

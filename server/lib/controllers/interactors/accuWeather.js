@@ -15,13 +15,19 @@ const accuGetCity = (lat, lon) => {
 }
 
 const accuGetCurrent = cityKey => {
-  return fetch(`https://apidev.accuweather.com/currentconditions/v1/${cityKey}.json?language=en&apikey=hoArfRosT1215`)
+  return fetch(`https://apidev.accuweather.com/currentconditions/v1/${cityKey}.json?language=en&apikey=hoArfRosT1215&metric=true`)
     .then(resApi => resApi.json())
 }
 
 const accuGetForecast = cityKey => {
-  return fetch(`https://dataservice.accuweather.com/forecasts/v1/daily/5day/${cityKey}?apikey=${apiKeyAccuWeather}&language=${language}`)
+  return fetch(`https://dataservice.accuweather.com/forecasts/v1/daily/5day/${cityKey}?apikey=${apiKeyAccuWeather}&language=${language}&metric=true`)
     .then(resApi => resApi.json())
 }
 
- module.exports = {accuGetCity, accuGetCurrent, accuGetForecast}
+const accuGetHourly = cityKey => {
+  return fetch(`https://dataservice.accuweather.com/forecasts/v1/hourly/12hour/${cityKey}?apikey=${apiKeyAccuWeather}&language=${language}&metric=true`)
+    .then(resApi => resApi.json())
+}
+
+
+ module.exports = {accuGetCity, accuGetCurrent, accuGetForecast, accuGetHourly}

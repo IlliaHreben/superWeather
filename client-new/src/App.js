@@ -18,8 +18,6 @@ const getPosition = () => {
 
 class App extends Component {
   state = {
-    didRenderWeather: false,
-    city: '',
     nameOrIndex: null,
     key: ''
 
@@ -34,45 +32,44 @@ class App extends Component {
           city: data.city.name,
           nameOrIndex: data.city.index,
           key: 'index',
-          didRenderWeather: true
         })
       })
   }
 
   handleCityName = cityName => {
-    this.setState({nameOrIndex: cityName, city: cityName})
+    this.setState({nameOrIndex: cityName})
   }
 
-  handleSearchButton = () => {
-    this.setState({didRenderWeather: true, key: 'cityName'})
+  handleSearchButton = cityName => {
+    this.setState({key: 'cityName', nameOrIndex: cityName})
   }
 
-  handleOnClickSentence = (index, name) => {
+  handleOnClickSentence = index => {
     this.setState({
       key: 'index',
-      nameOrIndex: index,
-      didRenderWeather: true,
-      city: name
+      nameOrIndex: index
     })
   }
 
   render () {
+
     return (
       <ErrorBoundary>
         <Header
-          city={this.state.city}
           handleCityName={this.handleCityName}
           handleSearchButton={this.handleSearchButton}
           handleOnClickSentence={this.handleOnClickSentence}
         />
-        {this.state.didRenderWeather
-          ? ([
-              <div className='containerForMainContainers' key='containerForMainContainers'>
-                <Weathers keyRequest={this.state.key} desiredValue={this.state.nameOrIndex} key='weathersContainer'/>
-                <HistorySearch key='historySearchContainer'/>
-              </div>,
-              <News key='news' keyRequest={this.state.key} nameOrIndex={this.state.nameOrIndex}/>
-            ])
+        {this.state.key
+          ? (
+              <>
+                <div className='containerForMainContainers'>
+                  <Weathers keyRequest={this.state.key} desiredValue={this.state.nameOrIndex}/>
+                  <HistorySearch />
+                </div>
+                <News keyRequest={this.state.key} nameOrIndex={this.state.nameOrIndex}/>
+              </>
+            )
           : null
         }
             </ErrorBoundary>
@@ -87,12 +84,13 @@ class Header extends Component {
     cityCountryData: {},
     citySentences: [],
     didRenderSentences: false,
-    didRenderLoading: false
+    didRenderLoading: false,
+    cityName: ''
   }
 
   onInputChange = e => {
     const cityName = e.target.value
-    this.props.handleCityName(cityName)
+    this.setState({cityName})
     if (cityName && cityName !== '') {
       this.setState({didRenderLoading: true})
       return this.fetchCitySentences(cityName)
@@ -101,7 +99,7 @@ class Header extends Component {
   }
 
   handleAbout = () => {
-    handleApiResponse(fetch(`/api/aboutCity?cityName=${this.props.city}`))
+    handleApiResponse(fetch(`/api/aboutCity?cityName=${this.state.cityName}`))
     .then(cityCountryData => {
       this.setState({
         cityCountryData,
@@ -110,9 +108,9 @@ class Header extends Component {
     })
   }
 
-  handleOnClickSentence = (index, name) => {
-    this.setState({didRenderSentences: false})
-    this.props.handleOnClickSentence(index, name)
+  handleOnClickSentence = (index, cityName) => {
+    this.setState({didRenderSentences: false, cityName})
+    this.props.handleOnClickSentence(index)
   }
 
   handleCloseButton = () => {
@@ -145,39 +143,42 @@ class Header extends Component {
           <input
             type='text'
             id='cityName'
-            value={this.props.city}
+            value={this.state.cityName}
             onChange={this.onInputChange}
             autoComplete='off'
             required
           />
           <label htmlFor='cityName' className='cityNameLabel'>Enter your city here</label>
-          <button className='headerButton' id='search' onClick={this.props.handleSearchButton}>Search</button>
+          <button
+            className='headerButton'
+            id='search'
+            onClick={() => this.props.handleSearchButton(this.state.cityName)}
+          >Search</button>
           {this.state.didRenderLoading
             ? <FontAwesomeIcon icon={faSpinner} spin id='loadingIcon'/>
             : null
           }
 
 
-          {this.state.isAboutClick ? (
-            <div className='aboutContainer' id='aboutCityArea'>
-              <div className='infoContainer' id='infoContainer'>
-                <InfoContainer
-                  cityInfo={this.state.cityCountryData}
-                  onClickClose={this.handleCloseButton}
-                />
+          {this.state.isAboutClick
+            ? <div className='aboutContainer' id='aboutCityArea'>
+                <div className='infoContainer' id='infoContainer'>
+                  <InfoContainer
+                    cityInfo={this.state.cityCountryData}
+                    onClickClose={this.handleCloseButton}
+                  />
+                </div>
               </div>
-            </div>
-          ) : null}
+           : null}
 
           {this.state.didRenderSentences
-            ? (<ErrorBoundarySentences>
-              <CitySentences
-                willUnmount={this.citySentencesWillUnmount}
-                cityCountry={this.state.citySentences}
-                onClick={this.handleOnClickSentence}
-              />
-            </ErrorBoundarySentences>
-            )
+            ? <ErrorBoundarySentences>
+                <CitySentences
+                  willUnmount={this.citySentencesWillUnmount}
+                  cityCountry={this.state.citySentences}
+                  onClick={this.handleOnClickSentence}
+                />
+              </ErrorBoundarySentences>
             : null}
         </div>
       </header>

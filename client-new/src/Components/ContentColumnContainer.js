@@ -86,8 +86,8 @@ export default class ContentColumnsContainer extends Component {
             ref={ref => (this.div = ref)}
             style={{marginLeft: marginColumnsContainer, marginRight: marginColumnsContainer}}
           >
-            {this.props.data.map(source =>
-              <OneWeatherContainer {...source}/>
+            {this.props.data.map((source, i) =>
+              <OneWeatherContainer key={i} {...source}/> // doenst have keys
             )}
           </div>
 

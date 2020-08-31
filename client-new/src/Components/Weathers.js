@@ -8,20 +8,28 @@ export default class WeathersContainer extends Component {
     sources: []
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.fetchWeather(this.props.keyRequest, this.props.desiredValue)
+    }
+  }
+
   componentDidMount() {
-    const key = this.props.keyRequest
-    const desiredValue = this.props.desiredValue
-    Promise
+    this.fetchWeather(this.props.keyRequest, this.props.desiredValue)
+  }
+
+  fetchWeather = (key, value) => {
+    return Promise
       .all(
         [
           // 'accu',
           'open',
           'yahoo'
-        ].map(sourceName => handleApiResponse(fetch(`/api/${sourceName}?${key}=${desiredValue}`)) )
+        ].map(sourceName => handleApiResponse(fetch(`/api/${sourceName}?${key}=${value}`)) )
       )
       .catch(err => console.log(err))
       .then(sourcesData => this.setState({sources: sourcesData}) )
-  }
+    }
 
   render() {
     return (

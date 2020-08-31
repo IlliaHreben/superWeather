@@ -24,8 +24,8 @@ const getAccu = (req, res) => {
               }, forecast.DailyForecasts.map(day => {
                 return {
                   date: day.Date,
-                  temperatureMin: +((day.Temperature.Minimum.Value - 32) * 5/9).toFixed(1),
-                  temperatureMax: +((day.Temperature.Maximum.Value - 32) * 5/9).toFixed(1),
+                  temperatureMin: day.Temperature.Minimum.Value,
+                  temperatureMax: day.Temperature.Maximum.Value,
                   iconId: day.Day.Icon.toString(),
                   iconPhrase: day.Day.IconPhrase.replace(' w/', '.')
                 }

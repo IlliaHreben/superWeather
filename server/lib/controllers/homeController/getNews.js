@@ -8,31 +8,54 @@ const newsApi = new NewsAPI(newsApiKey)
 
 
 const getNews = (req, res) => {
-  console.log(req.query)
   if (!req.query.index && !req.query.cityName) {
-    return Promise.reject(new ServiceError('Data did not come from the client', 'NO_DATA_COME'))
+    sendPromiseToClient(res,
+      Promise.reject(new ServiceError('Data did not come from the server', 'NO_DATA_COME'))
+    )
+    return
   }
 
   const {country, city} = getCityCountry(req.query)
 
-  const promise =  newsApi.v2.everything({
-    q: country.name,
-    language: country.languageCode || language,
-    sortBy: 'publishedAt',
-    pageSize: 5
-  })
-    .then(response => {
+  const promise =  async () => {
+    try {
+      let response
+
+      response = await newsApi.v2.everything({
+        q: city.name,
+        language: country.languageCode || language,
+        sortBy: 'publishedAt',
+        pageSize: 5
+      })
+
       if (response.status !== 'ok') {
         throw new Error(response.message)
       }
+      if (response.totalResults === 0) {
+        response = await newsApi.v2.everything({
+          q: country.name,
+          language: country.languageCode || language,
+          sortBy: 'publishedAt',
+          pageSize: 5
+        })
+      }
+      if (response.totalResults === 0) {
+        response = await newsApi.v2.everything({
+          q: 'news',
+          language,
+          sortBy: 'publishedAt',
+          pageSize: 5
+        })
+      }
+
       return formatNews(response.articles)
-    })
-    .catch(err => {
+    } catch (err) {
       if (err.code === 400) {throw new ServiceError('Wat da city????', 'CITY_NEWS_NOT_FOUND') }
       throw new Error(err.message)
-    })
+    }
+  }
 
-  sendPromiseToClient(res, promise)
+  sendPromiseToClient(res, promise())
 }
 
 const formatNews = news => {

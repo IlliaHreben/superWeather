@@ -7,54 +7,56 @@ class InfoContainer extends Component {
   render() {
     const {country, city} = this.props.cityInfo
 
-    return ([
-      <InfoAboutCityString
-        class='headingContainer' key='nameCountry'
-        stringClass='headingName'
-        value={`${city.name}, ${country.name} (${country.nameLocal})`}
-      />,
-      <InfoAboutCityString
-        class='stringInfoContainer' key='population'
-        icon={faUsers}
-        headerClass='headingFat' headerValue='Population: '
-        stringClass='infoText' value={`${city.population} peoples.`}
-      />,
-      <InfoAboutCityString
-        class='stringInfoContainer' key='region'
-        icon={faGlobe}
-        headerClass='headingFat' headerValue='Region: '
-        stringClass='infoText' value={`${country.region}.`}
-      />,
-      <InfoAboutCityString
-        class='stringInfoContainer' key='coordinates'
-        icon={faMapMarkedAlt}
-        headerClass='headingFat' headerValue='Coordinates: '
-        stringClass='infoText' value={`${city.latitude}, ${city.longitude}.`}
-      />,
-      <InfoAboutCityString
-        class='stringInfoContainer' key='currency'
-        icon={faWallet}
-        headerClass='headingFat' headerValue='Currency code: '
-        stringClass='infoText' value={`${country.currencyCode}.`}
-      />,
-      <InfoAboutCityString
-        class='stringInfoContainer' key='callingCode'
-        icon={faPhone}
-        headerClass='headingFat' headerValue='Country calling code: '
-        stringClass='infoText' value={`${country.callingCode}.`}
-      />,
-      <InfoAboutCityString
-        class='stringInfoContainer' key='language'
-        icon={faLanguage}
-        headerClass='headingFat' headerValue='Official language: '
-        stringClass='infoText' value={`${country.languageName} (${country.languageNameLocal}).`}
-      />,
-      <CloseButton
-        class='closeButtonContainer' key='closeButton'
-        icon={faTimes}
-        onClick={this.props.onClickClose}
-      />,
-    ])
+    return (
+      <>
+        <InfoAboutCityString
+          class='headingContainer'
+          stringClass='headingName'
+          value={`${city.name}, ${country.name} (${country.nameLocal})`}
+        />
+        <InfoAboutCityString
+          class='stringInfoContainer'
+          icon={faUsers}
+          headerClass='headingFat' headerValue='Population: '
+          stringClass='infoText' value={`${city.population} peoples.`}
+        />
+        <InfoAboutCityString
+          class='stringInfoContainer'
+          icon={faGlobe}
+          headerClass='headingFat' headerValue='Region: '
+          stringClass='infoText' value={`${country.region}.`}
+        />
+        <InfoAboutCityString
+          class='stringInfoContainer'
+          icon={faMapMarkedAlt}
+          headerClass='headingFat' headerValue='Coordinates: '
+          stringClass='infoText' value={`${city.latitude}, ${city.longitude}.`}
+        />
+        <InfoAboutCityString
+          class='stringInfoContainer'
+          icon={faWallet}
+          headerClass='headingFat' headerValue='Currency code: '
+          stringClass='infoText' value={`${country.currencyCode}.`}
+        />
+        <InfoAboutCityString
+          class='stringInfoContainer'
+          icon={faPhone}
+          headerClass='headingFat' headerValue='Country calling code: '
+          stringClass='infoText' value={`${country.callingCode}.`}
+        />
+        <InfoAboutCityString
+          class='stringInfoContainer'
+          icon={faLanguage}
+          headerClass='headingFat' headerValue='Official language: '
+          stringClass='infoText' value={`${country.languageName} (${country.languageNameLocal}).`}
+        />
+        <CloseButton
+          class='closeButtonContainer'
+          icon={faTimes}
+          onClick={this.props.onClickClose}
+        />
+      </>
+    )
   }
 }
 
