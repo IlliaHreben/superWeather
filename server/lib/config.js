@@ -5,6 +5,7 @@ const host = 'localhost'
 const port = '4000'
 
 const apiKeyAccuWeather = '8fcGrl6GYczUPQOshCeWIxss6guDWoKl'
+const apiKeyAccuWeather2 = '3QLuy2M5kGA6GirTSuQXZVpj7gIDoP5R'
 
 const apiKeyOpenWeather = '1aa104f66067dcf0b4baff605313f074'
 
@@ -24,4 +25,4 @@ const waqiApiKey = '6ecf7d714e3a841ca3c921c2aaca2c6343ce3803' //https://api.waqi
 const breezometerApiKey = '6a041fd201b3465ea8bd4cbea39b4887' // https://api.breezometer.com/air-quality/v2/current-conditions?lat=50.444&lon=30.54&key=6a041fd201b3465ea8bd4cbea39b4887
 const climacellApiKey = 'tKUCmiNVWALI97SP2PNk45SsNbI8vekx'
 
-module.exports = {sqlPassword, host, port, apiKeyAccuWeather, apiKeyOpenWeather, language, country, consumerKeyYahoo, consumerSecretYahoo, newsApiKey, openCageApiKey}
+module.exports = {sqlPassword, host, port, apiKeyAccuWeather, apiKeyAccuWeather2, apiKeyOpenWeather, language, country, consumerKeyYahoo, consumerSecretYahoo, newsApiKey, openCageApiKey}

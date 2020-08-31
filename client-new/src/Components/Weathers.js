@@ -22,7 +22,7 @@ export default class WeathersContainer extends Component {
     return Promise
       .all(
         [
-          // 'accu',
+          'accu',
           'open',
           'yahoo'
         ].map(sourceName => handleApiResponse(fetch(`/api/${sourceName}?${key}=${value}`)) )

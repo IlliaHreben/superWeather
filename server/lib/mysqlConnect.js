@@ -53,7 +53,7 @@ const findCityWeatherRequests = () => {
       ['updatedAt', 'DESC'],
       [Cities, 'name', 'ASC']
     ],
-    limit: 9
+    limit: 5
   })
 }
 

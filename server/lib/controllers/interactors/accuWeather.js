@@ -1,13 +1,14 @@
 const fetch = require('node-fetch')
 
-const {apiKeyAccuWeather, language} = require('../../config')
+const {apiKeyAccuWeather, apiKeyAccuWeather2, language} = require('../../config')
 const ServiceError = require('../../ServiceError')
 
 const accuGetCity = (lat, lon) => {
   return fetch(`https://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${apiKeyAccuWeather}&q=${lat},${lon}&language=${language}`)
     .then(resApi => resApi.json())
     .then(data => {
-      if (!data.Key) {
+      if (data.Code) {
+        if (data.Code === 'Unauthorized') throw new Error (data.Message)
         throw new ServiceError ('You entered the wrong city name', 'WRONG_CITY_NAME')
       }
       return data
@@ -25,7 +26,7 @@ const accuGetForecast = cityKey => {
 }
 
 const accuGetHourly = cityKey => {
-  return fetch(`https://dataservice.accuweather.com/forecasts/v1/hourly/12hour/${cityKey}?apikey=${apiKeyAccuWeather}&language=${language}&metric=true`)
+  return fetch(`https://dataservice.accuweather.com/forecasts/v1/hourly/12hour/${cityKey}?apikey=${apiKeyAccuWeather2}&language=${language}&metric=true&details=true`)
     .then(resApi => resApi.json())
 }
 
