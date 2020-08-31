@@ -10,7 +10,7 @@ const newsApi = new NewsAPI(newsApiKey)
 const getNews = (req, res) => {
   if (!req.query.index && !req.query.cityName) {
     sendPromiseToClient(res,
-      Promise.reject(new ServiceError('Data did not come from the server', 'NO_DATA_COME'))
+      Promise.reject(new ServiceError('Data did not come to server', 'NO_DATA_COME'))
     )
     return
   }

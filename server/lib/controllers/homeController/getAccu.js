@@ -5,7 +5,10 @@ const ServiceError = require('../../ServiceError')
 
 const getAccu = (req, res) => {
   if (!req.query.index && !req.query.cityName) {
-    return Promise.reject(new ServiceError('Data did not come from the client', 'NO_DATA_COME'))
+    sendPromiseToClient(res,
+      Promise.reject(new ServiceError('Data did not come to server', 'NO_DATA_COME'))
+    )
+    return
   }
 
   const {city, country} = getCityCountry(req.query)
