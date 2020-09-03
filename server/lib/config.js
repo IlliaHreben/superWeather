@@ -25,4 +25,7 @@ const waqiApiKey = '6ecf7d714e3a841ca3c921c2aaca2c6343ce3803' //https://api.waqi
 const breezometerApiKey = '6a041fd201b3465ea8bd4cbea39b4887' // https://api.breezometer.com/air-quality/v2/current-conditions?lat=50.444&lon=30.54&key=6a041fd201b3465ea8bd4cbea39b4887
 const climacellApiKey = 'tKUCmiNVWALI97SP2PNk45SsNbI8vekx'
 
-module.exports = {sqlPassword, host, port, apiKeyAccuWeather, apiKeyAccuWeather2, apiKeyOpenWeather, language, country, consumerKeyYahoo, consumerSecretYahoo, newsApiKey, openCageApiKey}
+const ambeeKey = 'uDo874l2eS2cZu0cGWGBR9udKtfi9S1f4aPFL45p'
+const iqairKey = '53fbd72a-4a70-46b8-ab0f-5543fd99c048'
+
+module.exports = {sqlPassword, host, port, apiKeyAccuWeather, apiKeyAccuWeather2, apiKeyOpenWeather, language, country, consumerKeyYahoo, consumerSecretYahoo, newsApiKey, openCageApiKey, ambeeKey, iqairKey}
