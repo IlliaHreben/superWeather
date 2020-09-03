@@ -462,6 +462,16 @@ section {
   cursor: pointer;
 }
 
+/* ---------------------------------AIR QUALITY--------------------------------- */
+
+.qualityBlock img {
+  height: 4em;
+}
+
+.qualityBlock {
+  display: flex;
+  flex-direction: row;
+}
 
 /* ---------------------------------NEWS--------------------------------- */
 

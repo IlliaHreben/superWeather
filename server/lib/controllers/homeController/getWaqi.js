@@ -27,6 +27,7 @@ const getWaqiPollution = (req, res) => {
 const formatPollution = pollution => {
   const {aqi, dominentpol} = pollution
   return {
+    source: 'WAQI',
     aqi,
     mainPollutor: dominentpol
   }

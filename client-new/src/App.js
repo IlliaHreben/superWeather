@@ -4,6 +4,7 @@ import React, {Component} from 'react'
 import HistorySearch from './Components/HistorySearch'
 import Weathers from './Components/Weathers'
 import News from './Components/News'
+import AirQuality from './Components/AirQuality'
 
 import './App.css'
 import Header from './Components/Header'
@@ -63,6 +64,7 @@ class App extends Component {
                 <div className='containerForMainContainers'>
                   <Weathers keyRequest={this.state.key} desiredValue={this.state.nameOrIndex}/>
                   <HistorySearch />
+                  <AirQuality keyRequest={this.state.key} nameOrIndex={this.state.nameOrIndex}/>
                 </div>
                 <News keyRequest={this.state.key} nameOrIndex={this.state.nameOrIndex}/>
               </>

@@ -25,10 +25,9 @@ const getIQpollution = (req, res) => {
 }
 
 const formatPollution = pollution => {
-  const {city, country, current} = pollution
+  const {current} = pollution
   return {
-    city,
-    country,
+    source: 'IQ Air',
     aqi: current.pollution.aqius,
     mainPollutor: current.pollution.mainus
   }
