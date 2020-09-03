@@ -28,4 +28,4 @@ const climacellApiKey = 'tKUCmiNVWALI97SP2PNk45SsNbI8vekx'
 const ambeeKey = 'uDo874l2eS2cZu0cGWGBR9udKtfi9S1f4aPFL45p'
 const iqairKey = '53fbd72a-4a70-46b8-ab0f-5543fd99c048'
 
-module.exports = {sqlPassword, host, port, apiKeyAccuWeather, apiKeyAccuWeather2, apiKeyOpenWeather, language, country, consumerKeyYahoo, consumerSecretYahoo, newsApiKey, openCageApiKey, ambeeKey, iqairKey}
+module.exports = {sqlPassword, host, port, apiKeyAccuWeather, apiKeyAccuWeather2, apiKeyOpenWeather, language, country, consumerKeyYahoo, consumerSecretYahoo, newsApiKey, openCageApiKey, ambeeKey, iqairKey, waqiApiKey}
