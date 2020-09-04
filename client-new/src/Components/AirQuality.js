@@ -12,12 +12,12 @@ export default class AirQuality extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      this.fetchAirQuailty(this.props.keyRequest, this.props.desiredValue)
+      this.fetchAirQuailty(this.props.keyRequest, this.props.nameOrIndex)
     }
   }
 
   componentDidMount() {
-    this.fetchAirQuailty(this.props.keyRequest, this.props.desiredValue)
+    this.fetchAirQuailty(this.props.keyRequest, this.props.nameOrIndex)
   }
 
   fetchAirQuailty = async (key, value) => {
@@ -25,10 +25,10 @@ export default class AirQuality extends Component {
       const sourcesData = await Promise.all(
         [
           'waqi',
-          'iqair'
+          'iqair',
+          'breezo'
         ].map(sourceName => handleApiResponse(fetch(`/api/${sourceName}?${key}=${value}`)) )
       )
-
       this.setState({sourcesData})
     } catch (err) {
       console.log(err)
@@ -36,7 +36,7 @@ export default class AirQuality extends Component {
   }
 
   render () {
-
+    const sourcesData = this.state.sourcesData
     return (
       <div className='mainContainer'>
 
@@ -44,8 +44,10 @@ export default class AirQuality extends Component {
           <h1 className='headerText'>AIR QUALITY</h1>
         </div>
 
-        <div className='mainContainerContent'>
-          {this.state.sourcesData && this.state.sourcesData.map(sourceData => <QualityBlock {...sourceData}/>)}
+        <div className='mainContainerContent airQualityContainer'>
+          {sourcesData && sourcesData.map(sourceData =>
+            <QualityBlock {...sourceData}/>
+          )}
         </div>
 
       </div>
@@ -57,9 +59,11 @@ const QualityBlock = props => {
 
   return (
     <div className='qualityBlock'>
-      <p>{props.source}</p>
-      <Pollutor description='AQI' value={props.aqi} path={contamination}/>
-      <Pollutor description='Main pollutor' value={props.mainPollutor} path={trash} />
+      <p className='pollutorSource'>{props.source}</p>
+      <div className='pollutorContainer'>
+        <Pollutor description='AQI' value={props.aqi} path={contamination}/>
+        <Pollutor description='Main pollutor' value={props.mainPollutor} path={trash} />
+      </div>
     </div>
   )
 }
@@ -68,8 +72,8 @@ const Pollutor = props => {
   return (
     <div className='pollutor'>
       <img src={props.path} alt='pollutor'/>
-      <p>{props.description}</p>
-      <p>{props.value}</p>
+      <p className='pollutorDescription'>{props.description}</p>
+      <p className='pollutorValue'>{props.value}</p>
     </div>
   )
 }

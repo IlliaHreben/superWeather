@@ -1,9 +1,9 @@
-const {getWaqi} = require('../interactors/waqi')
+const {getBreezo} = require('../interactors/breezometer')
 const {sendPromiseToClient, getCityCountry} = require('./homeController')
 
 const ServiceError = require('../../ServiceError')
 
-const getWaqiPollution = (req, res) => {
+const getBreezoPollution = (req, res) => {
   if (!req.query.index && !req.query.cityName) {
     sendPromiseToClient(res,
       Promise.reject(new ServiceError('Data did not come to server', 'NO_DATA_COME'))
@@ -13,8 +13,8 @@ const getWaqiPollution = (req, res) => {
   const getPollution = async () => {
     try {
       const {city} = getCityCountry(req.query)
-      const pollution = await getWaqi(city.latitude, city.longitude)
-      return formatPollution(pollution.data)
+      const pollution = await getBreezo(city.latitude, city.longitude)
+      return formatPollution(pollution.data.indexes.baqi)
     }
     catch (err) {
       console.log(err)
@@ -25,13 +25,13 @@ const getWaqiPollution = (req, res) => {
 }
 
 const formatPollution = pollution => {
-  const {aqi, dominentpol} = pollution
+  const {aqi, dominant_pollutant} = pollution
   return {
-    source: 'WAQI',
+    source: 'BreezoMeter',
     aqi: `${aqi}/100`,
-    mainPollutor: dominentpol
+    mainPollutor: dominant_pollutant
   }
 }
 
 
-module.exports = getWaqiPollution
+module.exports = getBreezoPollution

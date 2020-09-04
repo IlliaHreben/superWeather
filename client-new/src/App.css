@@ -191,7 +191,6 @@ section {
   -webkit-border-radius: 12px;
   -moz-border-radius: 12px;
   -khtml-border-radius: 12px;
-  white-space: nowrap;
   box-shadow: -2px 2px 10px rgba(0,0,0,0.1);
   background-color: white;
   margin-bottom: 20px;
@@ -262,7 +261,6 @@ section {
 }
 
 .mainContainerContent {
-  white-space: nowrap;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -464,13 +462,60 @@ section {
 
 /* ---------------------------------AIR QUALITY--------------------------------- */
 
-.qualityBlock img {
-  height: 4em;
+.airQualityContainer {
+  overflow-x: auto;
+}
+
+.pollutorContainer img {
+  height: 4.5em;
+}
+
+.pollutorSource {
+  margin: 0;
+  margin-bottom: 0.5em;
+  font-size: 1.3em;
+  font-weight: 500;
+}
+.pollutorDescription {
+  font-weight: 500;
+}
+.pollutorValue {
+  font-weight: 500;
+  font-size: 1.5em;
 }
 
 .qualityBlock {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.pollutorContainer {
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  /* height: 100%; */
+}
+.pollutor {
+  display: flex;
+  flex-direction: column;
+  margin-left: 1em; margin-right: 1em;
+  align-items: center;
+}
+
+.pollutor p {
+  margin: 0;
+  margin-top: 0.5em;
+}
+
+.qualityBlock p {
+  color: #2e2e2e;
 }
 
 /* ---------------------------------NEWS--------------------------------- */

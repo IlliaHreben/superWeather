@@ -28,7 +28,7 @@ const formatPollution = pollution => {
   const {current} = pollution
   return {
     source: 'IQ Air',
-    aqi: current.pollution.aqius,
+    aqi: `${current.pollution.aqius}/100`,
     mainPollutor: current.pollution.mainus
   }
 }
