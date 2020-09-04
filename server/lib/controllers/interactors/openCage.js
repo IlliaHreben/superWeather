@@ -6,9 +6,9 @@ const ServiceError = require('../../ServiceError')
 const handleError = data => {
   const {code, message} = data.status
   if (code === 400) {
-    throw new ServiceError(code, 'WHERE ARE U??????')
+    throw new ServiceError('WHERE ARE U??????', 'INVALID_LOCATION')
   } else if (code !== 200) {
-    throw new Error(code, message)
+    throw new Error(message)
   }
 }
 

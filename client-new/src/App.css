@@ -177,13 +177,12 @@ section {
 }
 
 .containerForMainContainers {
-  box-sizing: border-box;
   overflow-x: scroll;
   overflow-y: hidden;
   width: 51%;
   display: inline-block;
   vertical-align: top;
-  margin: 20px 10px 0 20px;
+  padding: 20px 20px 0 20px;
 }
 
 .mainContainer {
@@ -192,23 +191,22 @@ section {
   -webkit-border-radius: 12px;
   -moz-border-radius: 12px;
   -khtml-border-radius: 12px;
-  white-space: nowrap;
   box-shadow: -2px 2px 10px rgba(0,0,0,0.1);
   background-color: white;
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .mainContainerHeader, .newsHeader {
   background-color: #76b675;
   padding-left: 3.5em;
   padding-right: 3.5em;
-  margin-bottom: 12px;
   padding-top: 16px;
   -webkit-border-radius: 12px 12px 0px 0px;
   -moz-border-radius: 12px;
   -khtml-border-radius: 12px;
   border-radius: 12px 12px 0 0;
-    /* border-bottom: 2px solid #549c53; */
 }
 
 .headerText {
@@ -231,9 +229,12 @@ section {
 }
 
 .cityCountryCurrent {
-  text-align: left;
+  float: right;
   right: 8%;
   top: 20%;
+  max-width: 50%;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 .mainString {
@@ -254,6 +255,9 @@ section {
 .leftBottomString {
   bottom: 10px;
   font-size: 13px;
+  max-width: 40%;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 .temperatureMin {
@@ -262,6 +266,55 @@ section {
   right: 20px;
 }
 
+.mainContainerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  height: 185px;
+}
+
+.fa-caret-right {
+  transform: scaleY(3);
+}
+
+.fa-caret-left {
+  transform: scaleY(3);
+}
+
+.left, .right {
+  position: relative;
+  display: inline-block;
+  height: 100%;
+  width: 20px;
+  min-width: 20px;
+  align-self: center;
+  border: none;
+  border-radius: 0.5em;
+  cursor: pointer;
+  background-color: #00000000;
+  color: #5B5B5B;
+  transition: .3s;
+  padding: 0.1em;
+}
+
+.left:hover, .right:hover {
+  color: #464646;
+}
+
+.left:active, .right:active {
+  color: #2E2E2E;
+}
+
+.left:disabled, .right:disabled {
+  opacity: 0.5;
+  cursor: auto;
+}
+
+.columnsContainer {
+  display: inline-block;
+  overflow-x: hidden;
+  margin-top: 10px;
+}
 
 /*_____________ЭТО КОНТЕЙНЕР СО ВСЕМИ ВИДЖЕТАМИ_____________*/
 .widgetContainer {
@@ -269,15 +322,12 @@ section {
   display: inline-block;
   vertical-align: top;
   position: relative;
-  margin-left: 20px; margin-right: -20px;
   width: 300px;
   height: 150px;
   transition: all 0.5s ease-out;
   padding: 8px;
   border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -khtml-border-radius: 8px;
+  left: inherit;
 }
 
 
@@ -299,7 +349,7 @@ section {
   width: 250px;
   height: 100px;
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: 4px; margin-top: 4px;
   border-radius: 6px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -416,6 +466,63 @@ section {
   cursor: pointer;
 }
 
+/* ---------------------------------AIR QUALITY--------------------------------- */
+
+.airQualityContainer {
+  overflow-x: auto;
+}
+
+.pollutorContainer img {
+  height: 4.5em;
+}
+
+.pollutorSource {
+  margin: 0;
+  margin-bottom: 0.5em;
+  font-size: 1.3em;
+  font-weight: 500;
+}
+.pollutorDescription {
+  font-weight: 500;
+}
+.pollutorValue {
+  font-weight: 500;
+  font-size: 1.5em;
+}
+
+.qualityBlock {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.pollutorContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  /* height: 100%; */
+}
+.pollutor {
+  display: flex;
+  flex-direction: column;
+  margin-left: 1em; margin-right: 1em;
+  align-items: center;
+}
+
+.pollutor p {
+  margin: 0;
+  margin-top: 0.5em;
+}
+
+.qualityBlock p {
+  color: #2e2e2e;
+}
 
 /* ---------------------------------NEWS--------------------------------- */
 
@@ -427,7 +534,7 @@ section {
   box-shadow: -2px 2px 10px rgba(0,0,0,0.1);
   display: inline-block;
   vertical-align: top;
-  margin: 20px 10px 0 10px;
+  margin-top: 20px;
 }
 
 .oneNew {

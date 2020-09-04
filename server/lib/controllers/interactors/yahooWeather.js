@@ -1,7 +1,6 @@
 const OAuth = require('oauth')
 
 const {consumerKeyYahoo, consumerSecretYahoo} = require('../../config')
-const ServiceError = require('../../ServiceError')
 
 const yahooRequest = new OAuth.OAuth(
     null,
