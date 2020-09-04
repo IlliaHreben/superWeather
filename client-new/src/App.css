@@ -229,9 +229,12 @@ section {
 }
 
 .cityCountryCurrent {
-  text-align: left;
+  float: right;
   right: 8%;
   top: 20%;
+  max-width: 50%;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 .mainString {
@@ -252,6 +255,9 @@ section {
 .leftBottomString {
   bottom: 10px;
   font-size: 13px;
+  max-width: 40%;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 .temperatureMin {
