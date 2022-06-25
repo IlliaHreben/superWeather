@@ -15,7 +15,7 @@
     "express-handlebars": "^3.1.0",
     "mysql2": "^2.1.0",
     "newsapi": "^2.4.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.7",
     "nodemon": "^2.0.4",
     "oauth": "^0.9.15",
     "path": "^0.12.7",
